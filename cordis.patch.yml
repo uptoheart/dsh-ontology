@@ -1,0 +1,10 @@
+# dsh-ontology bundle layer.
+#
+# The plugin provides:
+#   1. Host-side tools: ontology-*
+#   2. Client-side UI: sidebar entry + center panel (web profile only)
+#
+# `dsh.client.platform: "web"` in package.json activates the browser half.
+- insert:
+    - id: dsh-ontology
+      name: dsh-ontology

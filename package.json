@@ -1,0 +1,58 @@
+{
+    "name":  "dsh-ontology",
+    "version":  "0.0.1",
+    "description":  "dsh-ontology — personal ontology plugin for DeepSeek Harness.",
+    "license":  "MIT",
+    "type":  "module",
+    "main":  "./dist/index.js",
+    "repository":  {
+                       "type":  "git",
+                       "url":  "git+https://github.com/uptoheart/dsh-ontology.git"
+                   },
+    "exports":  {
+                    ".":  "./dist/index.js",
+                    "./client":  "./dist/client.js"
+                },
+    "files":  [
+                  "dist",
+                  "cordis.patch.yml"
+              ],
+    "dsh":  {
+                "bundle":  {
+                               "patch":  "./cordis.patch.yml",
+                               "menus":  [
+                                             {
+                                                 "id":  "dsh-ontology",
+                                                 "label":  "Ontology",
+                                                 "icon":  "bookmark",
+                                                 "action":  "open-ontology-panel"
+                                             }
+                                         ]
+                           },
+                "client":  {
+                               "inject":  [
+
+                                          ],
+                               "platform":  "web"
+                           }
+            },
+    "scripts":  {
+                    "build":  "tsc -p tsconfig.json \u0026\u0026 node scripts/wrap-client.mjs \u0026\u0026 node scripts/copy-ui.mjs",
+                    "typecheck":  "tsc -p tsconfig.json --noEmit",
+                    "dev":  "pnpm run build \u0026\u0026 concurrently -n tsc,wrap,ui -c blue,green,yellow \"tsc -p tsconfig.json -w\" \"chokidar dist/client.js -c \\\"node scripts/wrap-client.mjs\\\"\" \"chokidar src/ui.html -c \\\"node scripts/copy-ui.mjs\\\"\"",
+                    "test":  "vitest",
+                    "test:run":  "vitest run",
+                    "test:coverage":  "vitest run --coverage"
+                },
+    "peerDependencies":  {
+                             "@deepseek-ai/cordis":  "^4.0.2"
+                         },
+    "devDependencies":  {
+                            "@deepseek-ai/cordis":  "^4.0.2",
+                            "@types/node":  "^22.10.0",
+                            "chokidar-cli":  "^3.0.0",
+                            "concurrently":  "^10.0.6",
+                            "typescript":  "^5.6.0",
+                            "vitest":  "^5.0.4"
+                        }
+}
