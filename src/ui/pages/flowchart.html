@@ -1,0 +1,62 @@
+<!-- Tab 4: 流程图 -->
+<section class="tab-panel" id="tab-flowchart">
+  <!-- 左栏：上 APQC 节点树 / 下 常用控制 -->
+  <div class="flow-left">
+    <div class="flow-left-top">
+      <div class="fw-search">
+        <input type="text" id="flowTreeSearch" placeholder="🔍 搜索 APQC 编号或名称">
+        <div class="hint">拖拽节点到画布生成任务节点</div>
+      </div>
+      <div class="tree-wrap" id="flowTreeWrap"></div>
+    </div>
+    <div class="flow-left-bottom">
+      <h4>常用流程图控制</h4>
+      <div class="flow-tools">
+        <button class="btn" data-add="start" title="添加开始节点">▶ 开始</button>
+        <button class="btn" data-add="end" title="添加结束节点">⏹ 结束</button>
+        <button class="btn" data-add="decision" title="添加判断节点">◈ 判断</button>
+        <button class="btn" data-add="task" title="添加通用任务节点">▭ 任务</button>
+        <button class="btn" id="flowDelSel" title="删除选中的节点或连线（或按 Delete 键）">🗑 删除选中</button>
+        <button class="btn" id="flowClear" title="清空画布并开始新流程图">🧹 清空画布</button>
+      </div>
+      <div class="flow-tips">从节点右侧圆点拖出连线到目标节点；拖动节点调整位置；点击节点/连线后按 Delete 删除。</div>
+    </div>
+  </div>
+
+  <!-- 中栏：上 工具栏 / 下 画布 -->
+  <div class="flow-center">
+    <div class="flow-toolbar">
+      <input type="text" id="flowName" placeholder="流程图名称…" maxlength="80">
+      <button class="btn primary" id="flowSave">💾 保存</button>
+      <div class="flow-export-group">
+        <button class="btn" id="flowNew" title="新建流程图（会先询问是否保存当前画布内容）">🆕 新建</button>
+        <button class="btn" id="flowExportPng" title="导出为 PNG 图片">🖼️ 导出 PNG</button>
+      </div>
+    </div>
+    <div class="flow-canvas-wrap" id="flowCanvasWrap">
+      <svg id="flowSvg" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <marker id="flowArrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="#8a93a3"></path>
+          </marker>
+          <marker id="flowArrowHi" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="#f59e0b"></path>
+          </marker>
+        </defs>
+        <g id="flowEdges"></g>
+        <line id="flowTempEdge" style="display:none" stroke="#f59e0b" stroke-width="1.6" stroke-dasharray="5 4"></line>
+        <g id="flowNodes"></g>
+      </svg>
+      <div class="flow-empty" id="flowEmpty">
+        <div class="big">🪢</div>
+        <div>从左侧拖入 APQC 节点，或点击「常用流程图控制」添加节点</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 右栏：已保存流程图列表 -->
+  <div class="flow-right">
+    <div class="pane-head">已保存流程图 <span class="ph-extra" id="flowCount"></span></div>
+    <div class="flow-list" id="flowList"></div>
+  </div>
+</section>

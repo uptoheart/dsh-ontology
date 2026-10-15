@@ -3,3 +3,4 @@ test-*
 .npmrc
 dist/*
 docs/*
+src/datastorage/flowcharts/*

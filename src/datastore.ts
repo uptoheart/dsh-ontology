@@ -1,6 +1,7 @@
 import { mkdir, readFile, writeFile, readdir, unlink } from 'node:fs/promises'
-import { statSync } from 'node:fs'
-import { join, dirname } from 'node:path'
+import { statSync, existsSync } from 'node:fs'
+import { join, dirname, resolve } from 'node:path'
+import { homedir } from 'node:os'
 import { fileURLToPath } from 'node:url'
 import type {
   SuiteData, OntologySuiteMeta, OntologyAnnotations, OntologyEntity, OntologyRelation,
@@ -27,6 +28,29 @@ function projRoot(): string {
   return dirname(__dirname)
 }
 
+const DEFAULT_DATASTORAGE_PATH = 'src/datastorage'
+
+/**
+ * 数据存储根目录（datastorage）解析优先级：
+ * 1. 环境变量 DSH_ONTOLOGY_DATA —— 部署/宿主环境显式指定
+ * 2. config.json 显式配置的 datastoragePath —— 相对项目根
+ * 3. 开发环境（项目根下存在 src/datastorage）—— 本地仓库开发体验不变
+ * 4. 兜底 ~/.dsh-ontology/data —— 发布安装后的用户数据目录，跨插件升级持久、必定可写
+ *
+ * 发布包不含 src/（package.json files 白名单仅 dist），若写入安装目录，
+ * 插件升级/重装时用户数据会整体丢失，故发布环境必须落到用户目录。
+ */
+export function resolveDatastorageRoot(cfg: DatastorageConfig): string {
+  const env = process.env.DSH_ONTOLOGY_DATA?.trim()
+  if (env) return resolve(env)
+  const root = projRoot()
+  if (cfg.datastoragePath && cfg.datastoragePath !== DEFAULT_DATASTORAGE_PATH) {
+    return join(root, cfg.datastoragePath)
+  }
+  if (existsSync(join(root, 'src', 'datastorage'))) return join(root, 'src', 'datastorage')
+  return join(homedir(), '.dsh-ontology', 'data')
+}
+
 let _configCache: DatastorageConfig | null = null
 
 async function getConfig(): Promise<DatastorageConfig> {
@@ -40,7 +64,7 @@ async function getConfig(): Promise<DatastorageConfig> {
   } catch {
     _configCache = {
       datasourcePath: 'src/datasource',
-      datastoragePath: 'src/datastorage',
+      datastoragePath: DEFAULT_DATASTORAGE_PATH,
       defaultFramework: 'apqc-process',
       ontologyCodePattern: 'ONT-{L1}-{L2}-{L3}',
     }
@@ -72,7 +96,7 @@ function suiteDir(storageRoot: string, suiteId: string): string {
 
 export async function listImportedSuites(): Promise<OntologySuiteMeta[]> {
   const cfg = await getConfig()
-  const storageRoot = join(projRoot(), cfg.datastoragePath)
+  const storageRoot = resolveDatastorageRoot(cfg)
   const suitesDir = join(storageRoot, 'ontologies')
   let entries: string[]
   try { entries = await readdir(suitesDir) } catch { return [] }
@@ -88,7 +112,7 @@ export async function listImportedSuites(): Promise<OntologySuiteMeta[]> {
 
 export async function loadSuite(suiteId: string): Promise<SuiteData | null> {
   const cfg = await getConfig()
-  const storageRoot = join(projRoot(), cfg.datastoragePath)
+  const storageRoot = resolveDatastorageRoot(cfg)
   const dir = suiteDir(storageRoot, suiteId)
 
   const meta = await readJsonSafe<OntologySuiteMeta | null>(join(dir, 'meta.json'), null)
@@ -105,7 +129,7 @@ export async function loadSuite(suiteId: string): Promise<SuiteData | null> {
 
 export async function saveSuite(suiteId: string, data: SuiteData): Promise<void> {
   const cfg = await getConfig()
-  const storageRoot = join(projRoot(), cfg.datastoragePath)
+  const storageRoot = resolveDatastorageRoot(cfg)
   const dir = suiteDir(storageRoot, suiteId)
   await writeJson(join(dir, 'meta.json'), data.meta)
   await writeJson(join(dir, 'entities.json'), data.entities)
@@ -115,7 +139,7 @@ export async function saveSuite(suiteId: string, data: SuiteData): Promise<void>
 
 export async function saveAnnotations(suiteId: string, annotations: OntologyAnnotations): Promise<void> {
   const cfg = await getConfig()
-  const storageRoot = join(projRoot(), cfg.datastoragePath)
+  const storageRoot = resolveDatastorageRoot(cfg)
   await writeJson(join(suiteDir(storageRoot, suiteId), 'annotations.json'), annotations)
 }
 
@@ -123,7 +147,7 @@ export async function saveAnnotations(suiteId: string, annotations: OntologyAnno
 
 export async function importFromDatasource(force = false): Promise<{ updated: string[]; skipped: string[] }> {
   const cfg = await getConfig()
-  const storageRoot = join(projRoot(), cfg.datastoragePath)
+  const storageRoot = resolveDatastorageRoot(cfg)
   const sourceRoot = join(projRoot(), cfg.datasourcePath)
   await ensureDir(storageRoot)
 
@@ -406,7 +430,7 @@ function isFlowchartData(v: unknown): v is FlowchartData {
 
 export async function listFlowcharts(): Promise<FlowchartMeta[]> {
   const cfg = await getConfig()
-  const dir = flowchartsDir(join(projRoot(), cfg.datastoragePath))
+  const dir = flowchartsDir(resolveDatastorageRoot(cfg))
   let entries: string[]
   try { entries = (await readdir(dir)).filter(f => f.endsWith('.json')) } catch { return [] }
 
@@ -427,14 +451,14 @@ export async function getFlowchart(id: string): Promise<FlowchartData | null> {
   const cfg = await getConfig()
   // id 仅允许字母数字下划线连字符，防止路径穿越
   if (!/^[\w-]+$/.test(id)) return null
-  const dir = flowchartsDir(join(projRoot(), cfg.datastoragePath))
+  const dir = flowchartsDir(resolveDatastorageRoot(cfg))
   const data = await readJsonSafe<FlowchartData | null>(join(dir, `${id}.json`), null)
   return isFlowchartData(data) ? data : null
 }
 
 export async function saveFlowchart(input: { id?: string; name: string; nodes: FlowchartData['nodes']; edges: FlowchartData['edges'] }): Promise<FlowchartData> {
   const cfg = await getConfig()
-  const dir = flowchartsDir(join(projRoot(), cfg.datastoragePath))
+  const dir = flowchartsDir(resolveDatastorageRoot(cfg))
   const existing = input.id ? await getFlowchart(input.id) : null
   const now = Date.now()
   const data: FlowchartData = {
@@ -452,7 +476,7 @@ export async function saveFlowchart(input: { id?: string; name: string; nodes: F
 export async function deleteFlowchart(id: string): Promise<boolean> {
   const cfg = await getConfig()
   if (!/^[\w-]+$/.test(id)) return false
-  const path = join(flowchartsDir(join(projRoot(), cfg.datastoragePath)), `${id}.json`)
+  const path = join(flowchartsDir(resolveDatastorageRoot(cfg)), `${id}.json`)
   try {
     await unlink(path)
     return true

@@ -1,0 +1,121 @@
+/* ═══════════ Tab4 流程图 ═══════════ */
+#tab-flowchart { display: none; padding: 0; }
+#tab-flowchart.active { display: flex; }
+
+/* ───── 左栏 ───── */
+.flow-left {
+  flex-shrink: 0; width: 272px; min-width: 232px;
+  display: flex; flex-direction: column; min-height: 0;
+  border-right: 1px solid var(--border); background: var(--card);
+}
+.flow-left-top { flex: 1; min-height: 0; display: flex; flex-direction: column; }
+.flow-left-top .tree-wrap { flex: 1; overflow: auto; padding: 6px 8px 12px; }
+.flow-left-bottom {
+  flex-shrink: 0; border-top: 1px solid var(--border);
+  padding: 10px 12px 12px; background: var(--surface);
+}
+.flow-left-bottom h4 {
+  font-size: 11.5px; font-weight: 600; color: var(--text-dim);
+  text-transform: uppercase; letter-spacing: .04em; margin-bottom: 8px;
+}
+.flow-tools { display: flex; flex-wrap: wrap; gap: 6px; }
+.flow-tools .btn { padding: 4px 9px; font-size: 11.5px; }
+.flow-tips { font-size: 10.5px; color: var(--text-dim); line-height: 1.6; margin-top: 8px; }
+
+/* 左栏 APQC 树行（可拖拽） */
+.flow-tree-row {
+  display: flex; align-items: center; gap: 6px;
+  padding: 4px 8px; border-radius: 6px; cursor: grab;
+  font-size: 12.5px; line-height: 1.5; user-select: none;
+}
+.flow-tree-row:hover { background: var(--hover); }
+.flow-tree-row.dragging { opacity: .5; }
+.flow-tree-row .caret {
+  width: 14px; flex-shrink: 0; text-align: center;
+  color: var(--text-dim); font-size: 10px; transition: transform .1s; user-select: none;
+}
+.flow-tree-row .caret.open { transform: rotate(90deg); }
+.flow-tree-row .caret.leaf { visibility: hidden; }
+.flow-tree-row .code { font-family: var(--mono); font-size: 11.5px; color: var(--accent); flex-shrink: 0; min-width: 66px; }
+.flow-tree-row .t-label { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.flow-tree-row .drag-hint { flex-shrink: 0; font-size: 10px; color: var(--text-dim); opacity: 0; transition: opacity .12s; }
+.flow-tree-row:hover .drag-hint { opacity: 1; }
+
+/* ───── 中栏 ───── */
+.flow-center { flex: 1; min-width: 0; min-height: 0; display: flex; flex-direction: column; }
+.flow-toolbar {
+  flex-shrink: 0; display: flex; align-items: center; gap: 8px;
+  padding: 9px 14px; border-bottom: 1px solid var(--border); background: var(--card);
+}
+.flow-toolbar input {
+  flex: 1; min-width: 120px; max-width: 360px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 6px; padding: 6px 10px; outline: none; font-size: 12.5px;
+}
+.flow-toolbar input:focus { border-color: var(--border-h); }
+.flow-export-group { display: flex; gap: 6px; margin-left: auto; }
+
+.flow-canvas-wrap {
+  flex: 1; min-height: 0; position: relative; overflow: auto;
+  background-color: var(--surface);
+  background-image:
+    linear-gradient(var(--border) 1px, transparent 1px),
+    linear-gradient(90deg, var(--border) 1px, transparent 1px);
+  background-size: 24px 24px;
+  background-position: -1px -1px;
+}
+#flowSvg { display: block; }
+#flowSvg.dragging { cursor: grabbing; }
+#flowSvg.linking { cursor: crosshair; }
+
+.flow-empty {
+  position: absolute; inset: 0; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 6px;
+  color: var(--text-dim); font-size: 13px; text-align: center;
+  pointer-events: none; line-height: 1.8;
+}
+.flow-empty .big { font-size: 34px; }
+.flow-empty.hidden { display: none; }
+
+/* SVG 节点 */
+.flow-node { cursor: move; }
+.flow-node .n-body { fill: var(--card); stroke: var(--border); stroke-width: 1.2; }
+.flow-node:hover .n-body { stroke: var(--border-h); }
+.flow-node.selected .n-body { stroke: var(--accent); stroke-width: 2; filter: drop-shadow(0 0 3px rgba(245,158,11,.45)); }
+.flow-node.link-target .n-body { stroke: var(--accent); stroke-width: 2; }
+.flow-node .n-label { fill: var(--text); font-size: 12px; pointer-events: none; }
+.flow-node .n-code { fill: var(--accent); font-family: var(--mono); font-size: 9.5px; pointer-events: none; }
+.flow-node .n-port { fill: var(--card); stroke: var(--text-dim); stroke-width: 1.2; cursor: crosshair; }
+.flow-node .n-port:hover { fill: var(--accent); stroke: var(--accent); }
+
+/* SVG 连线 */
+.flow-edge { cursor: pointer; }
+.flow-edge .e-line { stroke: #8a93a3; stroke-width: 1.4; fill: none; }
+.flow-edge:hover .e-line { stroke: var(--border-h); }
+.flow-edge.selected .e-line { stroke: var(--accent); stroke-width: 2; }
+
+/* ───── 右栏 ───── */
+.flow-right {
+  flex-shrink: 0; width: 252px; min-width: 212px;
+  display: flex; flex-direction: column; min-height: 0;
+  border-left: 1px solid var(--border); background: var(--card);
+}
+.flow-list { flex: 1; overflow: auto; padding: 8px; display: flex; flex-direction: column; gap: 6px; }
+.flow-item {
+  position: relative; border: 1px solid var(--border); border-radius: 6px;
+  padding: 8px 10px; cursor: pointer; background: var(--card);
+  transition: border-color .1s, background .1s;
+}
+.flow-item:hover { border-color: var(--border-h); }
+.flow-item.selected { border-color: var(--accent); background: var(--active); }
+.flow-item .fi-name {
+  font-size: 12.5px; font-weight: 600; word-break: break-all;
+  padding-right: 18px; line-height: 1.4;
+}
+.flow-item .fi-meta { font-size: 10.5px; color: var(--text-dim); margin-top: 4px; }
+.flow-item .fi-del {
+  position: absolute; top: 6px; right: 6px;
+  background: none; border: none; color: var(--text-dim);
+  font-size: 12px; line-height: 1; padding: 3px; border-radius: 4px;
+}
+.flow-item .fi-del:hover { color: var(--st-gap); background: var(--st-gap-bg); }
