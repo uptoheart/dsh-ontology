@@ -1,0 +1,15 @@
+<!-- Tab: 本体（左：实体关系图 / 右：实体详情）；默认激活面板与 layout.html 导航保持一致 -->
+<section class="tab-panel split active" id="tab-ontology">
+  <div class="split-left">
+    <div class="graph-toolbar">
+      <div class="gt-row">
+        <span class="gt-title">🕸️ 实体关系图</span>
+        <button class="btn" id="btnGraphReset" title="复位视图缩放与平移">⌖ 复位视图</button>
+        <span class="gt-hint">拖拽节点 · 滚轮缩放 · 点击查看详情</span>
+      </div>
+      <div class="legend" id="kindLegend"></div>
+    </div>
+    <div class="graph-wrap" id="graphWrap"><canvas id="ontoCanvas"></canvas></div>
+  </div>
+  <div class="split-right" id="ontoDetail"><div class="empty-hint"><div><div class="big">🧩</div>点击左侧实体节点，查看行为、规则与关联内容</div></div></div>
+</section>

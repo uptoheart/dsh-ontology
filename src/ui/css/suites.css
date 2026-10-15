@@ -1,0 +1,36 @@
+/* ═══════════ Tab1 本体管理：左侧套件列表 ═══════════ */
+#tab-suites .split-left { width: 320px; }
+.suite-list { flex: 1; overflow: auto; padding: 8px; }
+.suite-item {
+  padding: 10px 12px; border: 1px solid var(--border); border-radius: var(--radius);
+  margin-bottom: 8px; cursor: pointer; background: var(--card);
+  transition: border-color .12s, box-shadow .12s;
+}
+.suite-item:hover { border-color: var(--border-h); }
+.suite-item.selected { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+.suite-item .si-name { font-weight: 600; font-size: 13px; font-family: var(--mono); display: flex; align-items: center; gap: 6px; }
+.suite-item .si-name .check { color: var(--accent); }
+.suite-item .si-meta { font-size: 11.5px; color: var(--text-dim); margin-top: 4px; line-height: 1.6; }
+.suite-item .si-meta b { color: var(--text); font-weight: 500; }
+
+/* ═══════════ 实体表（本体管理右侧） ═══════════ */
+.ent-toolbar { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; flex-wrap: wrap; }
+.ent-toolbar select, .ent-toolbar input {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 6px; padding: 6px 9px; outline: none; font-size: 12.5px;
+}
+.ent-toolbar input { width: 240px; }
+.ent-toolbar select:focus, .ent-toolbar input:focus { border-color: var(--border-h); }
+.ent-toolbar .count { font-size: 12px; color: var(--text-dim); margin-left: auto; }
+table.ent-table { width: 100%; border-collapse: collapse; background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+table.ent-table th, table.ent-table td { padding: 7px 12px; text-align: left; font-size: 12.5px; border-bottom: 1px solid var(--border); }
+table.ent-table th { background: var(--surface); color: var(--text-dim); font-weight: 500; font-size: 11.5px; white-space: nowrap; }
+table.ent-table tbody tr { cursor: pointer; }
+table.ent-table tbody tr:hover { background: var(--hover); }
+table.ent-table tbody tr:last-child td { border-bottom: none; }
+td.idx { color: var(--text-dim); font-family: var(--mono); font-size: 11px; width: 48px; }
+.e-name { font-weight: 500; }
+td.apqc-cell { font-family: var(--mono); font-size: 11.5px; color: var(--accent); }
+td.apqc-cell.none { color: var(--text-dim); }
+.pager { display: flex; align-items: center; justify-content: flex-end; gap: 10px; padding: 12px 2px; font-size: 12px; color: var(--text-dim); }
+.pager .btn { padding: 4px 10px; }

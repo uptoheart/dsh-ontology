@@ -1,0 +1,2319 @@
+[
+  {
+    "id": "reference-example:ENTITY:AGG-CONTRACT-001::付款阶段::AGGREGATE_OWN_ENTITY::reference-example:AGGREGATE_ROOT:AGG-CONTRACT-001",
+    "from": "reference-example:ENTITY:AGG-CONTRACT-001::付款阶段",
+    "to": "reference-example:AGGREGATE_ROOT:AGG-CONTRACT-001",
+    "type": "AGGREGATE_OWN_ENTITY",
+    "label": "属于"
+  },
+  {
+    "id": "reference-example:ENTITY:AGG-INVOICE-001::开票付款阶段分摊::AGGREGATE_OWN_ENTITY::reference-example:AGGREGATE_ROOT:AGG-INVOICE-001",
+    "from": "reference-example:ENTITY:AGG-INVOICE-001::开票付款阶段分摊",
+    "to": "reference-example:AGGREGATE_ROOT:AGG-INVOICE-001",
+    "type": "AGGREGATE_OWN_ENTITY",
+    "label": "属于"
+  },
+  {
+    "id": "reference-example:AGGREGATE_ROOT:AGG-CONTRACT-001::REFERENCE::reference-example:AGGREGATE_ROOT:AGG-PRODUCT-001",
+    "from": "reference-example:AGGREGATE_ROOT:AGG-CONTRACT-001",
+    "to": "reference-example:AGGREGATE_ROOT:AGG-PRODUCT-001",
+    "type": "REFERENCE",
+    "label": "所属产品"
+  },
+  {
+    "id": "reference-example:AGGREGATE_ROOT:AGG-CONTRACT-001::REFERENCE::reference-example:AGGREGATE_ROOT:AGG-CUSTOMER-001",
+    "from": "reference-example:AGGREGATE_ROOT:AGG-CONTRACT-001",
+    "to": "reference-example:AGGREGATE_ROOT:AGG-CUSTOMER-001",
+    "type": "REFERENCE",
+    "label": "所属客户"
+  },
+  {
+    "id": "reference-example:AGGREGATE_ROOT:AGG-CONTRACT-001::REFERENCE::reference-example:AGGREGATE_ROOT:AGG-DEPARTMENT-001",
+    "from": "reference-example:AGGREGATE_ROOT:AGG-CONTRACT-001",
+    "to": "reference-example:AGGREGATE_ROOT:AGG-DEPARTMENT-001",
+    "type": "REFERENCE",
+    "label": "归属部门"
+  },
+  {
+    "id": "reference-example:AGGREGATE_ROOT:AGG-CONTRACT-001::REFERENCE::reference-example:AGGREGATE_ROOT:AGG-EMPLOYEE-001",
+    "from": "reference-example:AGGREGATE_ROOT:AGG-CONTRACT-001",
+    "to": "reference-example:AGGREGATE_ROOT:AGG-EMPLOYEE-001",
+    "type": "REFERENCE",
+    "label": "责任人"
+  },
+  {
+    "id": "reference-example:AGGREGATE_ROOT:AGG-EMPLOYEE-001::REFERENCE::reference-example:AGGREGATE_ROOT:AGG-DEPARTMENT-001",
+    "from": "reference-example:AGGREGATE_ROOT:AGG-EMPLOYEE-001",
+    "to": "reference-example:AGGREGATE_ROOT:AGG-DEPARTMENT-001",
+    "type": "REFERENCE",
+    "label": "所属部门"
+  },
+  {
+    "id": "reference-example:AGGREGATE_ROOT:AGG-CONTRACT-001::REFERENCE::reference-example:AGGREGATE_ROOT:AGG-INVOICE-001",
+    "from": "reference-example:AGGREGATE_ROOT:AGG-CONTRACT-001",
+    "to": "reference-example:AGGREGATE_ROOT:AGG-INVOICE-001",
+    "type": "REFERENCE",
+    "label": "产生开票"
+  },
+  {
+    "id": "reference-example:AGGREGATE_ROOT:AGG-CONTRACT-001::REFERENCE::reference-example:AGGREGATE_ROOT:AGG-RECEIPT-001",
+    "from": "reference-example:AGGREGATE_ROOT:AGG-CONTRACT-001",
+    "to": "reference-example:AGGREGATE_ROOT:AGG-RECEIPT-001",
+    "type": "REFERENCE",
+    "label": "对应收款"
+  },
+  {
+    "id": "reference-example:AGGREGATE_ROOT:AGG-INVOICE-001::REFERENCE::reference-example:AGGREGATE_ROOT:AGG-RECEIPT-001",
+    "from": "reference-example:AGGREGATE_ROOT:AGG-INVOICE-001",
+    "to": "reference-example:AGGREGATE_ROOT:AGG-RECEIPT-001",
+    "type": "REFERENCE",
+    "label": "对应收款"
+  },
+  {
+    "id": "reference-example:BEHAVIOR:Contract_SaveAsDraft::OWNED_BY::reference-example:AGGREGATE_ROOT:AGG-CONTRACT-001",
+    "from": "reference-example:BEHAVIOR:Contract_SaveAsDraft",
+    "to": "reference-example:AGGREGATE_ROOT:AGG-CONTRACT-001",
+    "type": "OWNED_BY",
+    "label": "归属"
+  },
+  {
+    "id": "reference-example:BEHAVIOR:Contract_SaveAsDraft::USES_RULE::reference-example:RULE:RULE-OWNER-DEPT-CONSISTENT",
+    "from": "reference-example:BEHAVIOR:Contract_SaveAsDraft",
+    "to": "reference-example:RULE:RULE-OWNER-DEPT-CONSISTENT",
+    "type": "USES_RULE",
+    "label": "使用"
+  },
+  {
+    "id": "reference-example:BEHAVIOR:Contract_Submit::OWNED_BY::reference-example:AGGREGATE_ROOT:AGG-CONTRACT-001",
+    "from": "reference-example:BEHAVIOR:Contract_Submit",
+    "to": "reference-example:AGGREGATE_ROOT:AGG-CONTRACT-001",
+    "type": "OWNED_BY",
+    "label": "归属"
+  },
+  {
+    "id": "reference-example:BEHAVIOR:Contract_Submit::USES_RULE::reference-example:RULE:RULE-CONTRACT-APPROVAL-LEVEL",
+    "from": "reference-example:BEHAVIOR:Contract_Submit",
+    "to": "reference-example:RULE:RULE-CONTRACT-APPROVAL-LEVEL",
+    "type": "USES_RULE",
+    "label": "使用"
+  },
+  {
+    "id": "reference-example:BEHAVIOR:Contract_Submit::USES_RULE::reference-example:RULE:RULE-OWNER-DEPT-CONSISTENT",
+    "from": "reference-example:BEHAVIOR:Contract_Submit",
+    "to": "reference-example:RULE:RULE-OWNER-DEPT-CONSISTENT",
+    "type": "USES_RULE",
+    "label": "使用"
+  },
+  {
+    "id": "reference-example:BEHAVIOR:Contract_Resubmit::OWNED_BY::reference-example:AGGREGATE_ROOT:AGG-CONTRACT-001",
+    "from": "reference-example:BEHAVIOR:Contract_Resubmit",
+    "to": "reference-example:AGGREGATE_ROOT:AGG-CONTRACT-001",
+    "type": "OWNED_BY",
+    "label": "归属"
+  },
+  {
+    "id": "reference-example:BEHAVIOR:Contract_Resubmit::USES_RULE::reference-example:RULE:RULE-CONTRACT-APPROVAL-LEVEL",
+    "from": "reference-example:BEHAVIOR:Contract_Resubmit",
+    "to": "reference-example:RULE:RULE-CONTRACT-APPROVAL-LEVEL",
+    "type": "USES_RULE",
+    "label": "使用"
+  },
+  {
+    "id": "reference-example:BEHAVIOR:Contract_Resubmit::USES_RULE::reference-example:RULE:RULE-OWNER-DEPT-CONSISTENT",
+    "from": "reference-example:BEHAVIOR:Contract_Resubmit",
+    "to": "reference-example:RULE:RULE-OWNER-DEPT-CONSISTENT",
+    "type": "USES_RULE",
+    "label": "使用"
+  },
+  {
+    "id": "reference-example:BEHAVIOR:Invoice_SaveAsDraft::OWNED_BY::reference-example:AGGREGATE_ROOT:AGG-INVOICE-001",
+    "from": "reference-example:BEHAVIOR:Invoice_SaveAsDraft",
+    "to": "reference-example:AGGREGATE_ROOT:AGG-INVOICE-001",
+    "type": "OWNED_BY",
+    "label": "归属"
+  },
+  {
+    "id": "reference-example:BEHAVIOR:Invoice_SaveAsDraft::USES_RULE::reference-example:RULE:RULE-CONTRACT-INVOICE-ELIGIBLE",
+    "from": "reference-example:BEHAVIOR:Invoice_SaveAsDraft",
+    "to": "reference-example:RULE:RULE-CONTRACT-INVOICE-ELIGIBLE",
+    "type": "USES_RULE",
+    "label": "使用"
+  },
+  {
+    "id": "reference-example:BEHAVIOR:Invoice_SaveAsDraft::USES_RULE::reference-example:RULE:RULE-PAYSTAGE-REMAIN-QUOTA",
+    "from": "reference-example:BEHAVIOR:Invoice_SaveAsDraft",
+    "to": "reference-example:RULE:RULE-PAYSTAGE-REMAIN-QUOTA",
+    "type": "USES_RULE",
+    "label": "使用"
+  },
+  {
+    "id": "reference-example:BEHAVIOR:Invoice_SaveAsDraft::USES_RULE::reference-example:RULE:RULE-INVOICE-TAXRATE-CONSISTENT",
+    "from": "reference-example:BEHAVIOR:Invoice_SaveAsDraft",
+    "to": "reference-example:RULE:RULE-INVOICE-TAXRATE-CONSISTENT",
+    "type": "USES_RULE",
+    "label": "使用"
+  },
+  {
+    "id": "reference-example:BEHAVIOR:Invoice_SaveAsDraft::USES_RULE::reference-example:RULE:RULE-ALLOCATION-CONTRACT-CONSISTENT",
+    "from": "reference-example:BEHAVIOR:Invoice_SaveAsDraft",
+    "to": "reference-example:RULE:RULE-ALLOCATION-CONTRACT-CONSISTENT",
+    "type": "USES_RULE",
+    "label": "使用"
+  },
+  {
+    "id": "reference-example:BEHAVIOR:Invoice_Submit::OWNED_BY::reference-example:AGGREGATE_ROOT:AGG-INVOICE-001",
+    "from": "reference-example:BEHAVIOR:Invoice_Submit",
+    "to": "reference-example:AGGREGATE_ROOT:AGG-INVOICE-001",
+    "type": "OWNED_BY",
+    "label": "归属"
+  },
+  {
+    "id": "reference-example:BEHAVIOR:Invoice_Submit::USES_RULE::reference-example:RULE:RULE-CONTRACT-INVOICE-ELIGIBLE",
+    "from": "reference-example:BEHAVIOR:Invoice_Submit",
+    "to": "reference-example:RULE:RULE-CONTRACT-INVOICE-ELIGIBLE",
+    "type": "USES_RULE",
+    "label": "使用"
+  },
+  {
+    "id": "reference-example:BEHAVIOR:Invoice_Submit::USES_RULE::reference-example:RULE:RULE-PAYSTAGE-REMAIN-QUOTA",
+    "from": "reference-example:BEHAVIOR:Invoice_Submit",
+    "to": "reference-example:RULE:RULE-PAYSTAGE-REMAIN-QUOTA",
+    "type": "USES_RULE",
+    "label": "使用"
+  },
+  {
+    "id": "reference-example:BEHAVIOR:Invoice_Submit::USES_RULE::reference-example:RULE:RULE-INVOICE-TAXRATE-CONSISTENT",
+    "from": "reference-example:BEHAVIOR:Invoice_Submit",
+    "to": "reference-example:RULE:RULE-INVOICE-TAXRATE-CONSISTENT",
+    "type": "USES_RULE",
+    "label": "使用"
+  },
+  {
+    "id": "reference-example:BEHAVIOR:Invoice_Submit::USES_RULE::reference-example:RULE:RULE-ALLOCATION-CONTRACT-CONSISTENT",
+    "from": "reference-example:BEHAVIOR:Invoice_Submit",
+    "to": "reference-example:RULE:RULE-ALLOCATION-CONTRACT-CONSISTENT",
+    "type": "USES_RULE",
+    "label": "使用"
+  },
+  {
+    "id": "reference-example:BEHAVIOR:Invoice_Resubmit::OWNED_BY::reference-example:AGGREGATE_ROOT:AGG-INVOICE-001",
+    "from": "reference-example:BEHAVIOR:Invoice_Resubmit",
+    "to": "reference-example:AGGREGATE_ROOT:AGG-INVOICE-001",
+    "type": "OWNED_BY",
+    "label": "归属"
+  },
+  {
+    "id": "reference-example:BEHAVIOR:Invoice_Resubmit::USES_RULE::reference-example:RULE:RULE-CONTRACT-INVOICE-ELIGIBLE",
+    "from": "reference-example:BEHAVIOR:Invoice_Resubmit",
+    "to": "reference-example:RULE:RULE-CONTRACT-INVOICE-ELIGIBLE",
+    "type": "USES_RULE",
+    "label": "使用"
+  },
+  {
+    "id": "reference-example:BEHAVIOR:Invoice_Resubmit::USES_RULE::reference-example:RULE:RULE-PAYSTAGE-REMAIN-QUOTA",
+    "from": "reference-example:BEHAVIOR:Invoice_Resubmit",
+    "to": "reference-example:RULE:RULE-PAYSTAGE-REMAIN-QUOTA",
+    "type": "USES_RULE",
+    "label": "使用"
+  },
+  {
+    "id": "reference-example:BEHAVIOR:Invoice_Resubmit::USES_RULE::reference-example:RULE:RULE-INVOICE-TAXRATE-CONSISTENT",
+    "from": "reference-example:BEHAVIOR:Invoice_Resubmit",
+    "to": "reference-example:RULE:RULE-INVOICE-TAXRATE-CONSISTENT",
+    "type": "USES_RULE",
+    "label": "使用"
+  },
+  {
+    "id": "reference-example:BEHAVIOR:Invoice_Resubmit::USES_RULE::reference-example:RULE:RULE-ALLOCATION-CONTRACT-CONSISTENT",
+    "from": "reference-example:BEHAVIOR:Invoice_Resubmit",
+    "to": "reference-example:RULE:RULE-ALLOCATION-CONTRACT-CONSISTENT",
+    "type": "USES_RULE",
+    "label": "使用"
+  },
+  {
+    "id": "reference-example:BEHAVIOR:Receipt_Record::OWNED_BY::reference-example:AGGREGATE_ROOT:AGG-RECEIPT-001",
+    "from": "reference-example:BEHAVIOR:Receipt_Record",
+    "to": "reference-example:AGGREGATE_ROOT:AGG-RECEIPT-001",
+    "type": "OWNED_BY",
+    "label": "归属"
+  },
+  {
+    "id": "reference-example:BEHAVIOR:Receipt_Record::USES_RULE::reference-example:RULE:RULE-INVOICE-REMAIN-RECEIPT-QUOTA",
+    "from": "reference-example:BEHAVIOR:Receipt_Record",
+    "to": "reference-example:RULE:RULE-INVOICE-REMAIN-RECEIPT-QUOTA",
+    "type": "USES_RULE",
+    "label": "使用"
+  },
+  {
+    "id": "reference-example:BEHAVIOR:Receipt_Record::USES_RULE::reference-example:RULE:RULE-RECEIPT-CONTRACT-CONSISTENT",
+    "from": "reference-example:BEHAVIOR:Receipt_Record",
+    "to": "reference-example:RULE:RULE-RECEIPT-CONTRACT-CONSISTENT",
+    "type": "USES_RULE",
+    "label": "使用"
+  },
+  {
+    "id": "reference-example:BEHAVIOR:Receipt_Record::TRIGGERS_BEHAVIOR::reference-example:BEHAVIOR:Invoice_UpdateReceiptStatus",
+    "from": "reference-example:BEHAVIOR:Receipt_Record",
+    "to": "reference-example:BEHAVIOR:Invoice_UpdateReceiptStatus",
+    "type": "TRIGGERS_BEHAVIOR",
+    "label": "收款登记后同步更新开票收款状态"
+  },
+  {
+    "id": "reference-example:BEHAVIOR:Receipt_Reverse::OWNED_BY::reference-example:AGGREGATE_ROOT:AGG-RECEIPT-001",
+    "from": "reference-example:BEHAVIOR:Receipt_Reverse",
+    "to": "reference-example:AGGREGATE_ROOT:AGG-RECEIPT-001",
+    "type": "OWNED_BY",
+    "label": "归属"
+  },
+  {
+    "id": "reference-example:BEHAVIOR:Receipt_Reverse::TRIGGERS_BEHAVIOR::reference-example:BEHAVIOR:Invoice_UpdateReceiptStatus",
+    "from": "reference-example:BEHAVIOR:Receipt_Reverse",
+    "to": "reference-example:BEHAVIOR:Invoice_UpdateReceiptStatus",
+    "type": "TRIGGERS_BEHAVIOR",
+    "label": "收款冲销后同步重算开票收款状态"
+  },
+  {
+    "id": "reference-example:BEHAVIOR:Contract_VoidOrArchive::OWNED_BY::reference-example:AGGREGATE_ROOT:AGG-CONTRACT-001",
+    "from": "reference-example:BEHAVIOR:Contract_VoidOrArchive",
+    "to": "reference-example:AGGREGATE_ROOT:AGG-CONTRACT-001",
+    "type": "OWNED_BY",
+    "label": "归属"
+  },
+  {
+    "id": "reference-example:BEHAVIOR:Contract_VoidOrArchive::USES_RULE::reference-example:RULE:RULE-CONTRACT-VOID-ELIGIBLE",
+    "from": "reference-example:BEHAVIOR:Contract_VoidOrArchive",
+    "to": "reference-example:RULE:RULE-CONTRACT-VOID-ELIGIBLE",
+    "type": "USES_RULE",
+    "label": "使用"
+  },
+  {
+    "id": "reference-example:BEHAVIOR:Invoice_Void::OWNED_BY::reference-example:AGGREGATE_ROOT:AGG-INVOICE-001",
+    "from": "reference-example:BEHAVIOR:Invoice_Void",
+    "to": "reference-example:AGGREGATE_ROOT:AGG-INVOICE-001",
+    "type": "OWNED_BY",
+    "label": "归属"
+  },
+  {
+    "id": "reference-example:BEHAVIOR:Invoice_Void::USES_RULE::reference-example:RULE:RULE-INVOICE-VOID-ELIGIBLE",
+    "from": "reference-example:BEHAVIOR:Invoice_Void",
+    "to": "reference-example:RULE:RULE-INVOICE-VOID-ELIGIBLE",
+    "type": "USES_RULE",
+    "label": "使用"
+  },
+  {
+    "id": "reference-example:BEHAVIOR:Invoice_Void::TRIGGERS_BEHAVIOR::reference-example:BEHAVIOR:PaymentStage_UpdateInvoiceStatus",
+    "from": "reference-example:BEHAVIOR:Invoice_Void",
+    "to": "reference-example:BEHAVIOR:PaymentStage_UpdateInvoiceStatus",
+    "type": "TRIGGERS_BEHAVIOR",
+    "label": "开票作废后同步释放付款阶段开票额度"
+  },
+  {
+    "id": "reference-example:BEHAVIOR:Product_Maintain::OWNED_BY::reference-example:AGGREGATE_ROOT:AGG-PRODUCT-001",
+    "from": "reference-example:BEHAVIOR:Product_Maintain",
+    "to": "reference-example:AGGREGATE_ROOT:AGG-PRODUCT-001",
+    "type": "OWNED_BY",
+    "label": "归属"
+  },
+  {
+    "id": "reference-example:BEHAVIOR:Customer_Maintain::OWNED_BY::reference-example:AGGREGATE_ROOT:AGG-CUSTOMER-001",
+    "from": "reference-example:BEHAVIOR:Customer_Maintain",
+    "to": "reference-example:AGGREGATE_ROOT:AGG-CUSTOMER-001",
+    "type": "OWNED_BY",
+    "label": "归属"
+  },
+  {
+    "id": "reference-example:BEHAVIOR:Department_Maintain::OWNED_BY::reference-example:AGGREGATE_ROOT:AGG-DEPARTMENT-001",
+    "from": "reference-example:BEHAVIOR:Department_Maintain",
+    "to": "reference-example:AGGREGATE_ROOT:AGG-DEPARTMENT-001",
+    "type": "OWNED_BY",
+    "label": "归属"
+  },
+  {
+    "id": "reference-example:BEHAVIOR:Employee_Maintain::OWNED_BY::reference-example:AGGREGATE_ROOT:AGG-EMPLOYEE-001",
+    "from": "reference-example:BEHAVIOR:Employee_Maintain",
+    "to": "reference-example:AGGREGATE_ROOT:AGG-EMPLOYEE-001",
+    "type": "OWNED_BY",
+    "label": "归属"
+  },
+  {
+    "id": "reference-example:BEHAVIOR:Contract_QueryList::OWNED_BY::reference-example:AGGREGATE_ROOT:AGG-CONTRACT-001",
+    "from": "reference-example:BEHAVIOR:Contract_QueryList",
+    "to": "reference-example:AGGREGATE_ROOT:AGG-CONTRACT-001",
+    "type": "OWNED_BY",
+    "label": "归属"
+  },
+  {
+    "id": "reference-example:BEHAVIOR:Contract_QueryList::REPORT_BEHAVIOR::reference-example:REPORT:REP-CONTRACT-LIST",
+    "from": "reference-example:BEHAVIOR:Contract_QueryList",
+    "to": "reference-example:REPORT:REP-CONTRACT-LIST",
+    "type": "REPORT_BEHAVIOR",
+    "label": "对应查询"
+  },
+  {
+    "id": "reference-example:BEHAVIOR:Contract_QueryDetail::OWNED_BY::reference-example:AGGREGATE_ROOT:AGG-CONTRACT-001",
+    "from": "reference-example:BEHAVIOR:Contract_QueryDetail",
+    "to": "reference-example:AGGREGATE_ROOT:AGG-CONTRACT-001",
+    "type": "OWNED_BY",
+    "label": "归属"
+  },
+  {
+    "id": "reference-example:BEHAVIOR:Contract_QueryDetail::REPORT_BEHAVIOR::reference-example:REPORT:REP-CONTRACT-DETAIL",
+    "from": "reference-example:BEHAVIOR:Contract_QueryDetail",
+    "to": "reference-example:REPORT:REP-CONTRACT-DETAIL",
+    "type": "REPORT_BEHAVIOR",
+    "label": "对应查询"
+  },
+  {
+    "id": "reference-example:BEHAVIOR:Contract_QueryExecutionAnalysis::OWNED_BY::reference-example:AGGREGATE_ROOT:AGG-CONTRACT-001",
+    "from": "reference-example:BEHAVIOR:Contract_QueryExecutionAnalysis",
+    "to": "reference-example:AGGREGATE_ROOT:AGG-CONTRACT-001",
+    "type": "OWNED_BY",
+    "label": "归属"
+  },
+  {
+    "id": "reference-example:BEHAVIOR:Contract_QueryExecutionAnalysis::REPORT_BEHAVIOR::reference-example:REPORT:REP-CONTRACT-EXECUTION",
+    "from": "reference-example:BEHAVIOR:Contract_QueryExecutionAnalysis",
+    "to": "reference-example:REPORT:REP-CONTRACT-EXECUTION",
+    "type": "REPORT_BEHAVIOR",
+    "label": "对应查询"
+  },
+  {
+    "id": "reference-example:BEHAVIOR:Contract_QueryDepartmentSummary::OWNED_BY::reference-example:AGGREGATE_ROOT:AGG-CONTRACT-001",
+    "from": "reference-example:BEHAVIOR:Contract_QueryDepartmentSummary",
+    "to": "reference-example:AGGREGATE_ROOT:AGG-CONTRACT-001",
+    "type": "OWNED_BY",
+    "label": "归属"
+  },
+  {
+    "id": "reference-example:BEHAVIOR:Contract_QueryDepartmentSummary::REPORT_BEHAVIOR::reference-example:REPORT:REP-DEPT-CONTRACT-SUMMARY",
+    "from": "reference-example:BEHAVIOR:Contract_QueryDepartmentSummary",
+    "to": "reference-example:REPORT:REP-DEPT-CONTRACT-SUMMARY",
+    "type": "REPORT_BEHAVIOR",
+    "label": "对应查询"
+  },
+  {
+    "id": "reference-example:BEHAVIOR:Contract_QueryInvoicedUnreceived::OWNED_BY::reference-example:AGGREGATE_ROOT:AGG-CONTRACT-001",
+    "from": "reference-example:BEHAVIOR:Contract_QueryInvoicedUnreceived",
+    "to": "reference-example:AGGREGATE_ROOT:AGG-CONTRACT-001",
+    "type": "OWNED_BY",
+    "label": "归属"
+  },
+  {
+    "id": "reference-example:BEHAVIOR:Contract_QueryInvoicedUnreceived::REPORT_BEHAVIOR::reference-example:REPORT:REP-INVOICED-UNRECEIVED",
+    "from": "reference-example:BEHAVIOR:Contract_QueryInvoicedUnreceived",
+    "to": "reference-example:REPORT:REP-INVOICED-UNRECEIVED",
+    "type": "REPORT_BEHAVIOR",
+    "label": "对应查询"
+  },
+  {
+    "id": "reference-example:BEHAVIOR:Contract_ApproveFinance::OWNED_BY::reference-example:AGGREGATE_ROOT:AGG-CONTRACT-001",
+    "from": "reference-example:BEHAVIOR:Contract_ApproveFinance",
+    "to": "reference-example:AGGREGATE_ROOT:AGG-CONTRACT-001",
+    "type": "OWNED_BY",
+    "label": "归属"
+  },
+  {
+    "id": "reference-example:BEHAVIOR:Contract_ApproveFinance::USES_RULE::reference-example:RULE:RULE-APPROVAL-SOD",
+    "from": "reference-example:BEHAVIOR:Contract_ApproveFinance",
+    "to": "reference-example:RULE:RULE-APPROVAL-SOD",
+    "type": "USES_RULE",
+    "label": "使用"
+  },
+  {
+    "id": "reference-example:BEHAVIOR:Contract_ApproveFinance::USES_RULE::reference-example:RULE:RULE-CONTRACT-APPROVAL-LEVEL",
+    "from": "reference-example:BEHAVIOR:Contract_ApproveFinance",
+    "to": "reference-example:RULE:RULE-CONTRACT-APPROVAL-LEVEL",
+    "type": "USES_RULE",
+    "label": "使用"
+  },
+  {
+    "id": "reference-example:BEHAVIOR:Contract_ApproveGeneralManager::OWNED_BY::reference-example:AGGREGATE_ROOT:AGG-CONTRACT-001",
+    "from": "reference-example:BEHAVIOR:Contract_ApproveGeneralManager",
+    "to": "reference-example:AGGREGATE_ROOT:AGG-CONTRACT-001",
+    "type": "OWNED_BY",
+    "label": "归属"
+  },
+  {
+    "id": "reference-example:BEHAVIOR:Contract_ApproveGeneralManager::USES_RULE::reference-example:RULE:RULE-APPROVAL-SOD",
+    "from": "reference-example:BEHAVIOR:Contract_ApproveGeneralManager",
+    "to": "reference-example:RULE:RULE-APPROVAL-SOD",
+    "type": "USES_RULE",
+    "label": "使用"
+  },
+  {
+    "id": "reference-example:BEHAVIOR:Invoice_ApproveFinance::OWNED_BY::reference-example:AGGREGATE_ROOT:AGG-INVOICE-001",
+    "from": "reference-example:BEHAVIOR:Invoice_ApproveFinance",
+    "to": "reference-example:AGGREGATE_ROOT:AGG-INVOICE-001",
+    "type": "OWNED_BY",
+    "label": "归属"
+  },
+  {
+    "id": "reference-example:BEHAVIOR:Invoice_ApproveFinance::USES_RULE::reference-example:RULE:RULE-APPROVAL-SOD",
+    "from": "reference-example:BEHAVIOR:Invoice_ApproveFinance",
+    "to": "reference-example:RULE:RULE-APPROVAL-SOD",
+    "type": "USES_RULE",
+    "label": "使用"
+  },
+  {
+    "id": "reference-example:BEHAVIOR:Invoice_ApproveFinance::TRIGGERS_BEHAVIOR::reference-example:BEHAVIOR:PaymentStage_UpdateInvoiceStatus",
+    "from": "reference-example:BEHAVIOR:Invoice_ApproveFinance",
+    "to": "reference-example:BEHAVIOR:PaymentStage_UpdateInvoiceStatus",
+    "type": "TRIGGERS_BEHAVIOR",
+    "label": "审批通过后同步更新付款阶段开票状态"
+  },
+  {
+    "id": "reference-example:BEHAVIOR:PaymentStage_UpdateInvoiceStatus::OWNED_BY::reference-example:AGGREGATE_ROOT:AGG-CONTRACT-001",
+    "from": "reference-example:BEHAVIOR:PaymentStage_UpdateInvoiceStatus",
+    "to": "reference-example:AGGREGATE_ROOT:AGG-CONTRACT-001",
+    "type": "OWNED_BY",
+    "label": "归属"
+  },
+  {
+    "id": "reference-example:BEHAVIOR:PaymentStage_UpdateInvoiceStatus::TRIGGERS_BEHAVIOR::reference-example:BEHAVIOR:Contract_UpdateSettlementStatus",
+    "from": "reference-example:BEHAVIOR:PaymentStage_UpdateInvoiceStatus",
+    "to": "reference-example:BEHAVIOR:Contract_UpdateSettlementStatus",
+    "type": "TRIGGERS_BEHAVIOR",
+    "label": "付款阶段开票状态更新后判断合同结清资格"
+  },
+  {
+    "id": "reference-example:BEHAVIOR:Invoice_UpdateReceiptStatus::OWNED_BY::reference-example:AGGREGATE_ROOT:AGG-INVOICE-001",
+    "from": "reference-example:BEHAVIOR:Invoice_UpdateReceiptStatus",
+    "to": "reference-example:AGGREGATE_ROOT:AGG-INVOICE-001",
+    "type": "OWNED_BY",
+    "label": "归属"
+  },
+  {
+    "id": "reference-example:BEHAVIOR:Invoice_UpdateReceiptStatus::USES_RULE::reference-example:RULE:RULE-INVOICE-RECEIPT-STATUS",
+    "from": "reference-example:BEHAVIOR:Invoice_UpdateReceiptStatus",
+    "to": "reference-example:RULE:RULE-INVOICE-RECEIPT-STATUS",
+    "type": "USES_RULE",
+    "label": "使用"
+  },
+  {
+    "id": "reference-example:BEHAVIOR:Invoice_UpdateReceiptStatus::TRIGGERS_BEHAVIOR::reference-example:BEHAVIOR:Contract_UpdateSettlementStatus",
+    "from": "reference-example:BEHAVIOR:Invoice_UpdateReceiptStatus",
+    "to": "reference-example:BEHAVIOR:Contract_UpdateSettlementStatus",
+    "type": "TRIGGERS_BEHAVIOR",
+    "label": "开票收款状态更新后判断合同结清资格"
+  },
+  {
+    "id": "reference-example:BEHAVIOR:Contract_UpdateSettlementStatus::OWNED_BY::reference-example:AGGREGATE_ROOT:AGG-CONTRACT-001",
+    "from": "reference-example:BEHAVIOR:Contract_UpdateSettlementStatus",
+    "to": "reference-example:AGGREGATE_ROOT:AGG-CONTRACT-001",
+    "type": "OWNED_BY",
+    "label": "归属"
+  },
+  {
+    "id": "reference-example:BEHAVIOR:Contract_UpdateSettlementStatus::USES_RULE::reference-example:RULE:RULE-CONTRACT-SETTLEMENT",
+    "from": "reference-example:BEHAVIOR:Contract_UpdateSettlementStatus",
+    "to": "reference-example:RULE:RULE-CONTRACT-SETTLEMENT",
+    "type": "USES_RULE",
+    "label": "使用"
+  },
+  {
+    "id": "reference-example:RULE:RULE-CONTRACT-APPROVAL-LEVEL::RULE_USED_BY::reference-example:BEHAVIOR:Contract_Submit",
+    "from": "reference-example:RULE:RULE-CONTRACT-APPROVAL-LEVEL",
+    "to": "reference-example:BEHAVIOR:Contract_Submit",
+    "type": "RULE_USED_BY",
+    "label": "被使用"
+  },
+  {
+    "id": "reference-example:RULE:RULE-CONTRACT-APPROVAL-LEVEL::RULE_USED_BY::reference-example:BEHAVIOR:Contract_Resubmit",
+    "from": "reference-example:RULE:RULE-CONTRACT-APPROVAL-LEVEL",
+    "to": "reference-example:BEHAVIOR:Contract_Resubmit",
+    "type": "RULE_USED_BY",
+    "label": "被使用"
+  },
+  {
+    "id": "reference-example:RULE:RULE-CONTRACT-APPROVAL-LEVEL::RULE_USED_BY::reference-example:BEHAVIOR:Contract_ApproveFinance",
+    "from": "reference-example:RULE:RULE-CONTRACT-APPROVAL-LEVEL",
+    "to": "reference-example:BEHAVIOR:Contract_ApproveFinance",
+    "type": "RULE_USED_BY",
+    "label": "被使用"
+  },
+  {
+    "id": "reference-example:RULE:RULE-CONTRACT-INVOICE-ELIGIBLE::RULE_USED_BY::reference-example:BEHAVIOR:Invoice_SaveAsDraft",
+    "from": "reference-example:RULE:RULE-CONTRACT-INVOICE-ELIGIBLE",
+    "to": "reference-example:BEHAVIOR:Invoice_SaveAsDraft",
+    "type": "RULE_USED_BY",
+    "label": "被使用"
+  },
+  {
+    "id": "reference-example:RULE:RULE-CONTRACT-INVOICE-ELIGIBLE::RULE_USED_BY::reference-example:BEHAVIOR:Invoice_Submit",
+    "from": "reference-example:RULE:RULE-CONTRACT-INVOICE-ELIGIBLE",
+    "to": "reference-example:BEHAVIOR:Invoice_Submit",
+    "type": "RULE_USED_BY",
+    "label": "被使用"
+  },
+  {
+    "id": "reference-example:RULE:RULE-CONTRACT-INVOICE-ELIGIBLE::RULE_USED_BY::reference-example:BEHAVIOR:Invoice_Resubmit",
+    "from": "reference-example:RULE:RULE-CONTRACT-INVOICE-ELIGIBLE",
+    "to": "reference-example:BEHAVIOR:Invoice_Resubmit",
+    "type": "RULE_USED_BY",
+    "label": "被使用"
+  },
+  {
+    "id": "reference-example:RULE:RULE-PAYSTAGE-REMAIN-QUOTA::RULE_USED_BY::reference-example:BEHAVIOR:Invoice_SaveAsDraft",
+    "from": "reference-example:RULE:RULE-PAYSTAGE-REMAIN-QUOTA",
+    "to": "reference-example:BEHAVIOR:Invoice_SaveAsDraft",
+    "type": "RULE_USED_BY",
+    "label": "被使用"
+  },
+  {
+    "id": "reference-example:RULE:RULE-PAYSTAGE-REMAIN-QUOTA::RULE_USED_BY::reference-example:BEHAVIOR:Invoice_Submit",
+    "from": "reference-example:RULE:RULE-PAYSTAGE-REMAIN-QUOTA",
+    "to": "reference-example:BEHAVIOR:Invoice_Submit",
+    "type": "RULE_USED_BY",
+    "label": "被使用"
+  },
+  {
+    "id": "reference-example:RULE:RULE-PAYSTAGE-REMAIN-QUOTA::RULE_USED_BY::reference-example:BEHAVIOR:Invoice_Resubmit",
+    "from": "reference-example:RULE:RULE-PAYSTAGE-REMAIN-QUOTA",
+    "to": "reference-example:BEHAVIOR:Invoice_Resubmit",
+    "type": "RULE_USED_BY",
+    "label": "被使用"
+  },
+  {
+    "id": "reference-example:RULE:RULE-INVOICE-REMAIN-RECEIPT-QUOTA::RULE_USED_BY::reference-example:BEHAVIOR:Receipt_Record",
+    "from": "reference-example:RULE:RULE-INVOICE-REMAIN-RECEIPT-QUOTA",
+    "to": "reference-example:BEHAVIOR:Receipt_Record",
+    "type": "RULE_USED_BY",
+    "label": "被使用"
+  },
+  {
+    "id": "reference-example:RULE:RULE-INVOICE-RECEIPT-STATUS::RULE_USED_BY::reference-example:BEHAVIOR:Invoice_UpdateReceiptStatus",
+    "from": "reference-example:RULE:RULE-INVOICE-RECEIPT-STATUS",
+    "to": "reference-example:BEHAVIOR:Invoice_UpdateReceiptStatus",
+    "type": "RULE_USED_BY",
+    "label": "被使用"
+  },
+  {
+    "id": "reference-example:RULE:RULE-CONTRACT-VOID-ELIGIBLE::RULE_USED_BY::reference-example:BEHAVIOR:Contract_VoidOrArchive",
+    "from": "reference-example:RULE:RULE-CONTRACT-VOID-ELIGIBLE",
+    "to": "reference-example:BEHAVIOR:Contract_VoidOrArchive",
+    "type": "RULE_USED_BY",
+    "label": "被使用"
+  },
+  {
+    "id": "reference-example:RULE:RULE-INVOICE-VOID-ELIGIBLE::RULE_USED_BY::reference-example:BEHAVIOR:Invoice_Void",
+    "from": "reference-example:RULE:RULE-INVOICE-VOID-ELIGIBLE",
+    "to": "reference-example:BEHAVIOR:Invoice_Void",
+    "type": "RULE_USED_BY",
+    "label": "被使用"
+  },
+  {
+    "id": "reference-example:RULE:RULE-INVOICE-TAXRATE-CONSISTENT::RULE_USED_BY::reference-example:BEHAVIOR:Invoice_SaveAsDraft",
+    "from": "reference-example:RULE:RULE-INVOICE-TAXRATE-CONSISTENT",
+    "to": "reference-example:BEHAVIOR:Invoice_SaveAsDraft",
+    "type": "RULE_USED_BY",
+    "label": "被使用"
+  },
+  {
+    "id": "reference-example:RULE:RULE-INVOICE-TAXRATE-CONSISTENT::RULE_USED_BY::reference-example:BEHAVIOR:Invoice_Submit",
+    "from": "reference-example:RULE:RULE-INVOICE-TAXRATE-CONSISTENT",
+    "to": "reference-example:BEHAVIOR:Invoice_Submit",
+    "type": "RULE_USED_BY",
+    "label": "被使用"
+  },
+  {
+    "id": "reference-example:RULE:RULE-INVOICE-TAXRATE-CONSISTENT::RULE_USED_BY::reference-example:BEHAVIOR:Invoice_Resubmit",
+    "from": "reference-example:RULE:RULE-INVOICE-TAXRATE-CONSISTENT",
+    "to": "reference-example:BEHAVIOR:Invoice_Resubmit",
+    "type": "RULE_USED_BY",
+    "label": "被使用"
+  },
+  {
+    "id": "reference-example:RULE:RULE-APPROVAL-SOD::RULE_USED_BY::reference-example:BEHAVIOR:Contract_ApproveFinance",
+    "from": "reference-example:RULE:RULE-APPROVAL-SOD",
+    "to": "reference-example:BEHAVIOR:Contract_ApproveFinance",
+    "type": "RULE_USED_BY",
+    "label": "被使用"
+  },
+  {
+    "id": "reference-example:RULE:RULE-APPROVAL-SOD::RULE_USED_BY::reference-example:BEHAVIOR:Contract_ApproveGeneralManager",
+    "from": "reference-example:RULE:RULE-APPROVAL-SOD",
+    "to": "reference-example:BEHAVIOR:Contract_ApproveGeneralManager",
+    "type": "RULE_USED_BY",
+    "label": "被使用"
+  },
+  {
+    "id": "reference-example:RULE:RULE-APPROVAL-SOD::RULE_USED_BY::reference-example:BEHAVIOR:Invoice_ApproveFinance",
+    "from": "reference-example:RULE:RULE-APPROVAL-SOD",
+    "to": "reference-example:BEHAVIOR:Invoice_ApproveFinance",
+    "type": "RULE_USED_BY",
+    "label": "被使用"
+  },
+  {
+    "id": "reference-example:RULE:RULE-CONTRACT-SETTLEMENT::RULE_USED_BY::reference-example:BEHAVIOR:PaymentStage_UpdateInvoiceStatus",
+    "from": "reference-example:RULE:RULE-CONTRACT-SETTLEMENT",
+    "to": "reference-example:BEHAVIOR:PaymentStage_UpdateInvoiceStatus",
+    "type": "RULE_USED_BY",
+    "label": "被使用"
+  },
+  {
+    "id": "reference-example:RULE:RULE-CONTRACT-SETTLEMENT::RULE_USED_BY::reference-example:BEHAVIOR:Invoice_UpdateReceiptStatus",
+    "from": "reference-example:RULE:RULE-CONTRACT-SETTLEMENT",
+    "to": "reference-example:BEHAVIOR:Invoice_UpdateReceiptStatus",
+    "type": "RULE_USED_BY",
+    "label": "被使用"
+  },
+  {
+    "id": "reference-example:RULE:RULE-CONTRACT-SETTLEMENT::RULE_USED_BY::reference-example:BEHAVIOR:Contract_UpdateSettlementStatus",
+    "from": "reference-example:RULE:RULE-CONTRACT-SETTLEMENT",
+    "to": "reference-example:BEHAVIOR:Contract_UpdateSettlementStatus",
+    "type": "RULE_USED_BY",
+    "label": "被使用"
+  },
+  {
+    "id": "reference-example:RULE:RULE-ALLOCATION-CONTRACT-CONSISTENT::RULE_USED_BY::reference-example:BEHAVIOR:Invoice_SaveAsDraft",
+    "from": "reference-example:RULE:RULE-ALLOCATION-CONTRACT-CONSISTENT",
+    "to": "reference-example:BEHAVIOR:Invoice_SaveAsDraft",
+    "type": "RULE_USED_BY",
+    "label": "被使用"
+  },
+  {
+    "id": "reference-example:RULE:RULE-ALLOCATION-CONTRACT-CONSISTENT::RULE_USED_BY::reference-example:BEHAVIOR:Invoice_Submit",
+    "from": "reference-example:RULE:RULE-ALLOCATION-CONTRACT-CONSISTENT",
+    "to": "reference-example:BEHAVIOR:Invoice_Submit",
+    "type": "RULE_USED_BY",
+    "label": "被使用"
+  },
+  {
+    "id": "reference-example:RULE:RULE-ALLOCATION-CONTRACT-CONSISTENT::RULE_USED_BY::reference-example:BEHAVIOR:Invoice_Resubmit",
+    "from": "reference-example:RULE:RULE-ALLOCATION-CONTRACT-CONSISTENT",
+    "to": "reference-example:BEHAVIOR:Invoice_Resubmit",
+    "type": "RULE_USED_BY",
+    "label": "被使用"
+  },
+  {
+    "id": "reference-example:RULE:RULE-RECEIPT-CONTRACT-CONSISTENT::RULE_USED_BY::reference-example:BEHAVIOR:Receipt_Record",
+    "from": "reference-example:RULE:RULE-RECEIPT-CONTRACT-CONSISTENT",
+    "to": "reference-example:BEHAVIOR:Receipt_Record",
+    "type": "RULE_USED_BY",
+    "label": "被使用"
+  },
+  {
+    "id": "reference-example:RULE:RULE-OWNER-DEPT-CONSISTENT::RULE_USED_BY::reference-example:BEHAVIOR:Contract_SaveAsDraft",
+    "from": "reference-example:RULE:RULE-OWNER-DEPT-CONSISTENT",
+    "to": "reference-example:BEHAVIOR:Contract_SaveAsDraft",
+    "type": "RULE_USED_BY",
+    "label": "被使用"
+  },
+  {
+    "id": "reference-example:RULE:RULE-OWNER-DEPT-CONSISTENT::RULE_USED_BY::reference-example:BEHAVIOR:Contract_Submit",
+    "from": "reference-example:RULE:RULE-OWNER-DEPT-CONSISTENT",
+    "to": "reference-example:BEHAVIOR:Contract_Submit",
+    "type": "RULE_USED_BY",
+    "label": "被使用"
+  },
+  {
+    "id": "reference-example:RULE:RULE-OWNER-DEPT-CONSISTENT::RULE_USED_BY::reference-example:BEHAVIOR:Contract_Resubmit",
+    "from": "reference-example:RULE:RULE-OWNER-DEPT-CONSISTENT",
+    "to": "reference-example:BEHAVIOR:Contract_Resubmit",
+    "type": "RULE_USED_BY",
+    "label": "被使用"
+  },
+  {
+    "id": "reference-example:ACTOR:ACTOR-SALES::HAS_ROLE::reference-example:ROLE:ROLE-SALES",
+    "from": "reference-example:ACTOR:ACTOR-SALES",
+    "to": "reference-example:ROLE:ROLE-SALES",
+    "type": "HAS_ROLE",
+    "label": "拥有角色"
+  },
+  {
+    "id": "reference-example:ACTOR:ACTOR-FINANCE::HAS_ROLE::reference-example:ROLE:ROLE-FINANCE",
+    "from": "reference-example:ACTOR:ACTOR-FINANCE",
+    "to": "reference-example:ROLE:ROLE-FINANCE",
+    "type": "HAS_ROLE",
+    "label": "拥有角色"
+  },
+  {
+    "id": "reference-example:ACTOR:ACTOR-FINANCE-MANAGER::HAS_ROLE::reference-example:ROLE:ROLE-FINANCE-MANAGER",
+    "from": "reference-example:ACTOR:ACTOR-FINANCE-MANAGER",
+    "to": "reference-example:ROLE:ROLE-FINANCE-MANAGER",
+    "type": "HAS_ROLE",
+    "label": "拥有角色"
+  },
+  {
+    "id": "reference-example:ACTOR:ACTOR-GENERAL-MANAGER::HAS_ROLE::reference-example:ROLE:ROLE-GENERAL-MANAGER",
+    "from": "reference-example:ACTOR:ACTOR-GENERAL-MANAGER",
+    "to": "reference-example:ROLE:ROLE-GENERAL-MANAGER",
+    "type": "HAS_ROLE",
+    "label": "拥有角色"
+  },
+  {
+    "id": "reference-example:ACTOR:ACTOR-EMPLOYEE::HAS_ROLE::reference-example:ROLE:ROLE-EMPLOYEE",
+    "from": "reference-example:ACTOR:ACTOR-EMPLOYEE",
+    "to": "reference-example:ROLE:ROLE-EMPLOYEE",
+    "type": "HAS_ROLE",
+    "label": "拥有角色"
+  },
+  {
+    "id": "reference-example:ACTOR:ACTOR-SYSTEM::HAS_ROLE::reference-example:ROLE:ROLE-SYSTEM",
+    "from": "reference-example:ACTOR:ACTOR-SYSTEM",
+    "to": "reference-example:ROLE:ROLE-SYSTEM",
+    "type": "HAS_ROLE",
+    "label": "拥有角色"
+  },
+  {
+    "id": "reference-example:ROLE:ROLE-SALES::HAS_PERMISSION::reference-example:PERMISSION:PERM-CONTRACT-SAVE-DRAFT",
+    "from": "reference-example:ROLE:ROLE-SALES",
+    "to": "reference-example:PERMISSION:PERM-CONTRACT-SAVE-DRAFT",
+    "type": "HAS_PERMISSION",
+    "label": "拥有权限"
+  },
+  {
+    "id": "reference-example:ROLE:ROLE-SALES::HAS_PERMISSION::reference-example:PERMISSION:PERM-CONTRACT-SUBMIT",
+    "from": "reference-example:ROLE:ROLE-SALES",
+    "to": "reference-example:PERMISSION:PERM-CONTRACT-SUBMIT",
+    "type": "HAS_PERMISSION",
+    "label": "拥有权限"
+  },
+  {
+    "id": "reference-example:ROLE:ROLE-SALES::HAS_PERMISSION::reference-example:PERMISSION:PERM-CONTRACT-RESUBMIT",
+    "from": "reference-example:ROLE:ROLE-SALES",
+    "to": "reference-example:PERMISSION:PERM-CONTRACT-RESUBMIT",
+    "type": "HAS_PERMISSION",
+    "label": "拥有权限"
+  },
+  {
+    "id": "reference-example:ROLE:ROLE-SALES::HAS_PERMISSION::reference-example:PERMISSION:PERM-CONTRACT-QUERY-LIST",
+    "from": "reference-example:ROLE:ROLE-SALES",
+    "to": "reference-example:PERMISSION:PERM-CONTRACT-QUERY-LIST",
+    "type": "HAS_PERMISSION",
+    "label": "拥有权限"
+  },
+  {
+    "id": "reference-example:ROLE:ROLE-SALES::HAS_PERMISSION::reference-example:PERMISSION:PERM-CONTRACT-QUERY-DETAIL",
+    "from": "reference-example:ROLE:ROLE-SALES",
+    "to": "reference-example:PERMISSION:PERM-CONTRACT-QUERY-DETAIL",
+    "type": "HAS_PERMISSION",
+    "label": "拥有权限"
+  },
+  {
+    "id": "reference-example:ROLE:ROLE-SALES::HAS_PERMISSION::reference-example:PERMISSION:PERM-CONTRACT-QUERY-EXECUTION",
+    "from": "reference-example:ROLE:ROLE-SALES",
+    "to": "reference-example:PERMISSION:PERM-CONTRACT-QUERY-EXECUTION",
+    "type": "HAS_PERMISSION",
+    "label": "拥有权限"
+  },
+  {
+    "id": "reference-example:ROLE:ROLE-SALES::HAS_PERMISSION::reference-example:PERMISSION:PERM-CONTRACT-QUERY-DEPT-SUMMARY",
+    "from": "reference-example:ROLE:ROLE-SALES",
+    "to": "reference-example:PERMISSION:PERM-CONTRACT-QUERY-DEPT-SUMMARY",
+    "type": "HAS_PERMISSION",
+    "label": "拥有权限"
+  },
+  {
+    "id": "reference-example:ROLE:ROLE-SALES::HAS_PERMISSION::reference-example:PERMISSION:PERM-CONTRACT-QUERY-UNRECEIVED",
+    "from": "reference-example:ROLE:ROLE-SALES",
+    "to": "reference-example:PERMISSION:PERM-CONTRACT-QUERY-UNRECEIVED",
+    "type": "HAS_PERMISSION",
+    "label": "拥有权限"
+  },
+  {
+    "id": "reference-example:ROLE:ROLE-FINANCE::HAS_PERMISSION::reference-example:PERMISSION:PERM-CONTRACT-SAVE-DRAFT",
+    "from": "reference-example:ROLE:ROLE-FINANCE",
+    "to": "reference-example:PERMISSION:PERM-CONTRACT-SAVE-DRAFT",
+    "type": "HAS_PERMISSION",
+    "label": "拥有权限"
+  },
+  {
+    "id": "reference-example:ROLE:ROLE-FINANCE::HAS_PERMISSION::reference-example:PERMISSION:PERM-CONTRACT-SUBMIT",
+    "from": "reference-example:ROLE:ROLE-FINANCE",
+    "to": "reference-example:PERMISSION:PERM-CONTRACT-SUBMIT",
+    "type": "HAS_PERMISSION",
+    "label": "拥有权限"
+  },
+  {
+    "id": "reference-example:ROLE:ROLE-FINANCE::HAS_PERMISSION::reference-example:PERMISSION:PERM-CONTRACT-RESUBMIT",
+    "from": "reference-example:ROLE:ROLE-FINANCE",
+    "to": "reference-example:PERMISSION:PERM-CONTRACT-RESUBMIT",
+    "type": "HAS_PERMISSION",
+    "label": "拥有权限"
+  },
+  {
+    "id": "reference-example:ROLE:ROLE-FINANCE::HAS_PERMISSION::reference-example:PERMISSION:PERM-INVOICE-SAVE-DRAFT",
+    "from": "reference-example:ROLE:ROLE-FINANCE",
+    "to": "reference-example:PERMISSION:PERM-INVOICE-SAVE-DRAFT",
+    "type": "HAS_PERMISSION",
+    "label": "拥有权限"
+  },
+  {
+    "id": "reference-example:ROLE:ROLE-FINANCE::HAS_PERMISSION::reference-example:PERMISSION:PERM-INVOICE-SUBMIT",
+    "from": "reference-example:ROLE:ROLE-FINANCE",
+    "to": "reference-example:PERMISSION:PERM-INVOICE-SUBMIT",
+    "type": "HAS_PERMISSION",
+    "label": "拥有权限"
+  },
+  {
+    "id": "reference-example:ROLE:ROLE-FINANCE::HAS_PERMISSION::reference-example:PERMISSION:PERM-INVOICE-RESUBMIT",
+    "from": "reference-example:ROLE:ROLE-FINANCE",
+    "to": "reference-example:PERMISSION:PERM-INVOICE-RESUBMIT",
+    "type": "HAS_PERMISSION",
+    "label": "拥有权限"
+  },
+  {
+    "id": "reference-example:ROLE:ROLE-FINANCE::HAS_PERMISSION::reference-example:PERMISSION:PERM-RECEIPT-RECORD",
+    "from": "reference-example:ROLE:ROLE-FINANCE",
+    "to": "reference-example:PERMISSION:PERM-RECEIPT-RECORD",
+    "type": "HAS_PERMISSION",
+    "label": "拥有权限"
+  },
+  {
+    "id": "reference-example:ROLE:ROLE-FINANCE::HAS_PERMISSION::reference-example:PERMISSION:PERM-RECEIPT-REVERSE",
+    "from": "reference-example:ROLE:ROLE-FINANCE",
+    "to": "reference-example:PERMISSION:PERM-RECEIPT-REVERSE",
+    "type": "HAS_PERMISSION",
+    "label": "拥有权限"
+  },
+  {
+    "id": "reference-example:ROLE:ROLE-FINANCE::HAS_PERMISSION::reference-example:PERMISSION:PERM-INVOICE-VOID",
+    "from": "reference-example:ROLE:ROLE-FINANCE",
+    "to": "reference-example:PERMISSION:PERM-INVOICE-VOID",
+    "type": "HAS_PERMISSION",
+    "label": "拥有权限"
+  },
+  {
+    "id": "reference-example:ROLE:ROLE-FINANCE::HAS_PERMISSION::reference-example:PERMISSION:PERM-CONTRACT-QUERY-LIST",
+    "from": "reference-example:ROLE:ROLE-FINANCE",
+    "to": "reference-example:PERMISSION:PERM-CONTRACT-QUERY-LIST",
+    "type": "HAS_PERMISSION",
+    "label": "拥有权限"
+  },
+  {
+    "id": "reference-example:ROLE:ROLE-FINANCE::HAS_PERMISSION::reference-example:PERMISSION:PERM-CONTRACT-QUERY-DETAIL",
+    "from": "reference-example:ROLE:ROLE-FINANCE",
+    "to": "reference-example:PERMISSION:PERM-CONTRACT-QUERY-DETAIL",
+    "type": "HAS_PERMISSION",
+    "label": "拥有权限"
+  },
+  {
+    "id": "reference-example:ROLE:ROLE-FINANCE::HAS_PERMISSION::reference-example:PERMISSION:PERM-CONTRACT-QUERY-EXECUTION",
+    "from": "reference-example:ROLE:ROLE-FINANCE",
+    "to": "reference-example:PERMISSION:PERM-CONTRACT-QUERY-EXECUTION",
+    "type": "HAS_PERMISSION",
+    "label": "拥有权限"
+  },
+  {
+    "id": "reference-example:ROLE:ROLE-FINANCE::HAS_PERMISSION::reference-example:PERMISSION:PERM-CONTRACT-QUERY-DEPT-SUMMARY",
+    "from": "reference-example:ROLE:ROLE-FINANCE",
+    "to": "reference-example:PERMISSION:PERM-CONTRACT-QUERY-DEPT-SUMMARY",
+    "type": "HAS_PERMISSION",
+    "label": "拥有权限"
+  },
+  {
+    "id": "reference-example:ROLE:ROLE-FINANCE::HAS_PERMISSION::reference-example:PERMISSION:PERM-CONTRACT-QUERY-UNRECEIVED",
+    "from": "reference-example:ROLE:ROLE-FINANCE",
+    "to": "reference-example:PERMISSION:PERM-CONTRACT-QUERY-UNRECEIVED",
+    "type": "HAS_PERMISSION",
+    "label": "拥有权限"
+  },
+  {
+    "id": "reference-example:ROLE:ROLE-FINANCE-MANAGER::HAS_PERMISSION::reference-example:PERMISSION:PERM-CONTRACT-VOID",
+    "from": "reference-example:ROLE:ROLE-FINANCE-MANAGER",
+    "to": "reference-example:PERMISSION:PERM-CONTRACT-VOID",
+    "type": "HAS_PERMISSION",
+    "label": "拥有权限"
+  },
+  {
+    "id": "reference-example:ROLE:ROLE-FINANCE-MANAGER::HAS_PERMISSION::reference-example:PERMISSION:PERM-PRODUCT-MAINTAIN",
+    "from": "reference-example:ROLE:ROLE-FINANCE-MANAGER",
+    "to": "reference-example:PERMISSION:PERM-PRODUCT-MAINTAIN",
+    "type": "HAS_PERMISSION",
+    "label": "拥有权限"
+  },
+  {
+    "id": "reference-example:ROLE:ROLE-FINANCE-MANAGER::HAS_PERMISSION::reference-example:PERMISSION:PERM-CUSTOMER-MAINTAIN",
+    "from": "reference-example:ROLE:ROLE-FINANCE-MANAGER",
+    "to": "reference-example:PERMISSION:PERM-CUSTOMER-MAINTAIN",
+    "type": "HAS_PERMISSION",
+    "label": "拥有权限"
+  },
+  {
+    "id": "reference-example:ROLE:ROLE-FINANCE-MANAGER::HAS_PERMISSION::reference-example:PERMISSION:PERM-DEPARTMENT-MAINTAIN",
+    "from": "reference-example:ROLE:ROLE-FINANCE-MANAGER",
+    "to": "reference-example:PERMISSION:PERM-DEPARTMENT-MAINTAIN",
+    "type": "HAS_PERMISSION",
+    "label": "拥有权限"
+  },
+  {
+    "id": "reference-example:ROLE:ROLE-FINANCE-MANAGER::HAS_PERMISSION::reference-example:PERMISSION:PERM-EMPLOYEE-MAINTAIN",
+    "from": "reference-example:ROLE:ROLE-FINANCE-MANAGER",
+    "to": "reference-example:PERMISSION:PERM-EMPLOYEE-MAINTAIN",
+    "type": "HAS_PERMISSION",
+    "label": "拥有权限"
+  },
+  {
+    "id": "reference-example:ROLE:ROLE-FINANCE-MANAGER::HAS_PERMISSION::reference-example:PERMISSION:PERM-CONTRACT-APPROVE-FINANCE",
+    "from": "reference-example:ROLE:ROLE-FINANCE-MANAGER",
+    "to": "reference-example:PERMISSION:PERM-CONTRACT-APPROVE-FINANCE",
+    "type": "HAS_PERMISSION",
+    "label": "拥有权限"
+  },
+  {
+    "id": "reference-example:ROLE:ROLE-FINANCE-MANAGER::HAS_PERMISSION::reference-example:PERMISSION:PERM-INVOICE-APPROVE",
+    "from": "reference-example:ROLE:ROLE-FINANCE-MANAGER",
+    "to": "reference-example:PERMISSION:PERM-INVOICE-APPROVE",
+    "type": "HAS_PERMISSION",
+    "label": "拥有权限"
+  },
+  {
+    "id": "reference-example:ROLE:ROLE-FINANCE-MANAGER::HAS_PERMISSION::reference-example:PERMISSION:PERM-CONTRACT-QUERY-LIST",
+    "from": "reference-example:ROLE:ROLE-FINANCE-MANAGER",
+    "to": "reference-example:PERMISSION:PERM-CONTRACT-QUERY-LIST",
+    "type": "HAS_PERMISSION",
+    "label": "拥有权限"
+  },
+  {
+    "id": "reference-example:ROLE:ROLE-FINANCE-MANAGER::HAS_PERMISSION::reference-example:PERMISSION:PERM-CONTRACT-QUERY-DETAIL",
+    "from": "reference-example:ROLE:ROLE-FINANCE-MANAGER",
+    "to": "reference-example:PERMISSION:PERM-CONTRACT-QUERY-DETAIL",
+    "type": "HAS_PERMISSION",
+    "label": "拥有权限"
+  },
+  {
+    "id": "reference-example:ROLE:ROLE-FINANCE-MANAGER::HAS_PERMISSION::reference-example:PERMISSION:PERM-CONTRACT-QUERY-EXECUTION",
+    "from": "reference-example:ROLE:ROLE-FINANCE-MANAGER",
+    "to": "reference-example:PERMISSION:PERM-CONTRACT-QUERY-EXECUTION",
+    "type": "HAS_PERMISSION",
+    "label": "拥有权限"
+  },
+  {
+    "id": "reference-example:ROLE:ROLE-FINANCE-MANAGER::HAS_PERMISSION::reference-example:PERMISSION:PERM-CONTRACT-QUERY-DEPT-SUMMARY",
+    "from": "reference-example:ROLE:ROLE-FINANCE-MANAGER",
+    "to": "reference-example:PERMISSION:PERM-CONTRACT-QUERY-DEPT-SUMMARY",
+    "type": "HAS_PERMISSION",
+    "label": "拥有权限"
+  },
+  {
+    "id": "reference-example:ROLE:ROLE-FINANCE-MANAGER::HAS_PERMISSION::reference-example:PERMISSION:PERM-CONTRACT-QUERY-UNRECEIVED",
+    "from": "reference-example:ROLE:ROLE-FINANCE-MANAGER",
+    "to": "reference-example:PERMISSION:PERM-CONTRACT-QUERY-UNRECEIVED",
+    "type": "HAS_PERMISSION",
+    "label": "拥有权限"
+  },
+  {
+    "id": "reference-example:ROLE:ROLE-GENERAL-MANAGER::HAS_PERMISSION::reference-example:PERMISSION:PERM-CONTRACT-APPROVE-LARGE",
+    "from": "reference-example:ROLE:ROLE-GENERAL-MANAGER",
+    "to": "reference-example:PERMISSION:PERM-CONTRACT-APPROVE-LARGE",
+    "type": "HAS_PERMISSION",
+    "label": "拥有权限"
+  },
+  {
+    "id": "reference-example:ROLE:ROLE-GENERAL-MANAGER::HAS_PERMISSION::reference-example:PERMISSION:PERM-CONTRACT-QUERY-LIST",
+    "from": "reference-example:ROLE:ROLE-GENERAL-MANAGER",
+    "to": "reference-example:PERMISSION:PERM-CONTRACT-QUERY-LIST",
+    "type": "HAS_PERMISSION",
+    "label": "拥有权限"
+  },
+  {
+    "id": "reference-example:ROLE:ROLE-GENERAL-MANAGER::HAS_PERMISSION::reference-example:PERMISSION:PERM-CONTRACT-QUERY-DETAIL",
+    "from": "reference-example:ROLE:ROLE-GENERAL-MANAGER",
+    "to": "reference-example:PERMISSION:PERM-CONTRACT-QUERY-DETAIL",
+    "type": "HAS_PERMISSION",
+    "label": "拥有权限"
+  },
+  {
+    "id": "reference-example:ROLE:ROLE-GENERAL-MANAGER::HAS_PERMISSION::reference-example:PERMISSION:PERM-CONTRACT-QUERY-EXECUTION",
+    "from": "reference-example:ROLE:ROLE-GENERAL-MANAGER",
+    "to": "reference-example:PERMISSION:PERM-CONTRACT-QUERY-EXECUTION",
+    "type": "HAS_PERMISSION",
+    "label": "拥有权限"
+  },
+  {
+    "id": "reference-example:ROLE:ROLE-GENERAL-MANAGER::HAS_PERMISSION::reference-example:PERMISSION:PERM-CONTRACT-QUERY-DEPT-SUMMARY",
+    "from": "reference-example:ROLE:ROLE-GENERAL-MANAGER",
+    "to": "reference-example:PERMISSION:PERM-CONTRACT-QUERY-DEPT-SUMMARY",
+    "type": "HAS_PERMISSION",
+    "label": "拥有权限"
+  },
+  {
+    "id": "reference-example:ROLE:ROLE-GENERAL-MANAGER::HAS_PERMISSION::reference-example:PERMISSION:PERM-CONTRACT-QUERY-UNRECEIVED",
+    "from": "reference-example:ROLE:ROLE-GENERAL-MANAGER",
+    "to": "reference-example:PERMISSION:PERM-CONTRACT-QUERY-UNRECEIVED",
+    "type": "HAS_PERMISSION",
+    "label": "拥有权限"
+  },
+  {
+    "id": "reference-example:ROLE:ROLE-EMPLOYEE::HAS_PERMISSION::reference-example:PERMISSION:PERM-CONTRACT-QUERY-LIST-OWN-DEPT",
+    "from": "reference-example:ROLE:ROLE-EMPLOYEE",
+    "to": "reference-example:PERMISSION:PERM-CONTRACT-QUERY-LIST-OWN-DEPT",
+    "type": "HAS_PERMISSION",
+    "label": "拥有权限"
+  },
+  {
+    "id": "reference-example:ROLE:ROLE-EMPLOYEE::HAS_PERMISSION::reference-example:PERMISSION:PERM-CONTRACT-QUERY-DETAIL-OWN-DEPT",
+    "from": "reference-example:ROLE:ROLE-EMPLOYEE",
+    "to": "reference-example:PERMISSION:PERM-CONTRACT-QUERY-DETAIL-OWN-DEPT",
+    "type": "HAS_PERMISSION",
+    "label": "拥有权限"
+  },
+  {
+    "id": "reference-example:ROLE:ROLE-EMPLOYEE::HAS_PERMISSION::reference-example:PERMISSION:PERM-CONTRACT-QUERY-EXECUTION-OWN-DEPT",
+    "from": "reference-example:ROLE:ROLE-EMPLOYEE",
+    "to": "reference-example:PERMISSION:PERM-CONTRACT-QUERY-EXECUTION-OWN-DEPT",
+    "type": "HAS_PERMISSION",
+    "label": "拥有权限"
+  },
+  {
+    "id": "reference-example:ROLE:ROLE-EMPLOYEE::HAS_PERMISSION::reference-example:PERMISSION:PERM-CONTRACT-QUERY-DEPT-SUMMARY-OWN-DEPT",
+    "from": "reference-example:ROLE:ROLE-EMPLOYEE",
+    "to": "reference-example:PERMISSION:PERM-CONTRACT-QUERY-DEPT-SUMMARY-OWN-DEPT",
+    "type": "HAS_PERMISSION",
+    "label": "拥有权限"
+  },
+  {
+    "id": "reference-example:ROLE:ROLE-EMPLOYEE::HAS_PERMISSION::reference-example:PERMISSION:PERM-CONTRACT-QUERY-UNRECEIVED-OWN-DEPT",
+    "from": "reference-example:ROLE:ROLE-EMPLOYEE",
+    "to": "reference-example:PERMISSION:PERM-CONTRACT-QUERY-UNRECEIVED-OWN-DEPT",
+    "type": "HAS_PERMISSION",
+    "label": "拥有权限"
+  },
+  {
+    "id": "reference-example:PERMISSION:PERM-CONTRACT-SAVE-DRAFT::PERMISSION_TARGET::reference-example:BEHAVIOR:Contract_SaveAsDraft",
+    "from": "reference-example:PERMISSION:PERM-CONTRACT-SAVE-DRAFT",
+    "to": "reference-example:BEHAVIOR:Contract_SaveAsDraft",
+    "type": "PERMISSION_TARGET",
+    "label": "授权目标"
+  },
+  {
+    "id": "reference-example:PERMISSION:PERM-CONTRACT-SUBMIT::PERMISSION_TARGET::reference-example:BEHAVIOR:Contract_Submit",
+    "from": "reference-example:PERMISSION:PERM-CONTRACT-SUBMIT",
+    "to": "reference-example:BEHAVIOR:Contract_Submit",
+    "type": "PERMISSION_TARGET",
+    "label": "授权目标"
+  },
+  {
+    "id": "reference-example:PERMISSION:PERM-CONTRACT-RESUBMIT::PERMISSION_TARGET::reference-example:BEHAVIOR:Contract_Resubmit",
+    "from": "reference-example:PERMISSION:PERM-CONTRACT-RESUBMIT",
+    "to": "reference-example:BEHAVIOR:Contract_Resubmit",
+    "type": "PERMISSION_TARGET",
+    "label": "授权目标"
+  },
+  {
+    "id": "reference-example:PERMISSION:PERM-INVOICE-SAVE-DRAFT::PERMISSION_TARGET::reference-example:BEHAVIOR:Invoice_SaveAsDraft",
+    "from": "reference-example:PERMISSION:PERM-INVOICE-SAVE-DRAFT",
+    "to": "reference-example:BEHAVIOR:Invoice_SaveAsDraft",
+    "type": "PERMISSION_TARGET",
+    "label": "授权目标"
+  },
+  {
+    "id": "reference-example:PERMISSION:PERM-INVOICE-SUBMIT::PERMISSION_TARGET::reference-example:BEHAVIOR:Invoice_Submit",
+    "from": "reference-example:PERMISSION:PERM-INVOICE-SUBMIT",
+    "to": "reference-example:BEHAVIOR:Invoice_Submit",
+    "type": "PERMISSION_TARGET",
+    "label": "授权目标"
+  },
+  {
+    "id": "reference-example:PERMISSION:PERM-INVOICE-RESUBMIT::PERMISSION_TARGET::reference-example:BEHAVIOR:Invoice_Resubmit",
+    "from": "reference-example:PERMISSION:PERM-INVOICE-RESUBMIT",
+    "to": "reference-example:BEHAVIOR:Invoice_Resubmit",
+    "type": "PERMISSION_TARGET",
+    "label": "授权目标"
+  },
+  {
+    "id": "reference-example:PERMISSION:PERM-RECEIPT-RECORD::PERMISSION_TARGET::reference-example:BEHAVIOR:Receipt_Record",
+    "from": "reference-example:PERMISSION:PERM-RECEIPT-RECORD",
+    "to": "reference-example:BEHAVIOR:Receipt_Record",
+    "type": "PERMISSION_TARGET",
+    "label": "授权目标"
+  },
+  {
+    "id": "reference-example:PERMISSION:PERM-RECEIPT-REVERSE::PERMISSION_TARGET::reference-example:BEHAVIOR:Receipt_Reverse",
+    "from": "reference-example:PERMISSION:PERM-RECEIPT-REVERSE",
+    "to": "reference-example:BEHAVIOR:Receipt_Reverse",
+    "type": "PERMISSION_TARGET",
+    "label": "授权目标"
+  },
+  {
+    "id": "reference-example:PERMISSION:PERM-CONTRACT-VOID::PERMISSION_TARGET::reference-example:BEHAVIOR:Contract_VoidOrArchive",
+    "from": "reference-example:PERMISSION:PERM-CONTRACT-VOID",
+    "to": "reference-example:BEHAVIOR:Contract_VoidOrArchive",
+    "type": "PERMISSION_TARGET",
+    "label": "授权目标"
+  },
+  {
+    "id": "reference-example:PERMISSION:PERM-INVOICE-VOID::PERMISSION_TARGET::reference-example:BEHAVIOR:Invoice_Void",
+    "from": "reference-example:PERMISSION:PERM-INVOICE-VOID",
+    "to": "reference-example:BEHAVIOR:Invoice_Void",
+    "type": "PERMISSION_TARGET",
+    "label": "授权目标"
+  },
+  {
+    "id": "reference-example:PERMISSION:PERM-PRODUCT-MAINTAIN::PERMISSION_TARGET::reference-example:BEHAVIOR:Product_Maintain",
+    "from": "reference-example:PERMISSION:PERM-PRODUCT-MAINTAIN",
+    "to": "reference-example:BEHAVIOR:Product_Maintain",
+    "type": "PERMISSION_TARGET",
+    "label": "授权目标"
+  },
+  {
+    "id": "reference-example:PERMISSION:PERM-CUSTOMER-MAINTAIN::PERMISSION_TARGET::reference-example:BEHAVIOR:Customer_Maintain",
+    "from": "reference-example:PERMISSION:PERM-CUSTOMER-MAINTAIN",
+    "to": "reference-example:BEHAVIOR:Customer_Maintain",
+    "type": "PERMISSION_TARGET",
+    "label": "授权目标"
+  },
+  {
+    "id": "reference-example:PERMISSION:PERM-DEPARTMENT-MAINTAIN::PERMISSION_TARGET::reference-example:BEHAVIOR:Department_Maintain",
+    "from": "reference-example:PERMISSION:PERM-DEPARTMENT-MAINTAIN",
+    "to": "reference-example:BEHAVIOR:Department_Maintain",
+    "type": "PERMISSION_TARGET",
+    "label": "授权目标"
+  },
+  {
+    "id": "reference-example:PERMISSION:PERM-EMPLOYEE-MAINTAIN::PERMISSION_TARGET::reference-example:BEHAVIOR:Employee_Maintain",
+    "from": "reference-example:PERMISSION:PERM-EMPLOYEE-MAINTAIN",
+    "to": "reference-example:BEHAVIOR:Employee_Maintain",
+    "type": "PERMISSION_TARGET",
+    "label": "授权目标"
+  },
+  {
+    "id": "reference-example:PERMISSION:PERM-CONTRACT-QUERY-LIST::PERMISSION_TARGET::reference-example:BEHAVIOR:Contract_QueryList",
+    "from": "reference-example:PERMISSION:PERM-CONTRACT-QUERY-LIST",
+    "to": "reference-example:BEHAVIOR:Contract_QueryList",
+    "type": "PERMISSION_TARGET",
+    "label": "授权目标"
+  },
+  {
+    "id": "reference-example:PERMISSION:PERM-CONTRACT-QUERY-DETAIL::PERMISSION_TARGET::reference-example:BEHAVIOR:Contract_QueryDetail",
+    "from": "reference-example:PERMISSION:PERM-CONTRACT-QUERY-DETAIL",
+    "to": "reference-example:BEHAVIOR:Contract_QueryDetail",
+    "type": "PERMISSION_TARGET",
+    "label": "授权目标"
+  },
+  {
+    "id": "reference-example:PERMISSION:PERM-CONTRACT-QUERY-EXECUTION::PERMISSION_TARGET::reference-example:BEHAVIOR:Contract_QueryExecutionAnalysis",
+    "from": "reference-example:PERMISSION:PERM-CONTRACT-QUERY-EXECUTION",
+    "to": "reference-example:BEHAVIOR:Contract_QueryExecutionAnalysis",
+    "type": "PERMISSION_TARGET",
+    "label": "授权目标"
+  },
+  {
+    "id": "reference-example:PERMISSION:PERM-CONTRACT-QUERY-DEPT-SUMMARY::PERMISSION_TARGET::reference-example:BEHAVIOR:Contract_QueryDepartmentSummary",
+    "from": "reference-example:PERMISSION:PERM-CONTRACT-QUERY-DEPT-SUMMARY",
+    "to": "reference-example:BEHAVIOR:Contract_QueryDepartmentSummary",
+    "type": "PERMISSION_TARGET",
+    "label": "授权目标"
+  },
+  {
+    "id": "reference-example:PERMISSION:PERM-CONTRACT-QUERY-UNRECEIVED::PERMISSION_TARGET::reference-example:BEHAVIOR:Contract_QueryInvoicedUnreceived",
+    "from": "reference-example:PERMISSION:PERM-CONTRACT-QUERY-UNRECEIVED",
+    "to": "reference-example:BEHAVIOR:Contract_QueryInvoicedUnreceived",
+    "type": "PERMISSION_TARGET",
+    "label": "授权目标"
+  },
+  {
+    "id": "reference-example:PERMISSION:PERM-CONTRACT-QUERY-LIST-OWN-DEPT::PERMISSION_TARGET::reference-example:BEHAVIOR:Contract_QueryList",
+    "from": "reference-example:PERMISSION:PERM-CONTRACT-QUERY-LIST-OWN-DEPT",
+    "to": "reference-example:BEHAVIOR:Contract_QueryList",
+    "type": "PERMISSION_TARGET",
+    "label": "授权目标"
+  },
+  {
+    "id": "reference-example:PERMISSION:PERM-CONTRACT-QUERY-DETAIL-OWN-DEPT::PERMISSION_TARGET::reference-example:BEHAVIOR:Contract_QueryDetail",
+    "from": "reference-example:PERMISSION:PERM-CONTRACT-QUERY-DETAIL-OWN-DEPT",
+    "to": "reference-example:BEHAVIOR:Contract_QueryDetail",
+    "type": "PERMISSION_TARGET",
+    "label": "授权目标"
+  },
+  {
+    "id": "reference-example:PERMISSION:PERM-CONTRACT-QUERY-EXECUTION-OWN-DEPT::PERMISSION_TARGET::reference-example:BEHAVIOR:Contract_QueryExecutionAnalysis",
+    "from": "reference-example:PERMISSION:PERM-CONTRACT-QUERY-EXECUTION-OWN-DEPT",
+    "to": "reference-example:BEHAVIOR:Contract_QueryExecutionAnalysis",
+    "type": "PERMISSION_TARGET",
+    "label": "授权目标"
+  },
+  {
+    "id": "reference-example:PERMISSION:PERM-CONTRACT-QUERY-DEPT-SUMMARY-OWN-DEPT::PERMISSION_TARGET::reference-example:BEHAVIOR:Contract_QueryDepartmentSummary",
+    "from": "reference-example:PERMISSION:PERM-CONTRACT-QUERY-DEPT-SUMMARY-OWN-DEPT",
+    "to": "reference-example:BEHAVIOR:Contract_QueryDepartmentSummary",
+    "type": "PERMISSION_TARGET",
+    "label": "授权目标"
+  },
+  {
+    "id": "reference-example:PERMISSION:PERM-CONTRACT-QUERY-UNRECEIVED-OWN-DEPT::PERMISSION_TARGET::reference-example:BEHAVIOR:Contract_QueryInvoicedUnreceived",
+    "from": "reference-example:PERMISSION:PERM-CONTRACT-QUERY-UNRECEIVED-OWN-DEPT",
+    "to": "reference-example:BEHAVIOR:Contract_QueryInvoicedUnreceived",
+    "type": "PERMISSION_TARGET",
+    "label": "授权目标"
+  },
+  {
+    "id": "reference-example:PERMISSION:PERM-CONTRACT-APPROVE-FINANCE::PERMISSION_TARGET::reference-example:BEHAVIOR:Contract_ApproveFinance",
+    "from": "reference-example:PERMISSION:PERM-CONTRACT-APPROVE-FINANCE",
+    "to": "reference-example:BEHAVIOR:Contract_ApproveFinance",
+    "type": "PERMISSION_TARGET",
+    "label": "授权目标"
+  },
+  {
+    "id": "reference-example:PERMISSION:PERM-CONTRACT-APPROVE-LARGE::PERMISSION_TARGET::reference-example:BEHAVIOR:Contract_ApproveGeneralManager",
+    "from": "reference-example:PERMISSION:PERM-CONTRACT-APPROVE-LARGE",
+    "to": "reference-example:BEHAVIOR:Contract_ApproveGeneralManager",
+    "type": "PERMISSION_TARGET",
+    "label": "授权目标"
+  },
+  {
+    "id": "reference-example:PERMISSION:PERM-INVOICE-APPROVE::PERMISSION_TARGET::reference-example:BEHAVIOR:Invoice_ApproveFinance",
+    "from": "reference-example:PERMISSION:PERM-INVOICE-APPROVE",
+    "to": "reference-example:BEHAVIOR:Invoice_ApproveFinance",
+    "type": "PERMISSION_TARGET",
+    "label": "授权目标"
+  },
+  {
+    "id": "reference-example:FLOW:FLOW-CONTRACT-001::FLOW_BUSINESS_OBJECT::reference-example:AGGREGATE_ROOT:AGG-CONTRACT-001",
+    "from": "reference-example:FLOW:FLOW-CONTRACT-001",
+    "to": "reference-example:AGGREGATE_ROOT:AGG-CONTRACT-001",
+    "type": "FLOW_BUSINESS_OBJECT",
+    "label": "操作对象"
+  },
+  {
+    "id": "reference-example:FLOW:FLOW-CONTRACT-001::FLOW_BUSINESS_OBJECT::reference-example:AGGREGATE_ROOT:AGG-INVOICE-001",
+    "from": "reference-example:FLOW:FLOW-CONTRACT-001",
+    "to": "reference-example:AGGREGATE_ROOT:AGG-INVOICE-001",
+    "type": "FLOW_BUSINESS_OBJECT",
+    "label": "操作对象"
+  },
+  {
+    "id": "reference-example:FLOW:FLOW-CONTRACT-001::FLOW_BUSINESS_OBJECT::reference-example:AGGREGATE_ROOT:AGG-RECEIPT-001",
+    "from": "reference-example:FLOW:FLOW-CONTRACT-001",
+    "to": "reference-example:AGGREGATE_ROOT:AGG-RECEIPT-001",
+    "type": "FLOW_BUSINESS_OBJECT",
+    "label": "操作对象"
+  },
+  {
+    "id": "reference-example:FLOW:FLOW-CONTRACT-001::FLOW_ROLE::reference-example:ROLE:ROLE-SALES",
+    "from": "reference-example:FLOW:FLOW-CONTRACT-001",
+    "to": "reference-example:ROLE:ROLE-SALES",
+    "type": "FLOW_ROLE",
+    "label": "涉及角色"
+  },
+  {
+    "id": "reference-example:FLOW:FLOW-CONTRACT-001::FLOW_ROLE::reference-example:ROLE:ROLE-FINANCE",
+    "from": "reference-example:FLOW:FLOW-CONTRACT-001",
+    "to": "reference-example:ROLE:ROLE-FINANCE",
+    "type": "FLOW_ROLE",
+    "label": "涉及角色"
+  },
+  {
+    "id": "reference-example:FLOW:FLOW-CONTRACT-001::FLOW_ROLE::reference-example:ROLE:ROLE-FINANCE-MANAGER",
+    "from": "reference-example:FLOW:FLOW-CONTRACT-001",
+    "to": "reference-example:ROLE:ROLE-FINANCE-MANAGER",
+    "type": "FLOW_ROLE",
+    "label": "涉及角色"
+  },
+  {
+    "id": "reference-example:FLOW:FLOW-CONTRACT-001::FLOW_ROLE::reference-example:ROLE:ROLE-GENERAL-MANAGER",
+    "from": "reference-example:FLOW:FLOW-CONTRACT-001",
+    "to": "reference-example:ROLE:ROLE-GENERAL-MANAGER",
+    "type": "FLOW_ROLE",
+    "label": "涉及角色"
+  },
+  {
+    "id": "reference-example:FLOW:FLOW-CONTRACT-001::FLOW_CONTAINS_ACTIVITY::reference-example:ACTIVITY:A01",
+    "from": "reference-example:FLOW:FLOW-CONTRACT-001",
+    "to": "reference-example:ACTIVITY:A01",
+    "type": "FLOW_CONTAINS_ACTIVITY",
+    "label": "包含活动"
+  },
+  {
+    "id": "reference-example:ACTIVITY:A01::ACTIVITY_NEXT::reference-example:ACTIVITY:A02",
+    "from": "reference-example:ACTIVITY:A01",
+    "to": "reference-example:ACTIVITY:A02",
+    "type": "ACTIVITY_NEXT",
+    "label": "下一步"
+  },
+  {
+    "id": "reference-example:FLOW:FLOW-CONTRACT-001::FLOW_CONTAINS_ACTIVITY::reference-example:ACTIVITY:A02",
+    "from": "reference-example:FLOW:FLOW-CONTRACT-001",
+    "to": "reference-example:ACTIVITY:A02",
+    "type": "FLOW_CONTAINS_ACTIVITY",
+    "label": "包含活动"
+  },
+  {
+    "id": "reference-example:ACTIVITY:A02::ACTIVITY_CALLS_BEHAVIOR::reference-example:BEHAVIOR:Contract_Submit",
+    "from": "reference-example:ACTIVITY:A02",
+    "to": "reference-example:BEHAVIOR:Contract_Submit",
+    "type": "ACTIVITY_CALLS_BEHAVIOR",
+    "label": "执行行为"
+  },
+  {
+    "id": "reference-example:ACTIVITY:A02::ACTIVITY_ROLE::reference-example:ROLE:ROLE-SALES",
+    "from": "reference-example:ACTIVITY:A02",
+    "to": "reference-example:ROLE:ROLE-SALES",
+    "type": "ACTIVITY_ROLE",
+    "label": "参与角色"
+  },
+  {
+    "id": "reference-example:ACTIVITY:A02::ACTIVITY_NEXT::reference-example:ACTIVITY:A03",
+    "from": "reference-example:ACTIVITY:A02",
+    "to": "reference-example:ACTIVITY:A03",
+    "type": "ACTIVITY_NEXT",
+    "label": "下一步"
+  },
+  {
+    "id": "reference-example:FLOW:FLOW-CONTRACT-001::FLOW_CONTAINS_ACTIVITY::reference-example:ACTIVITY:A03",
+    "from": "reference-example:FLOW:FLOW-CONTRACT-001",
+    "to": "reference-example:ACTIVITY:A03",
+    "type": "FLOW_CONTAINS_ACTIVITY",
+    "label": "包含活动"
+  },
+  {
+    "id": "reference-example:ACTIVITY:A03::ACTIVITY_NEXT::reference-example:ACTIVITY:A04",
+    "from": "reference-example:ACTIVITY:A03",
+    "to": "reference-example:ACTIVITY:A04",
+    "type": "ACTIVITY_NEXT",
+    "label": "下一步"
+  },
+  {
+    "id": "reference-example:FLOW:FLOW-CONTRACT-001::FLOW_CONTAINS_ACTIVITY::reference-example:ACTIVITY:A04",
+    "from": "reference-example:FLOW:FLOW-CONTRACT-001",
+    "to": "reference-example:ACTIVITY:A04",
+    "type": "FLOW_CONTAINS_ACTIVITY",
+    "label": "包含活动"
+  },
+  {
+    "id": "reference-example:ACTIVITY:A04::ACTIVITY_NEXT::reference-example:ACTIVITY:A05",
+    "from": "reference-example:ACTIVITY:A04",
+    "to": "reference-example:ACTIVITY:A05",
+    "type": "ACTIVITY_NEXT",
+    "label": "审批通过"
+  },
+  {
+    "id": "reference-example:ACTIVITY:A04::ACTIVITY_NEXT::reference-example:ACTIVITY:A02",
+    "from": "reference-example:ACTIVITY:A04",
+    "to": "reference-example:ACTIVITY:A02",
+    "type": "ACTIVITY_NEXT",
+    "label": "驳回后修改重提"
+  },
+  {
+    "id": "reference-example:ACTIVITY:A04::ACTIVITY_NEXT::reference-example:ACTIVITY:A09",
+    "from": "reference-example:ACTIVITY:A04",
+    "to": "reference-example:ACTIVITY:A09",
+    "type": "ACTIVITY_NEXT",
+    "label": "终止且不再提交"
+  },
+  {
+    "id": "reference-example:FLOW:FLOW-CONTRACT-001::FLOW_CONTAINS_ACTIVITY::reference-example:ACTIVITY:A05",
+    "from": "reference-example:FLOW:FLOW-CONTRACT-001",
+    "to": "reference-example:ACTIVITY:A05",
+    "type": "FLOW_CONTAINS_ACTIVITY",
+    "label": "包含活动"
+  },
+  {
+    "id": "reference-example:ACTIVITY:A05::ACTIVITY_NEXT::reference-example:ACTIVITY:A06",
+    "from": "reference-example:ACTIVITY:A05",
+    "to": "reference-example:ACTIVITY:A06",
+    "type": "ACTIVITY_NEXT",
+    "label": "下一步"
+  },
+  {
+    "id": "reference-example:FLOW:FLOW-CONTRACT-001::FLOW_CONTAINS_ACTIVITY::reference-example:ACTIVITY:A06",
+    "from": "reference-example:FLOW:FLOW-CONTRACT-001",
+    "to": "reference-example:ACTIVITY:A06",
+    "type": "FLOW_CONTAINS_ACTIVITY",
+    "label": "包含活动"
+  },
+  {
+    "id": "reference-example:ACTIVITY:A06::ACTIVITY_NEXT::reference-example:ACTIVITY:A07",
+    "from": "reference-example:ACTIVITY:A06",
+    "to": "reference-example:ACTIVITY:A07",
+    "type": "ACTIVITY_NEXT",
+    "label": "满足结清条件"
+  },
+  {
+    "id": "reference-example:ACTIVITY:A06::ACTIVITY_NEXT::reference-example:ACTIVITY:A05",
+    "from": "reference-example:ACTIVITY:A06",
+    "to": "reference-example:ACTIVITY:A05",
+    "type": "ACTIVITY_NEXT",
+    "label": "未结清，继续开票收款"
+  },
+  {
+    "id": "reference-example:FLOW:FLOW-CONTRACT-001::FLOW_CONTAINS_ACTIVITY::reference-example:ACTIVITY:A07",
+    "from": "reference-example:FLOW:FLOW-CONTRACT-001",
+    "to": "reference-example:ACTIVITY:A07",
+    "type": "FLOW_CONTAINS_ACTIVITY",
+    "label": "包含活动"
+  },
+  {
+    "id": "reference-example:ACTIVITY:A07::ACTIVITY_CALLS_BEHAVIOR::reference-example:BEHAVIOR:Contract_UpdateSettlementStatus",
+    "from": "reference-example:ACTIVITY:A07",
+    "to": "reference-example:BEHAVIOR:Contract_UpdateSettlementStatus",
+    "type": "ACTIVITY_CALLS_BEHAVIOR",
+    "label": "执行行为"
+  },
+  {
+    "id": "reference-example:ACTIVITY:A07::ACTIVITY_NEXT::reference-example:ACTIVITY:A08",
+    "from": "reference-example:ACTIVITY:A07",
+    "to": "reference-example:ACTIVITY:A08",
+    "type": "ACTIVITY_NEXT",
+    "label": "下一步"
+  },
+  {
+    "id": "reference-example:FLOW:FLOW-CONTRACT-001::FLOW_CONTAINS_ACTIVITY::reference-example:ACTIVITY:A08",
+    "from": "reference-example:FLOW:FLOW-CONTRACT-001",
+    "to": "reference-example:ACTIVITY:A08",
+    "type": "FLOW_CONTAINS_ACTIVITY",
+    "label": "包含活动"
+  },
+  {
+    "id": "reference-example:ACTIVITY:A08::ACTIVITY_CALLS_BEHAVIOR::reference-example:BEHAVIOR:Contract_VoidOrArchive",
+    "from": "reference-example:ACTIVITY:A08",
+    "to": "reference-example:BEHAVIOR:Contract_VoidOrArchive",
+    "type": "ACTIVITY_CALLS_BEHAVIOR",
+    "label": "执行行为"
+  },
+  {
+    "id": "reference-example:ACTIVITY:A08::ACTIVITY_ROLE::reference-example:ROLE:ROLE-FINANCE-MANAGER",
+    "from": "reference-example:ACTIVITY:A08",
+    "to": "reference-example:ROLE:ROLE-FINANCE-MANAGER",
+    "type": "ACTIVITY_ROLE",
+    "label": "参与角色"
+  },
+  {
+    "id": "reference-example:ACTIVITY:A08::ACTIVITY_NEXT::reference-example:ACTIVITY:A09",
+    "from": "reference-example:ACTIVITY:A08",
+    "to": "reference-example:ACTIVITY:A09",
+    "type": "ACTIVITY_NEXT",
+    "label": "下一步"
+  },
+  {
+    "id": "reference-example:FLOW:FLOW-CONTRACT-001::FLOW_CONTAINS_ACTIVITY::reference-example:ACTIVITY:A09",
+    "from": "reference-example:FLOW:FLOW-CONTRACT-001",
+    "to": "reference-example:ACTIVITY:A09",
+    "type": "FLOW_CONTAINS_ACTIVITY",
+    "label": "包含活动"
+  },
+  {
+    "id": "reference-example:FLOW:FLOW-CONTRACT-INVOICE-002::FLOW_BUSINESS_OBJECT::reference-example:AGGREGATE_ROOT:AGG-CONTRACT-001",
+    "from": "reference-example:FLOW:FLOW-CONTRACT-INVOICE-002",
+    "to": "reference-example:AGGREGATE_ROOT:AGG-CONTRACT-001",
+    "type": "FLOW_BUSINESS_OBJECT",
+    "label": "操作对象"
+  },
+  {
+    "id": "reference-example:FLOW:FLOW-CONTRACT-INVOICE-002::FLOW_BUSINESS_OBJECT::reference-example:AGGREGATE_ROOT:AGG-INVOICE-001",
+    "from": "reference-example:FLOW:FLOW-CONTRACT-INVOICE-002",
+    "to": "reference-example:AGGREGATE_ROOT:AGG-INVOICE-001",
+    "type": "FLOW_BUSINESS_OBJECT",
+    "label": "操作对象"
+  },
+  {
+    "id": "reference-example:FLOW:FLOW-CONTRACT-INVOICE-002::FLOW_BUSINESS_OBJECT::reference-example:AGGREGATE_ROOT:AGG-RECEIPT-001",
+    "from": "reference-example:FLOW:FLOW-CONTRACT-INVOICE-002",
+    "to": "reference-example:AGGREGATE_ROOT:AGG-RECEIPT-001",
+    "type": "FLOW_BUSINESS_OBJECT",
+    "label": "操作对象"
+  },
+  {
+    "id": "reference-example:FLOW:FLOW-CONTRACT-INVOICE-002::FLOW_ROLE::reference-example:ROLE:ROLE-FINANCE",
+    "from": "reference-example:FLOW:FLOW-CONTRACT-INVOICE-002",
+    "to": "reference-example:ROLE:ROLE-FINANCE",
+    "type": "FLOW_ROLE",
+    "label": "涉及角色"
+  },
+  {
+    "id": "reference-example:FLOW:FLOW-CONTRACT-INVOICE-002::FLOW_ROLE::reference-example:ROLE:ROLE-FINANCE-MANAGER",
+    "from": "reference-example:FLOW:FLOW-CONTRACT-INVOICE-002",
+    "to": "reference-example:ROLE:ROLE-FINANCE-MANAGER",
+    "type": "FLOW_ROLE",
+    "label": "涉及角色"
+  },
+  {
+    "id": "reference-example:FLOW:FLOW-CONTRACT-INVOICE-002::FLOW_CONTAINS_ACTIVITY::reference-example:ACTIVITY:B01",
+    "from": "reference-example:FLOW:FLOW-CONTRACT-INVOICE-002",
+    "to": "reference-example:ACTIVITY:B01",
+    "type": "FLOW_CONTAINS_ACTIVITY",
+    "label": "包含活动"
+  },
+  {
+    "id": "reference-example:ACTIVITY:B01::ACTIVITY_NEXT::reference-example:ACTIVITY:B02",
+    "from": "reference-example:ACTIVITY:B01",
+    "to": "reference-example:ACTIVITY:B02",
+    "type": "ACTIVITY_NEXT",
+    "label": "下一步"
+  },
+  {
+    "id": "reference-example:FLOW:FLOW-CONTRACT-INVOICE-002::FLOW_CONTAINS_ACTIVITY::reference-example:ACTIVITY:B02",
+    "from": "reference-example:FLOW:FLOW-CONTRACT-INVOICE-002",
+    "to": "reference-example:ACTIVITY:B02",
+    "type": "FLOW_CONTAINS_ACTIVITY",
+    "label": "包含活动"
+  },
+  {
+    "id": "reference-example:ACTIVITY:B02::ACTIVITY_CALLS_BEHAVIOR::reference-example:BEHAVIOR:Invoice_Submit",
+    "from": "reference-example:ACTIVITY:B02",
+    "to": "reference-example:BEHAVIOR:Invoice_Submit",
+    "type": "ACTIVITY_CALLS_BEHAVIOR",
+    "label": "执行行为"
+  },
+  {
+    "id": "reference-example:ACTIVITY:B02::ACTIVITY_ROLE::reference-example:ROLE:ROLE-FINANCE",
+    "from": "reference-example:ACTIVITY:B02",
+    "to": "reference-example:ROLE:ROLE-FINANCE",
+    "type": "ACTIVITY_ROLE",
+    "label": "参与角色"
+  },
+  {
+    "id": "reference-example:ACTIVITY:B02::ACTIVITY_NEXT::reference-example:ACTIVITY:B03",
+    "from": "reference-example:ACTIVITY:B02",
+    "to": "reference-example:ACTIVITY:B03",
+    "type": "ACTIVITY_NEXT",
+    "label": "下一步"
+  },
+  {
+    "id": "reference-example:FLOW:FLOW-CONTRACT-INVOICE-002::FLOW_CONTAINS_ACTIVITY::reference-example:ACTIVITY:B03",
+    "from": "reference-example:FLOW:FLOW-CONTRACT-INVOICE-002",
+    "to": "reference-example:ACTIVITY:B03",
+    "type": "FLOW_CONTAINS_ACTIVITY",
+    "label": "包含活动"
+  },
+  {
+    "id": "reference-example:ACTIVITY:B03::ACTIVITY_NEXT::reference-example:ACTIVITY:B04",
+    "from": "reference-example:ACTIVITY:B03",
+    "to": "reference-example:ACTIVITY:B04",
+    "type": "ACTIVITY_NEXT",
+    "label": "下一步"
+  },
+  {
+    "id": "reference-example:FLOW:FLOW-CONTRACT-INVOICE-002::FLOW_CONTAINS_ACTIVITY::reference-example:ACTIVITY:B04",
+    "from": "reference-example:FLOW:FLOW-CONTRACT-INVOICE-002",
+    "to": "reference-example:ACTIVITY:B04",
+    "type": "FLOW_CONTAINS_ACTIVITY",
+    "label": "包含活动"
+  },
+  {
+    "id": "reference-example:ACTIVITY:B04::ACTIVITY_NEXT::reference-example:ACTIVITY:B05",
+    "from": "reference-example:ACTIVITY:B04",
+    "to": "reference-example:ACTIVITY:B05",
+    "type": "ACTIVITY_NEXT",
+    "label": "审批通过"
+  },
+  {
+    "id": "reference-example:ACTIVITY:B04::ACTIVITY_NEXT::reference-example:ACTIVITY:B02",
+    "from": "reference-example:ACTIVITY:B04",
+    "to": "reference-example:ACTIVITY:B02",
+    "type": "ACTIVITY_NEXT",
+    "label": "驳回后修改重提"
+  },
+  {
+    "id": "reference-example:ACTIVITY:B04::ACTIVITY_NEXT::reference-example:ACTIVITY:B09",
+    "from": "reference-example:ACTIVITY:B04",
+    "to": "reference-example:ACTIVITY:B09",
+    "type": "ACTIVITY_NEXT",
+    "label": "终止且不再提交"
+  },
+  {
+    "id": "reference-example:FLOW:FLOW-CONTRACT-INVOICE-002::FLOW_CONTAINS_ACTIVITY::reference-example:ACTIVITY:B05",
+    "from": "reference-example:FLOW:FLOW-CONTRACT-INVOICE-002",
+    "to": "reference-example:ACTIVITY:B05",
+    "type": "FLOW_CONTAINS_ACTIVITY",
+    "label": "包含活动"
+  },
+  {
+    "id": "reference-example:ACTIVITY:B05::ACTIVITY_CALLS_BEHAVIOR::reference-example:BEHAVIOR:PaymentStage_UpdateInvoiceStatus",
+    "from": "reference-example:ACTIVITY:B05",
+    "to": "reference-example:BEHAVIOR:PaymentStage_UpdateInvoiceStatus",
+    "type": "ACTIVITY_CALLS_BEHAVIOR",
+    "label": "执行行为"
+  },
+  {
+    "id": "reference-example:ACTIVITY:B05::ACTIVITY_NEXT::reference-example:ACTIVITY:B06",
+    "from": "reference-example:ACTIVITY:B05",
+    "to": "reference-example:ACTIVITY:B06",
+    "type": "ACTIVITY_NEXT",
+    "label": "下一步"
+  },
+  {
+    "id": "reference-example:FLOW:FLOW-CONTRACT-INVOICE-002::FLOW_CONTAINS_ACTIVITY::reference-example:ACTIVITY:B06",
+    "from": "reference-example:FLOW:FLOW-CONTRACT-INVOICE-002",
+    "to": "reference-example:ACTIVITY:B06",
+    "type": "FLOW_CONTAINS_ACTIVITY",
+    "label": "包含活动"
+  },
+  {
+    "id": "reference-example:ACTIVITY:B06::ACTIVITY_CALLS_BEHAVIOR::reference-example:BEHAVIOR:Receipt_Record",
+    "from": "reference-example:ACTIVITY:B06",
+    "to": "reference-example:BEHAVIOR:Receipt_Record",
+    "type": "ACTIVITY_CALLS_BEHAVIOR",
+    "label": "执行行为"
+  },
+  {
+    "id": "reference-example:ACTIVITY:B06::ACTIVITY_ROLE::reference-example:ROLE:ROLE-FINANCE",
+    "from": "reference-example:ACTIVITY:B06",
+    "to": "reference-example:ROLE:ROLE-FINANCE",
+    "type": "ACTIVITY_ROLE",
+    "label": "参与角色"
+  },
+  {
+    "id": "reference-example:ACTIVITY:B06::ACTIVITY_NEXT::reference-example:ACTIVITY:B07",
+    "from": "reference-example:ACTIVITY:B06",
+    "to": "reference-example:ACTIVITY:B07",
+    "type": "ACTIVITY_NEXT",
+    "label": "下一步"
+  },
+  {
+    "id": "reference-example:FLOW:FLOW-CONTRACT-INVOICE-002::FLOW_CONTAINS_ACTIVITY::reference-example:ACTIVITY:B07",
+    "from": "reference-example:FLOW:FLOW-CONTRACT-INVOICE-002",
+    "to": "reference-example:ACTIVITY:B07",
+    "type": "FLOW_CONTAINS_ACTIVITY",
+    "label": "包含活动"
+  },
+  {
+    "id": "reference-example:ACTIVITY:B07::ACTIVITY_CALLS_BEHAVIOR::reference-example:BEHAVIOR:Invoice_UpdateReceiptStatus",
+    "from": "reference-example:ACTIVITY:B07",
+    "to": "reference-example:BEHAVIOR:Invoice_UpdateReceiptStatus",
+    "type": "ACTIVITY_CALLS_BEHAVIOR",
+    "label": "执行行为"
+  },
+  {
+    "id": "reference-example:ACTIVITY:B07::ACTIVITY_NEXT::reference-example:ACTIVITY:B08",
+    "from": "reference-example:ACTIVITY:B07",
+    "to": "reference-example:ACTIVITY:B08",
+    "type": "ACTIVITY_NEXT",
+    "label": "下一步"
+  },
+  {
+    "id": "reference-example:FLOW:FLOW-CONTRACT-INVOICE-002::FLOW_CONTAINS_ACTIVITY::reference-example:ACTIVITY:B08",
+    "from": "reference-example:FLOW:FLOW-CONTRACT-INVOICE-002",
+    "to": "reference-example:ACTIVITY:B08",
+    "type": "FLOW_CONTAINS_ACTIVITY",
+    "label": "包含活动"
+  },
+  {
+    "id": "reference-example:ACTIVITY:B08::ACTIVITY_NEXT::reference-example:ACTIVITY:B09",
+    "from": "reference-example:ACTIVITY:B08",
+    "to": "reference-example:ACTIVITY:B09",
+    "type": "ACTIVITY_NEXT",
+    "label": "已全部收齐"
+  },
+  {
+    "id": "reference-example:ACTIVITY:B08::ACTIVITY_NEXT::reference-example:ACTIVITY:B06",
+    "from": "reference-example:ACTIVITY:B08",
+    "to": "reference-example:ACTIVITY:B06",
+    "type": "ACTIVITY_NEXT",
+    "label": "未收齐，继续收款"
+  },
+  {
+    "id": "reference-example:FLOW:FLOW-CONTRACT-INVOICE-002::FLOW_CONTAINS_ACTIVITY::reference-example:ACTIVITY:B09",
+    "from": "reference-example:FLOW:FLOW-CONTRACT-INVOICE-002",
+    "to": "reference-example:ACTIVITY:B09",
+    "type": "FLOW_CONTAINS_ACTIVITY",
+    "label": "包含活动"
+  },
+  {
+    "id": "reference-example:FLOW:FLOW-CONTRACT-APPROVAL-001::FLOW_BUSINESS_OBJECT::reference-example:AGGREGATE_ROOT:AGG-CONTRACT-001",
+    "from": "reference-example:FLOW:FLOW-CONTRACT-APPROVAL-001",
+    "to": "reference-example:AGGREGATE_ROOT:AGG-CONTRACT-001",
+    "type": "FLOW_BUSINESS_OBJECT",
+    "label": "操作对象"
+  },
+  {
+    "id": "reference-example:FLOW:FLOW-CONTRACT-APPROVAL-001::FLOW_ROLE::reference-example:ROLE:ROLE-FINANCE-MANAGER",
+    "from": "reference-example:FLOW:FLOW-CONTRACT-APPROVAL-001",
+    "to": "reference-example:ROLE:ROLE-FINANCE-MANAGER",
+    "type": "FLOW_ROLE",
+    "label": "涉及角色"
+  },
+  {
+    "id": "reference-example:FLOW:FLOW-CONTRACT-APPROVAL-001::FLOW_ROLE::reference-example:ROLE:ROLE-GENERAL-MANAGER",
+    "from": "reference-example:FLOW:FLOW-CONTRACT-APPROVAL-001",
+    "to": "reference-example:ROLE:ROLE-GENERAL-MANAGER",
+    "type": "FLOW_ROLE",
+    "label": "涉及角色"
+  },
+  {
+    "id": "reference-example:FLOW:FLOW-CONTRACT-APPROVAL-001::FLOW_CONTAINS_ACTIVITY::reference-example:ACTIVITY:P01",
+    "from": "reference-example:FLOW:FLOW-CONTRACT-APPROVAL-001",
+    "to": "reference-example:ACTIVITY:P01",
+    "type": "FLOW_CONTAINS_ACTIVITY",
+    "label": "包含活动"
+  },
+  {
+    "id": "reference-example:ACTIVITY:P01::ACTIVITY_NEXT::reference-example:ACTIVITY:P02",
+    "from": "reference-example:ACTIVITY:P01",
+    "to": "reference-example:ACTIVITY:P02",
+    "type": "ACTIVITY_NEXT",
+    "label": "下一步"
+  },
+  {
+    "id": "reference-example:FLOW:FLOW-CONTRACT-APPROVAL-001::FLOW_CONTAINS_ACTIVITY::reference-example:ACTIVITY:P02",
+    "from": "reference-example:FLOW:FLOW-CONTRACT-APPROVAL-001",
+    "to": "reference-example:ACTIVITY:P02",
+    "type": "FLOW_CONTAINS_ACTIVITY",
+    "label": "包含活动"
+  },
+  {
+    "id": "reference-example:ACTIVITY:P02::ACTIVITY_CALLS_BEHAVIOR::reference-example:BEHAVIOR:Contract_ApproveFinance",
+    "from": "reference-example:ACTIVITY:P02",
+    "to": "reference-example:BEHAVIOR:Contract_ApproveFinance",
+    "type": "ACTIVITY_CALLS_BEHAVIOR",
+    "label": "执行行为"
+  },
+  {
+    "id": "reference-example:ACTIVITY:P02::ACTIVITY_ROLE::reference-example:ROLE:ROLE-FINANCE-MANAGER",
+    "from": "reference-example:ACTIVITY:P02",
+    "to": "reference-example:ROLE:ROLE-FINANCE-MANAGER",
+    "type": "ACTIVITY_ROLE",
+    "label": "参与角色"
+  },
+  {
+    "id": "reference-example:ACTIVITY:P02::ACTIVITY_NEXT::reference-example:ACTIVITY:P03",
+    "from": "reference-example:ACTIVITY:P02",
+    "to": "reference-example:ACTIVITY:P03",
+    "type": "ACTIVITY_NEXT",
+    "label": "下一步"
+  },
+  {
+    "id": "reference-example:FLOW:FLOW-CONTRACT-APPROVAL-001::FLOW_CONTAINS_ACTIVITY::reference-example:ACTIVITY:P03",
+    "from": "reference-example:FLOW:FLOW-CONTRACT-APPROVAL-001",
+    "to": "reference-example:ACTIVITY:P03",
+    "type": "FLOW_CONTAINS_ACTIVITY",
+    "label": "包含活动"
+  },
+  {
+    "id": "reference-example:ACTIVITY:P03::ACTIVITY_NEXT::reference-example:ACTIVITY:P08",
+    "from": "reference-example:ACTIVITY:P03",
+    "to": "reference-example:ACTIVITY:P08",
+    "type": "ACTIVITY_NEXT",
+    "label": "驳回"
+  },
+  {
+    "id": "reference-example:ACTIVITY:P03::ACTIVITY_NEXT::reference-example:ACTIVITY:P04",
+    "from": "reference-example:ACTIVITY:P03",
+    "to": "reference-example:ACTIVITY:P04",
+    "type": "ACTIVITY_NEXT",
+    "label": "通过"
+  },
+  {
+    "id": "reference-example:FLOW:FLOW-CONTRACT-APPROVAL-001::FLOW_CONTAINS_ACTIVITY::reference-example:ACTIVITY:P04",
+    "from": "reference-example:FLOW:FLOW-CONTRACT-APPROVAL-001",
+    "to": "reference-example:ACTIVITY:P04",
+    "type": "FLOW_CONTAINS_ACTIVITY",
+    "label": "包含活动"
+  },
+  {
+    "id": "reference-example:ACTIVITY:P04::ACTIVITY_NEXT::reference-example:ACTIVITY:P05",
+    "from": "reference-example:ACTIVITY:P04",
+    "to": "reference-example:ACTIVITY:P05",
+    "type": "ACTIVITY_NEXT",
+    "label": "金额大于等于100万元"
+  },
+  {
+    "id": "reference-example:ACTIVITY:P04::ACTIVITY_NEXT::reference-example:ACTIVITY:P06",
+    "from": "reference-example:ACTIVITY:P04",
+    "to": "reference-example:ACTIVITY:P06",
+    "type": "ACTIVITY_NEXT",
+    "label": "普通金额合同"
+  },
+  {
+    "id": "reference-example:FLOW:FLOW-CONTRACT-APPROVAL-001::FLOW_CONTAINS_ACTIVITY::reference-example:ACTIVITY:P05",
+    "from": "reference-example:FLOW:FLOW-CONTRACT-APPROVAL-001",
+    "to": "reference-example:ACTIVITY:P05",
+    "type": "FLOW_CONTAINS_ACTIVITY",
+    "label": "包含活动"
+  },
+  {
+    "id": "reference-example:ACTIVITY:P05::ACTIVITY_CALLS_BEHAVIOR::reference-example:BEHAVIOR:Contract_ApproveGeneralManager",
+    "from": "reference-example:ACTIVITY:P05",
+    "to": "reference-example:BEHAVIOR:Contract_ApproveGeneralManager",
+    "type": "ACTIVITY_CALLS_BEHAVIOR",
+    "label": "执行行为"
+  },
+  {
+    "id": "reference-example:ACTIVITY:P05::ACTIVITY_ROLE::reference-example:ROLE:ROLE-GENERAL-MANAGER",
+    "from": "reference-example:ACTIVITY:P05",
+    "to": "reference-example:ROLE:ROLE-GENERAL-MANAGER",
+    "type": "ACTIVITY_ROLE",
+    "label": "参与角色"
+  },
+  {
+    "id": "reference-example:ACTIVITY:P05::ACTIVITY_NEXT::reference-example:ACTIVITY:P06",
+    "from": "reference-example:ACTIVITY:P05",
+    "to": "reference-example:ACTIVITY:P06",
+    "type": "ACTIVITY_NEXT",
+    "label": "下一步"
+  },
+  {
+    "id": "reference-example:FLOW:FLOW-CONTRACT-APPROVAL-001::FLOW_CONTAINS_ACTIVITY::reference-example:ACTIVITY:P06",
+    "from": "reference-example:FLOW:FLOW-CONTRACT-APPROVAL-001",
+    "to": "reference-example:ACTIVITY:P06",
+    "type": "FLOW_CONTAINS_ACTIVITY",
+    "label": "包含活动"
+  },
+  {
+    "id": "reference-example:ACTIVITY:P06::ACTIVITY_CALLS_BEHAVIOR::reference-example:BEHAVIOR:Contract_ApproveGeneralManager",
+    "from": "reference-example:ACTIVITY:P06",
+    "to": "reference-example:BEHAVIOR:Contract_ApproveGeneralManager",
+    "type": "ACTIVITY_CALLS_BEHAVIOR",
+    "label": "执行行为"
+  },
+  {
+    "id": "reference-example:ACTIVITY:P06::ACTIVITY_NEXT::reference-example:ACTIVITY:P07",
+    "from": "reference-example:ACTIVITY:P06",
+    "to": "reference-example:ACTIVITY:P07",
+    "type": "ACTIVITY_NEXT",
+    "label": "下一步"
+  },
+  {
+    "id": "reference-example:FLOW:FLOW-CONTRACT-APPROVAL-001::FLOW_CONTAINS_ACTIVITY::reference-example:ACTIVITY:P07",
+    "from": "reference-example:FLOW:FLOW-CONTRACT-APPROVAL-001",
+    "to": "reference-example:ACTIVITY:P07",
+    "type": "FLOW_CONTAINS_ACTIVITY",
+    "label": "包含活动"
+  },
+  {
+    "id": "reference-example:FLOW:FLOW-CONTRACT-APPROVAL-001::FLOW_CONTAINS_ACTIVITY::reference-example:ACTIVITY:P08",
+    "from": "reference-example:FLOW:FLOW-CONTRACT-APPROVAL-001",
+    "to": "reference-example:ACTIVITY:P08",
+    "type": "FLOW_CONTAINS_ACTIVITY",
+    "label": "包含活动"
+  },
+  {
+    "id": "reference-example:FLOW:FLOW-INVOICE-APPROVAL-002::FLOW_BUSINESS_OBJECT::reference-example:AGGREGATE_ROOT:AGG-INVOICE-001",
+    "from": "reference-example:FLOW:FLOW-INVOICE-APPROVAL-002",
+    "to": "reference-example:AGGREGATE_ROOT:AGG-INVOICE-001",
+    "type": "FLOW_BUSINESS_OBJECT",
+    "label": "操作对象"
+  },
+  {
+    "id": "reference-example:FLOW:FLOW-INVOICE-APPROVAL-002::FLOW_ROLE::reference-example:ROLE:ROLE-FINANCE-MANAGER",
+    "from": "reference-example:FLOW:FLOW-INVOICE-APPROVAL-002",
+    "to": "reference-example:ROLE:ROLE-FINANCE-MANAGER",
+    "type": "FLOW_ROLE",
+    "label": "涉及角色"
+  },
+  {
+    "id": "reference-example:FLOW:FLOW-INVOICE-APPROVAL-002::FLOW_CONTAINS_ACTIVITY::reference-example:ACTIVITY:Q01",
+    "from": "reference-example:FLOW:FLOW-INVOICE-APPROVAL-002",
+    "to": "reference-example:ACTIVITY:Q01",
+    "type": "FLOW_CONTAINS_ACTIVITY",
+    "label": "包含活动"
+  },
+  {
+    "id": "reference-example:ACTIVITY:Q01::ACTIVITY_NEXT::reference-example:ACTIVITY:Q02",
+    "from": "reference-example:ACTIVITY:Q01",
+    "to": "reference-example:ACTIVITY:Q02",
+    "type": "ACTIVITY_NEXT",
+    "label": "下一步"
+  },
+  {
+    "id": "reference-example:FLOW:FLOW-INVOICE-APPROVAL-002::FLOW_CONTAINS_ACTIVITY::reference-example:ACTIVITY:Q02",
+    "from": "reference-example:FLOW:FLOW-INVOICE-APPROVAL-002",
+    "to": "reference-example:ACTIVITY:Q02",
+    "type": "FLOW_CONTAINS_ACTIVITY",
+    "label": "包含活动"
+  },
+  {
+    "id": "reference-example:ACTIVITY:Q02::ACTIVITY_CALLS_BEHAVIOR::reference-example:BEHAVIOR:Invoice_ApproveFinance",
+    "from": "reference-example:ACTIVITY:Q02",
+    "to": "reference-example:BEHAVIOR:Invoice_ApproveFinance",
+    "type": "ACTIVITY_CALLS_BEHAVIOR",
+    "label": "执行行为"
+  },
+  {
+    "id": "reference-example:ACTIVITY:Q02::ACTIVITY_ROLE::reference-example:ROLE:ROLE-FINANCE-MANAGER",
+    "from": "reference-example:ACTIVITY:Q02",
+    "to": "reference-example:ROLE:ROLE-FINANCE-MANAGER",
+    "type": "ACTIVITY_ROLE",
+    "label": "参与角色"
+  },
+  {
+    "id": "reference-example:ACTIVITY:Q02::ACTIVITY_NEXT::reference-example:ACTIVITY:Q03",
+    "from": "reference-example:ACTIVITY:Q02",
+    "to": "reference-example:ACTIVITY:Q03",
+    "type": "ACTIVITY_NEXT",
+    "label": "下一步"
+  },
+  {
+    "id": "reference-example:FLOW:FLOW-INVOICE-APPROVAL-002::FLOW_CONTAINS_ACTIVITY::reference-example:ACTIVITY:Q03",
+    "from": "reference-example:FLOW:FLOW-INVOICE-APPROVAL-002",
+    "to": "reference-example:ACTIVITY:Q03",
+    "type": "FLOW_CONTAINS_ACTIVITY",
+    "label": "包含活动"
+  },
+  {
+    "id": "reference-example:ACTIVITY:Q03::ACTIVITY_NEXT::reference-example:ACTIVITY:Q04",
+    "from": "reference-example:ACTIVITY:Q03",
+    "to": "reference-example:ACTIVITY:Q04",
+    "type": "ACTIVITY_NEXT",
+    "label": "通过"
+  },
+  {
+    "id": "reference-example:ACTIVITY:Q03::ACTIVITY_NEXT::reference-example:ACTIVITY:Q05",
+    "from": "reference-example:ACTIVITY:Q03",
+    "to": "reference-example:ACTIVITY:Q05",
+    "type": "ACTIVITY_NEXT",
+    "label": "驳回"
+  },
+  {
+    "id": "reference-example:FLOW:FLOW-INVOICE-APPROVAL-002::FLOW_CONTAINS_ACTIVITY::reference-example:ACTIVITY:Q04",
+    "from": "reference-example:FLOW:FLOW-INVOICE-APPROVAL-002",
+    "to": "reference-example:ACTIVITY:Q04",
+    "type": "FLOW_CONTAINS_ACTIVITY",
+    "label": "包含活动"
+  },
+  {
+    "id": "reference-example:FLOW:FLOW-INVOICE-APPROVAL-002::FLOW_CONTAINS_ACTIVITY::reference-example:ACTIVITY:Q05",
+    "from": "reference-example:FLOW:FLOW-INVOICE-APPROVAL-002",
+    "to": "reference-example:ACTIVITY:Q05",
+    "type": "FLOW_CONTAINS_ACTIVITY",
+    "label": "包含活动"
+  },
+  {
+    "id": "reference-example:REPORT:REP-CONTRACT-LIST::REPORT_BEHAVIOR::reference-example:BEHAVIOR:Contract_QueryList",
+    "from": "reference-example:REPORT:REP-CONTRACT-LIST",
+    "to": "reference-example:BEHAVIOR:Contract_QueryList",
+    "type": "REPORT_BEHAVIOR",
+    "label": "对应行为"
+  },
+  {
+    "id": "reference-example:REPORT:REP-CONTRACT-LIST::REPORT_SOURCE_OBJECT::reference-example:AGGREGATE_ROOT:AGG-CONTRACT-001",
+    "from": "reference-example:REPORT:REP-CONTRACT-LIST",
+    "to": "reference-example:AGGREGATE_ROOT:AGG-CONTRACT-001",
+    "type": "REPORT_SOURCE_OBJECT",
+    "label": "contract"
+  },
+  {
+    "id": "reference-example:REPORT:REP-CONTRACT-LIST::REPORT_SOURCE_OBJECT::reference-example:AGGREGATE_ROOT:AGG-PRODUCT-001",
+    "from": "reference-example:REPORT:REP-CONTRACT-LIST",
+    "to": "reference-example:AGGREGATE_ROOT:AGG-PRODUCT-001",
+    "type": "REPORT_SOURCE_OBJECT",
+    "label": "product"
+  },
+  {
+    "id": "reference-example:REPORT:REP-CONTRACT-LIST::REPORT_SOURCE_OBJECT::reference-example:AGGREGATE_ROOT:AGG-CUSTOMER-001",
+    "from": "reference-example:REPORT:REP-CONTRACT-LIST",
+    "to": "reference-example:AGGREGATE_ROOT:AGG-CUSTOMER-001",
+    "type": "REPORT_SOURCE_OBJECT",
+    "label": "customer"
+  },
+  {
+    "id": "reference-example:REPORT:REP-CONTRACT-LIST::REPORT_SOURCE_OBJECT::reference-example:AGGREGATE_ROOT:AGG-DEPARTMENT-001",
+    "from": "reference-example:REPORT:REP-CONTRACT-LIST",
+    "to": "reference-example:AGGREGATE_ROOT:AGG-DEPARTMENT-001",
+    "type": "REPORT_SOURCE_OBJECT",
+    "label": "department"
+  },
+  {
+    "id": "reference-example:REPORT:REP-CONTRACT-LIST::REPORT_SOURCE_OBJECT::reference-example:AGGREGATE_ROOT:AGG-EMPLOYEE-001",
+    "from": "reference-example:REPORT:REP-CONTRACT-LIST",
+    "to": "reference-example:AGGREGATE_ROOT:AGG-EMPLOYEE-001",
+    "type": "REPORT_SOURCE_OBJECT",
+    "label": "employee"
+  },
+  {
+    "id": "reference-example:REPORT:REP-CONTRACT-DETAIL::REPORT_BEHAVIOR::reference-example:BEHAVIOR:Contract_QueryDetail",
+    "from": "reference-example:REPORT:REP-CONTRACT-DETAIL",
+    "to": "reference-example:BEHAVIOR:Contract_QueryDetail",
+    "type": "REPORT_BEHAVIOR",
+    "label": "对应行为"
+  },
+  {
+    "id": "reference-example:REPORT:REP-CONTRACT-DETAIL::REPORT_SOURCE_OBJECT::reference-example:AGGREGATE_ROOT:AGG-CONTRACT-001",
+    "from": "reference-example:REPORT:REP-CONTRACT-DETAIL",
+    "to": "reference-example:AGGREGATE_ROOT:AGG-CONTRACT-001",
+    "type": "REPORT_SOURCE_OBJECT",
+    "label": "contract"
+  },
+  {
+    "id": "reference-example:REPORT:REP-CONTRACT-EXECUTION::REPORT_BEHAVIOR::reference-example:BEHAVIOR:Contract_QueryExecutionAnalysis",
+    "from": "reference-example:REPORT:REP-CONTRACT-EXECUTION",
+    "to": "reference-example:BEHAVIOR:Contract_QueryExecutionAnalysis",
+    "type": "REPORT_BEHAVIOR",
+    "label": "对应行为"
+  },
+  {
+    "id": "reference-example:REPORT:REP-CONTRACT-EXECUTION::REPORT_SOURCE_OBJECT::reference-example:AGGREGATE_ROOT:AGG-CONTRACT-001",
+    "from": "reference-example:REPORT:REP-CONTRACT-EXECUTION",
+    "to": "reference-example:AGGREGATE_ROOT:AGG-CONTRACT-001",
+    "type": "REPORT_SOURCE_OBJECT",
+    "label": "contract"
+  },
+  {
+    "id": "reference-example:REPORT:REP-CONTRACT-EXECUTION::REPORT_SOURCE_OBJECT::reference-example:AGGREGATE_ROOT:AGG-INVOICE-001",
+    "from": "reference-example:REPORT:REP-CONTRACT-EXECUTION",
+    "to": "reference-example:AGGREGATE_ROOT:AGG-INVOICE-001",
+    "type": "REPORT_SOURCE_OBJECT",
+    "label": "invoiceAgg"
+  },
+  {
+    "id": "reference-example:REPORT:REP-CONTRACT-EXECUTION::REPORT_SOURCE_OBJECT::reference-example:AGGREGATE_ROOT:AGG-RECEIPT-001",
+    "from": "reference-example:REPORT:REP-CONTRACT-EXECUTION",
+    "to": "reference-example:AGGREGATE_ROOT:AGG-RECEIPT-001",
+    "type": "REPORT_SOURCE_OBJECT",
+    "label": "receiptAgg"
+  },
+  {
+    "id": "reference-example:REPORT:REP-DEPT-CONTRACT-SUMMARY::REPORT_BEHAVIOR::reference-example:BEHAVIOR:Contract_QueryDepartmentSummary",
+    "from": "reference-example:REPORT:REP-DEPT-CONTRACT-SUMMARY",
+    "to": "reference-example:BEHAVIOR:Contract_QueryDepartmentSummary",
+    "type": "REPORT_BEHAVIOR",
+    "label": "对应行为"
+  },
+  {
+    "id": "reference-example:REPORT:REP-DEPT-CONTRACT-SUMMARY::REPORT_SOURCE_OBJECT::reference-example:AGGREGATE_ROOT:AGG-CONTRACT-001",
+    "from": "reference-example:REPORT:REP-DEPT-CONTRACT-SUMMARY",
+    "to": "reference-example:AGGREGATE_ROOT:AGG-CONTRACT-001",
+    "type": "REPORT_SOURCE_OBJECT",
+    "label": "contract"
+  },
+  {
+    "id": "reference-example:REPORT:REP-DEPT-CONTRACT-SUMMARY::REPORT_SOURCE_OBJECT::reference-example:AGGREGATE_ROOT:AGG-DEPARTMENT-001",
+    "from": "reference-example:REPORT:REP-DEPT-CONTRACT-SUMMARY",
+    "to": "reference-example:AGGREGATE_ROOT:AGG-DEPARTMENT-001",
+    "type": "REPORT_SOURCE_OBJECT",
+    "label": "department"
+  },
+  {
+    "id": "reference-example:REPORT:REP-DEPT-CONTRACT-SUMMARY::REPORT_SOURCE_OBJECT::reference-example:AGGREGATE_ROOT:AGG-INVOICE-001",
+    "from": "reference-example:REPORT:REP-DEPT-CONTRACT-SUMMARY",
+    "to": "reference-example:AGGREGATE_ROOT:AGG-INVOICE-001",
+    "type": "REPORT_SOURCE_OBJECT",
+    "label": "invoiceAgg"
+  },
+  {
+    "id": "reference-example:REPORT:REP-DEPT-CONTRACT-SUMMARY::REPORT_SOURCE_OBJECT::reference-example:AGGREGATE_ROOT:AGG-RECEIPT-001",
+    "from": "reference-example:REPORT:REP-DEPT-CONTRACT-SUMMARY",
+    "to": "reference-example:AGGREGATE_ROOT:AGG-RECEIPT-001",
+    "type": "REPORT_SOURCE_OBJECT",
+    "label": "receiptAgg"
+  },
+  {
+    "id": "reference-example:REPORT:REP-INVOICED-UNRECEIVED::REPORT_BEHAVIOR::reference-example:BEHAVIOR:Contract_QueryInvoicedUnreceived",
+    "from": "reference-example:REPORT:REP-INVOICED-UNRECEIVED",
+    "to": "reference-example:BEHAVIOR:Contract_QueryInvoicedUnreceived",
+    "type": "REPORT_BEHAVIOR",
+    "label": "对应行为"
+  },
+  {
+    "id": "reference-example:REPORT:REP-INVOICED-UNRECEIVED::REPORT_SOURCE_OBJECT::reference-example:AGGREGATE_ROOT:AGG-INVOICE-001",
+    "from": "reference-example:REPORT:REP-INVOICED-UNRECEIVED",
+    "to": "reference-example:AGGREGATE_ROOT:AGG-INVOICE-001",
+    "type": "REPORT_SOURCE_OBJECT",
+    "label": "invoice"
+  },
+  {
+    "id": "reference-example:REPORT:REP-INVOICED-UNRECEIVED::REPORT_SOURCE_OBJECT::reference-example:AGGREGATE_ROOT:AGG-CONTRACT-001",
+    "from": "reference-example:REPORT:REP-INVOICED-UNRECEIVED",
+    "to": "reference-example:AGGREGATE_ROOT:AGG-CONTRACT-001",
+    "type": "REPORT_SOURCE_OBJECT",
+    "label": "contract"
+  },
+  {
+    "id": "reference-example:REPORT:REP-INVOICED-UNRECEIVED::REPORT_SOURCE_OBJECT::reference-example:AGGREGATE_ROOT:AGG-RECEIPT-001",
+    "from": "reference-example:REPORT:REP-INVOICED-UNRECEIVED",
+    "to": "reference-example:AGGREGATE_ROOT:AGG-RECEIPT-001",
+    "type": "REPORT_SOURCE_OBJECT",
+    "label": "receiptAgg"
+  },
+  {
+    "id": "reference-example:UI_MENU:menu-contract-maintain::MENU_CONTAINS_MENU::reference-example:UI_MENU:menu-contract",
+    "from": "reference-example:UI_MENU:menu-contract-maintain",
+    "to": "reference-example:UI_MENU:menu-contract",
+    "type": "MENU_CONTAINS_MENU",
+    "label": "子菜单"
+  },
+  {
+    "id": "reference-example:UI_MENU:menu-contract-maintain::MENU_SCREEN::reference-example:UI_SCREEN:frmContractMaintain",
+    "from": "reference-example:UI_MENU:menu-contract-maintain",
+    "to": "reference-example:UI_SCREEN:frmContractMaintain",
+    "type": "MENU_SCREEN",
+    "label": "对应页面"
+  },
+  {
+    "id": "reference-example:UI_MENU:menu-contract-query::MENU_CONTAINS_MENU::reference-example:UI_MENU:menu-contract",
+    "from": "reference-example:UI_MENU:menu-contract-query",
+    "to": "reference-example:UI_MENU:menu-contract",
+    "type": "MENU_CONTAINS_MENU",
+    "label": "子菜单"
+  },
+  {
+    "id": "reference-example:UI_MENU:menu-contract-query::MENU_SCREEN::reference-example:UI_SCREEN:frmContractQuery",
+    "from": "reference-example:UI_MENU:menu-contract-query",
+    "to": "reference-example:UI_SCREEN:frmContractQuery",
+    "type": "MENU_SCREEN",
+    "label": "对应页面"
+  },
+  {
+    "id": "reference-example:UI_MENU:menu-invoice-maintain::MENU_CONTAINS_MENU::reference-example:UI_MENU:menu-invoice",
+    "from": "reference-example:UI_MENU:menu-invoice-maintain",
+    "to": "reference-example:UI_MENU:menu-invoice",
+    "type": "MENU_CONTAINS_MENU",
+    "label": "子菜单"
+  },
+  {
+    "id": "reference-example:UI_MENU:menu-invoice-maintain::MENU_SCREEN::reference-example:UI_SCREEN:frmInvoiceMaintain",
+    "from": "reference-example:UI_MENU:menu-invoice-maintain",
+    "to": "reference-example:UI_SCREEN:frmInvoiceMaintain",
+    "type": "MENU_SCREEN",
+    "label": "对应页面"
+  },
+  {
+    "id": "reference-example:UI_MENU:menu-invoice-query::MENU_CONTAINS_MENU::reference-example:UI_MENU:menu-invoice",
+    "from": "reference-example:UI_MENU:menu-invoice-query",
+    "to": "reference-example:UI_MENU:menu-invoice",
+    "type": "MENU_CONTAINS_MENU",
+    "label": "子菜单"
+  },
+  {
+    "id": "reference-example:UI_MENU:menu-invoice-query::MENU_SCREEN::reference-example:UI_SCREEN:frmInvoiceQuery",
+    "from": "reference-example:UI_MENU:menu-invoice-query",
+    "to": "reference-example:UI_SCREEN:frmInvoiceQuery",
+    "type": "MENU_SCREEN",
+    "label": "对应页面"
+  },
+  {
+    "id": "reference-example:UI_MENU:menu-receipt-maintain::MENU_CONTAINS_MENU::reference-example:UI_MENU:menu-receipt",
+    "from": "reference-example:UI_MENU:menu-receipt-maintain",
+    "to": "reference-example:UI_MENU:menu-receipt",
+    "type": "MENU_CONTAINS_MENU",
+    "label": "子菜单"
+  },
+  {
+    "id": "reference-example:UI_MENU:menu-receipt-maintain::MENU_SCREEN::reference-example:UI_SCREEN:frmReceiptMaintain",
+    "from": "reference-example:UI_MENU:menu-receipt-maintain",
+    "to": "reference-example:UI_SCREEN:frmReceiptMaintain",
+    "type": "MENU_SCREEN",
+    "label": "对应页面"
+  },
+  {
+    "id": "reference-example:UI_MENU:menu-receipt-query::MENU_CONTAINS_MENU::reference-example:UI_MENU:menu-receipt",
+    "from": "reference-example:UI_MENU:menu-receipt-query",
+    "to": "reference-example:UI_MENU:menu-receipt",
+    "type": "MENU_CONTAINS_MENU",
+    "label": "子菜单"
+  },
+  {
+    "id": "reference-example:UI_MENU:menu-receipt-query::MENU_SCREEN::reference-example:UI_SCREEN:frmReceiptQuery",
+    "from": "reference-example:UI_MENU:menu-receipt-query",
+    "to": "reference-example:UI_SCREEN:frmReceiptQuery",
+    "type": "MENU_SCREEN",
+    "label": "对应页面"
+  },
+  {
+    "id": "reference-example:UI_MENU:menu-approval-contract::MENU_CONTAINS_MENU::reference-example:UI_MENU:menu-approval",
+    "from": "reference-example:UI_MENU:menu-approval-contract",
+    "to": "reference-example:UI_MENU:menu-approval",
+    "type": "MENU_CONTAINS_MENU",
+    "label": "子菜单"
+  },
+  {
+    "id": "reference-example:UI_MENU:menu-approval-contract::MENU_SCREEN::reference-example:UI_SCREEN:frmContractApproval",
+    "from": "reference-example:UI_MENU:menu-approval-contract",
+    "to": "reference-example:UI_SCREEN:frmContractApproval",
+    "type": "MENU_SCREEN",
+    "label": "对应页面"
+  },
+  {
+    "id": "reference-example:UI_MENU:menu-approval-invoice::MENU_CONTAINS_MENU::reference-example:UI_MENU:menu-approval",
+    "from": "reference-example:UI_MENU:menu-approval-invoice",
+    "to": "reference-example:UI_MENU:menu-approval",
+    "type": "MENU_CONTAINS_MENU",
+    "label": "子菜单"
+  },
+  {
+    "id": "reference-example:UI_MENU:menu-approval-invoice::MENU_SCREEN::reference-example:UI_SCREEN:frmInvoiceApproval",
+    "from": "reference-example:UI_MENU:menu-approval-invoice",
+    "to": "reference-example:UI_SCREEN:frmInvoiceApproval",
+    "type": "MENU_SCREEN",
+    "label": "对应页面"
+  },
+  {
+    "id": "reference-example:UI_MENU:menu-report-execution::MENU_CONTAINS_MENU::reference-example:UI_MENU:menu-report",
+    "from": "reference-example:UI_MENU:menu-report-execution",
+    "to": "reference-example:UI_MENU:menu-report",
+    "type": "MENU_CONTAINS_MENU",
+    "label": "子菜单"
+  },
+  {
+    "id": "reference-example:UI_MENU:menu-report-execution::MENU_SCREEN::reference-example:UI_SCREEN:frmContractExecutionReport",
+    "from": "reference-example:UI_MENU:menu-report-execution",
+    "to": "reference-example:UI_SCREEN:frmContractExecutionReport",
+    "type": "MENU_SCREEN",
+    "label": "对应页面"
+  },
+  {
+    "id": "reference-example:UI_MENU:menu-report-dept::MENU_CONTAINS_MENU::reference-example:UI_MENU:menu-report",
+    "from": "reference-example:UI_MENU:menu-report-dept",
+    "to": "reference-example:UI_MENU:menu-report",
+    "type": "MENU_CONTAINS_MENU",
+    "label": "子菜单"
+  },
+  {
+    "id": "reference-example:UI_MENU:menu-report-dept::MENU_SCREEN::reference-example:UI_SCREEN:frmDeptReport",
+    "from": "reference-example:UI_MENU:menu-report-dept",
+    "to": "reference-example:UI_SCREEN:frmDeptReport",
+    "type": "MENU_SCREEN",
+    "label": "对应页面"
+  },
+  {
+    "id": "reference-example:UI_MENU:menu-report-unreceived::MENU_CONTAINS_MENU::reference-example:UI_MENU:menu-report",
+    "from": "reference-example:UI_MENU:menu-report-unreceived",
+    "to": "reference-example:UI_MENU:menu-report",
+    "type": "MENU_CONTAINS_MENU",
+    "label": "子菜单"
+  },
+  {
+    "id": "reference-example:UI_MENU:menu-report-unreceived::MENU_SCREEN::reference-example:UI_SCREEN:frmUnreceivedReport",
+    "from": "reference-example:UI_MENU:menu-report-unreceived",
+    "to": "reference-example:UI_SCREEN:frmUnreceivedReport",
+    "type": "MENU_SCREEN",
+    "label": "对应页面"
+  },
+  {
+    "id": "reference-example:UI_MENU:menu-masterdata-product::MENU_CONTAINS_MENU::reference-example:UI_MENU:menu-masterdata",
+    "from": "reference-example:UI_MENU:menu-masterdata-product",
+    "to": "reference-example:UI_MENU:menu-masterdata",
+    "type": "MENU_CONTAINS_MENU",
+    "label": "子菜单"
+  },
+  {
+    "id": "reference-example:UI_MENU:menu-masterdata-product::MENU_SCREEN::reference-example:UI_SCREEN:frmProductMaintain",
+    "from": "reference-example:UI_MENU:menu-masterdata-product",
+    "to": "reference-example:UI_SCREEN:frmProductMaintain",
+    "type": "MENU_SCREEN",
+    "label": "对应页面"
+  },
+  {
+    "id": "reference-example:UI_MENU:menu-masterdata-customer::MENU_CONTAINS_MENU::reference-example:UI_MENU:menu-masterdata",
+    "from": "reference-example:UI_MENU:menu-masterdata-customer",
+    "to": "reference-example:UI_MENU:menu-masterdata",
+    "type": "MENU_CONTAINS_MENU",
+    "label": "子菜单"
+  },
+  {
+    "id": "reference-example:UI_MENU:menu-masterdata-customer::MENU_SCREEN::reference-example:UI_SCREEN:frmCustomerMaintain",
+    "from": "reference-example:UI_MENU:menu-masterdata-customer",
+    "to": "reference-example:UI_SCREEN:frmCustomerMaintain",
+    "type": "MENU_SCREEN",
+    "label": "对应页面"
+  },
+  {
+    "id": "reference-example:UI_MENU:menu-masterdata-department::MENU_CONTAINS_MENU::reference-example:UI_MENU:menu-masterdata",
+    "from": "reference-example:UI_MENU:menu-masterdata-department",
+    "to": "reference-example:UI_MENU:menu-masterdata",
+    "type": "MENU_CONTAINS_MENU",
+    "label": "子菜单"
+  },
+  {
+    "id": "reference-example:UI_MENU:menu-masterdata-department::MENU_SCREEN::reference-example:UI_SCREEN:frmDepartmentMaintain",
+    "from": "reference-example:UI_MENU:menu-masterdata-department",
+    "to": "reference-example:UI_SCREEN:frmDepartmentMaintain",
+    "type": "MENU_SCREEN",
+    "label": "对应页面"
+  },
+  {
+    "id": "reference-example:UI_MENU:menu-masterdata-employee::MENU_CONTAINS_MENU::reference-example:UI_MENU:menu-masterdata",
+    "from": "reference-example:UI_MENU:menu-masterdata-employee",
+    "to": "reference-example:UI_MENU:menu-masterdata",
+    "type": "MENU_CONTAINS_MENU",
+    "label": "子菜单"
+  },
+  {
+    "id": "reference-example:UI_MENU:menu-masterdata-employee::MENU_SCREEN::reference-example:UI_SCREEN:frmEmployeeMaintain",
+    "from": "reference-example:UI_MENU:menu-masterdata-employee",
+    "to": "reference-example:UI_SCREEN:frmEmployeeMaintain",
+    "type": "MENU_SCREEN",
+    "label": "对应页面"
+  }
+]

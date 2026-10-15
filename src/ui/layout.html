@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ontology Lab</title>
+<style>
+/* @include: css/base.css */
+/* @include: css/suites.css */
+/* @include: css/coverage.css */
+/* @include: css/framework.css */
+/* @include: css/flowchart.css */
+/* @include: css/ontology.css */
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <span class="logo">🧬</span>
+    <span>Ontology Lab</span>
+    <span class="version">v1.0</span>
+  </div>
+  <div class="spacer"></div>
+  <div class="suite-bar">
+    <label for="suiteSelect">选择套件:</label>
+    <select id="suiteSelect"><option value="">— 加载中… —</option></select>
+    <button class="btn" id="btnRefresh" title="重新加载套件与覆盖度数据">🔄 刷新</button>
+    <button class="btn" id="btnReimport" title="从 datasource 重新解析并导入（保留标注）">📦 重新导入</button>
+  </div>
+</header>
+
+<nav class="tabs" id="tabs">
+  <button data-tab="ontology" class="active">本体<span class="tab-count" id="cntEntities">0</span></button>
+  <button data-tab="suites">本体管理<span class="tab-count" id="cntSuites">0</span></button>
+  <button data-tab="framework" disabled>APQC</button>
+  <button data-tab="flowchart" disabled>流程图<span class="tab-count" id="cntFlows">0</span></button>
+  <button data-tab="coverage" disabled>覆盖度</button>
+</nav>
+
+<main>
+<!-- @include: pages/suites.html -->
+<!-- @include: pages/coverage.html -->
+<!-- @include: pages/framework.html -->
+<!-- @include: pages/flowchart.html -->
+<!-- @include: pages/ontology.html -->
+</main>
+
+<!-- 标注抽屉 -->
+<div class="overlay" id="overlay"></div>
+<aside class="drawer" id="drawer">
+  <div class="drawer-head">
+    <div class="dt">
+      <h3 id="dwTitle">—</h3>
+      <div class="dsub" id="dwSub">—</div>
+    </div>
+    <button class="drawer-close" id="dwClose" title="关闭">✕</button>
+  </div>
+  <div class="drawer-body">
+    <div class="drawer-sec">
+      <h4>实体信息</h4>
+      <div class="ent-desc" id="dwDesc" style="display:none"></div>
+      <dl class="info-grid" id="dwInfo"></dl>
+    </div>
+    <div class="drawer-sec">
+      <h4>APQC 编号</h4>
+      <div class="apqc-box">
+        <input type="text" id="dwApqc" placeholder="如 9.3.1，输入以搜索…" autocomplete="off">
+        <div class="apqc-sug" id="dwSug"></div>
+      </div>
+      <div class="derive-line" id="dwDerive"></div>
+    </div>
+    <div class="drawer-sec">
+      <h4>覆盖状态</h4>
+      <div class="status-btns" id="dwStatus"></div>
+    </div>
+    <div class="drawer-sec">
+      <h4>备注</h4>
+      <textarea id="dwNote" placeholder="该实体属于哪个流程、口径说明等…"></textarea>
+    </div>
+  </div>
+  <div class="drawer-foot">
+    <button class="btn" id="dwClear" title="清除该实体的全部标注">清除标注</button>
+    <button class="btn primary" id="dwSave">保存</button>
+  </div>
+</aside>
+
+<div id="toast"></div>
+
+<script>
+'use strict';
+/* @include: scripts/shared.js */
+/* @include: scripts/suites.js */
+/* @include: scripts/coverage.js */
+/* @include: scripts/framework.js */
+/* @include: scripts/flowchart.js */
+/* @include: scripts/ontology.js */
+/* @include: scripts/main.js */
+</script>
+
+</body>
+</html>

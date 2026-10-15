@@ -1,0 +1,25 @@
+{
+  "entityFrameMapping": {
+    "reference-example:AGGREGATE_ROOT:AGG-PRODUCT-001": {
+      "frameworkId": "apqc-process",
+      "apqcCode": "2.3.2",
+      "mappedAt": 1792047623774
+    },
+    "reference-example:AGGREGATE_ROOT:AGG-CUSTOMER-001": {
+      "frameworkId": "apqc-process",
+      "apqcCode": "6.1.1",
+      "mappedAt": 1792050660145
+    }
+  },
+  "coverageMarks": {
+    "reference-example:AGGREGATE_ROOT:AGG-PRODUCT-001": {
+      "status": "partial",
+      "updatedAt": 1792047623774
+    },
+    "reference-example:AGGREGATE_ROOT:AGG-CUSTOMER-001": {
+      "status": "covered",
+      "updatedAt": 1792050660145
+    }
+  },
+  "customRelations": []
+}

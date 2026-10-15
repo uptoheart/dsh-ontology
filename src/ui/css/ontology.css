@@ -1,0 +1,58 @@
+/* ═══════════ Tab4 本体：关系图 + 详情 ═══════════ */
+#tab-ontology { display: none; padding: 0; }
+#tab-ontology.active { display: flex; }
+#tab-ontology .split-left { width: 58%; min-width: 420px; }
+.graph-toolbar {
+  flex-shrink: 0; padding: 8px 12px;
+  border-bottom: 1px solid var(--border); background: var(--surface);
+}
+.graph-toolbar .gt-row { display: flex; align-items: center; gap: 8px; }
+.graph-toolbar .gt-title { font-size: 12px; font-weight: 600; color: var(--text-dim); flex-shrink: 0; }
+.graph-toolbar .btn { padding: 2px 8px; font-size: 11px; }
+.graph-toolbar .gt-hint { font-size: 10.5px; color: var(--text-dim); margin-left: auto; white-space: nowrap; }
+.legend { display: flex; flex-wrap: wrap; gap: 4px 6px; margin-top: 7px; }
+.lg-chip {
+  display: inline-flex; align-items: center; gap: 4px;
+  border: 1px solid var(--border); background: var(--card);
+  border-radius: 9px; padding: 1px 8px; font-size: 10px; line-height: 16px;
+  color: var(--text-dim);
+}
+.lg-chip i { width: 8px; height: 8px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
+.lg-chip b { font-family: var(--mono); font-weight: 500; }
+.lg-chip.off { opacity: .38; }
+.lg-chip:hover { border-color: var(--border-h); }
+.graph-wrap { flex: 1; min-height: 0; position: relative; background: var(--bg); }
+.graph-wrap canvas { position: absolute; inset: 0; display: block; cursor: grab; }
+.graph-wrap canvas.dragging { cursor: grabbing; }
+.graph-wrap canvas.pointing { cursor: pointer; }
+
+#tab-ontology .split-right { padding: 16px 18px; }
+.onto-detail h2 { font-size: 15px; margin-bottom: 4px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.onto-detail h2 .en { font-size: 11.5px; color: var(--text-dim); font-weight: 400; }
+.onto-detail .od-sub { font-family: var(--mono); font-size: 10.5px; color: var(--text-dim); margin-bottom: 10px; word-break: break-all; }
+.detail-sec { margin-bottom: 18px; }
+.detail-sec > h4 {
+  font-size: 11.5px; font-weight: 600; color: var(--text-dim);
+  text-transform: uppercase; letter-spacing: .04em; margin-bottom: 8px;
+  display: flex; align-items: center; gap: 6px;
+}
+.detail-sec > h4 .sec-n { font-family: var(--mono); font-weight: 500; }
+.detail-sec > h4::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+.rel-group { margin-bottom: 10px; }
+.rel-group > h5 {
+  font-size: 11px; color: var(--text-dim); font-weight: 600;
+  margin-bottom: 5px; display: flex; align-items: center; gap: 6px;
+}
+.rel-group > h5 .kind-tag { font-size: 9px; }
+.rel-items { display: flex; flex-wrap: wrap; gap: 5px; }
+.rel-item {
+  display: inline-flex; align-items: center; gap: 6px;
+  border: 1px solid var(--border); border-radius: 6px;
+  background: var(--card); padding: 3px 9px; font-size: 12px;
+  transition: border-color .1s, background .1s;
+}
+.rel-item:hover { border-color: var(--border-h); background: var(--hover); }
+.rel-item.sel { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+.rel-item .arrow { color: var(--text-dim); font-size: 10px; }
+.rel-item .dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+.rel-empty { font-size: 11.5px; color: var(--text-dim); }

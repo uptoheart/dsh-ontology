@@ -1,0 +1,6674 @@
+[
+  {
+    "id": "reference-example:AGGREGATE_ROOT:AGG-PRODUCT-001",
+    "rawId": "AGG-PRODUCT-001",
+    "name": "产品",
+    "kind": "AGGREGATE_ROOT",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m1-object-model.yaml",
+    "alias": "Product",
+    "description": "产品主数据，本系统维护，被合同引用",
+    "properties": {
+      "id": "AGG-PRODUCT-001",
+      "name": "产品",
+      "alias": "Product",
+      "aggregateType": "AGGREGATE_ROOT",
+      "description": "产品主数据，本系统维护，被合同引用",
+      "lifecycle": [
+        "在用",
+        "停用"
+      ],
+      "tags": [
+        "主数据"
+      ],
+      "attributes": [
+        {
+          "name": "productId",
+          "label": "产品编号",
+          "type": "String",
+          "required": true,
+          "unique": true
+        },
+        {
+          "name": "productType",
+          "label": "产品类型",
+          "type": "DictionaryRef",
+          "dictionaryRef": {
+            "dictionaryId": "DICT-PRODUCT-TYPE",
+            "typeCode": "PRODUCT_TYPE"
+          },
+          "required": true
+        },
+        {
+          "name": "productName",
+          "label": "产品名称",
+          "type": "String",
+          "required": true
+        }
+      ]
+    }
+  },
+  {
+    "id": "reference-example:AGGREGATE_ROOT:AGG-CUSTOMER-001",
+    "rawId": "AGG-CUSTOMER-001",
+    "name": "客户",
+    "kind": "AGGREGATE_ROOT",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m1-object-model.yaml",
+    "alias": "Customer",
+    "description": "客户主数据，本系统维护，被合同引用",
+    "properties": {
+      "id": "AGG-CUSTOMER-001",
+      "name": "客户",
+      "alias": "Customer",
+      "aggregateType": "AGGREGATE_ROOT",
+      "description": "客户主数据，本系统维护，被合同引用",
+      "lifecycle": [
+        "在用",
+        "停用"
+      ],
+      "tags": [
+        "主数据"
+      ],
+      "attributes": [
+        {
+          "name": "customerId",
+          "label": "客户编号",
+          "type": "String",
+          "required": true,
+          "unique": true
+        },
+        {
+          "name": "customerType",
+          "label": "客户类型",
+          "type": "DictionaryRef",
+          "dictionaryRef": {
+            "dictionaryId": "DICT-CUSTOMER-TYPE",
+            "typeCode": "CUSTOMER_TYPE"
+          },
+          "required": true
+        },
+        {
+          "name": "customerName",
+          "label": "客户名称",
+          "type": "String",
+          "required": true
+        }
+      ]
+    }
+  },
+  {
+    "id": "reference-example:AGGREGATE_ROOT:AGG-DEPARTMENT-001",
+    "rawId": "AGG-DEPARTMENT-001",
+    "name": "部门",
+    "kind": "AGGREGATE_ROOT",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m1-object-model.yaml",
+    "alias": "Department",
+    "description": "组织主数据，本系统维护，被人员和合同引用",
+    "properties": {
+      "id": "AGG-DEPARTMENT-001",
+      "name": "部门",
+      "alias": "Department",
+      "aggregateType": "AGGREGATE_ROOT",
+      "description": "组织主数据，本系统维护，被人员和合同引用",
+      "lifecycle": [
+        "在用",
+        "停用"
+      ],
+      "tags": [
+        "主数据"
+      ],
+      "attributes": [
+        {
+          "name": "departmentId",
+          "label": "部门编号",
+          "type": "String",
+          "required": true,
+          "unique": true
+        },
+        {
+          "name": "departmentName",
+          "label": "部门名称",
+          "type": "String",
+          "required": true
+        }
+      ]
+    }
+  },
+  {
+    "id": "reference-example:AGGREGATE_ROOT:AGG-EMPLOYEE-001",
+    "rawId": "AGG-EMPLOYEE-001",
+    "name": "人员",
+    "kind": "AGGREGATE_ROOT",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m1-object-model.yaml",
+    "alias": "Employee",
+    "description": "人员主数据，本系统维护，被合同责任人引用",
+    "properties": {
+      "id": "AGG-EMPLOYEE-001",
+      "name": "人员",
+      "alias": "Employee",
+      "aggregateType": "AGGREGATE_ROOT",
+      "description": "人员主数据，本系统维护，被合同责任人引用",
+      "lifecycle": [
+        "在用",
+        "停用"
+      ],
+      "tags": [
+        "主数据"
+      ],
+      "attributes": [
+        {
+          "name": "employeeId",
+          "label": "人员编号",
+          "type": "String",
+          "required": true,
+          "unique": true
+        },
+        {
+          "name": "employeeName",
+          "label": "人员名称",
+          "type": "String",
+          "required": true
+        },
+        {
+          "name": "departmentId",
+          "label": "所属部门",
+          "type": "AggregateRootRef",
+          "targetAggregate": "AGG-DEPARTMENT-001",
+          "required": true
+        }
+      ]
+    }
+  },
+  {
+    "id": "reference-example:AGGREGATE_ROOT:AGG-CONTRACT-001",
+    "rawId": "AGG-CONTRACT-001",
+    "name": "合同",
+    "kind": "AGGREGATE_ROOT",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m1-object-model.yaml",
+    "alias": "Contract",
+    "description": "对外销售产生的合同签订信息，包含合同基本信息和付款条款明细",
+    "properties": {
+      "id": "AGG-CONTRACT-001",
+      "name": "合同",
+      "alias": "Contract",
+      "aggregateType": "AGGREGATE_ROOT",
+      "description": "对外销售产生的合同签订信息，包含合同基本信息和付款条款明细",
+      "lifecycle": [
+        "草稿",
+        "待财务经理审批",
+        "待总经理审批",
+        "已纳入管理",
+        "已结清",
+        "已驳回",
+        "已作废",
+        "已归档"
+      ],
+      "tags": [
+        "核心域"
+      ],
+      "attributes": [
+        {
+          "name": "contractNo",
+          "label": "合同编号",
+          "type": "String",
+          "required": true,
+          "unique": true
+        },
+        {
+          "name": "contractName",
+          "label": "合同名称",
+          "type": "String",
+          "required": true,
+          "refRules": [
+            {
+              "name": "合同名称长度限制",
+              "description": "合同名称最多 100 个字符",
+              "expression": "LENGTH(value) <= 100",
+              "violationMessage": "合同名称不能超过 100 个字符",
+              "enforcedAt": "ALWAYS"
+            }
+          ]
+        },
+        {
+          "name": "productId",
+          "label": "所属产品",
+          "type": "AggregateRootRef",
+          "targetAggregate": "AGG-PRODUCT-001",
+          "required": true
+        },
+        {
+          "name": "customerId",
+          "label": "所属客户",
+          "type": "AggregateRootRef",
+          "targetAggregate": "AGG-CUSTOMER-001",
+          "required": true
+        },
+        {
+          "name": "departmentId",
+          "label": "所属部门",
+          "type": "AggregateRootRef",
+          "targetAggregate": "AGG-DEPARTMENT-001",
+          "required": true
+        },
+        {
+          "name": "contractType",
+          "label": "合同类型",
+          "type": "DictionaryRef",
+          "dictionaryRef": {
+            "dictionaryId": "DICT-CONTRACT-TYPE",
+            "typeCode": "CONTRACT_TYPE"
+          },
+          "required": true
+        },
+        {
+          "name": "signDate",
+          "label": "合同签订时间",
+          "type": "Date",
+          "required": true
+        },
+        {
+          "name": "ownerId",
+          "label": "责任人",
+          "type": "AggregateRootRef",
+          "targetAggregate": "AGG-EMPLOYEE-001",
+          "required": true
+        },
+        {
+          "name": "totalAmount",
+          "label": "合同总金额（含税）",
+          "type": "Money",
+          "required": true,
+          "refRules": [
+            {
+              "name": "合同总金额必须为正数",
+              "description": "合同总金额必须大于 0",
+              "expression": "value > 0",
+              "violationMessage": "合同总金额必须大于 0",
+              "enforcedAt": "ALWAYS"
+            }
+          ]
+        },
+        {
+          "name": "purchaseAmount",
+          "label": "对外采购金额（含税）",
+          "type": "Money",
+          "required": true,
+          "refRules": [
+            {
+              "name": "采购金额非负",
+              "description": "对外采购金额不能小于 0",
+              "expression": "value >= 0",
+              "violationMessage": "对外采购金额不能小于 0",
+              "enforcedAt": "ALWAYS"
+            }
+          ]
+        },
+        {
+          "name": "taxRate",
+          "label": "合同税率",
+          "type": "Decimal",
+          "required": true,
+          "refRules": [
+            {
+              "name": "税率合法范围",
+              "description": "税率取值在 0 到 1 之间",
+              "expression": "value >= 0 AND value <= 1",
+              "violationMessage": "税率取值应在 0 到 1 之间",
+              "enforcedAt": "ALWAYS"
+            }
+          ]
+        },
+        {
+          "name": "status",
+          "label": "登记管理状态",
+          "type": "Enum",
+          "enumValues": [
+            "草稿",
+            "待财务经理审批",
+            "待总经理审批",
+            "已纳入管理",
+            "已结清",
+            "已驳回",
+            "已作废",
+            "已归档"
+          ],
+          "required": true,
+          "defaultValue": "草稿"
+        },
+        {
+          "name": "registeredAt",
+          "label": "登记时间",
+          "type": "DateTime",
+          "required": true
+        },
+        {
+          "name": "registrantId",
+          "label": "登记人",
+          "type": "AggregateRootRef",
+          "targetAggregate": "AGG-EMPLOYEE-001",
+          "required": true
+        }
+      ],
+      "entities": [
+        {
+          "name": "付款阶段",
+          "alias": "PaymentStage",
+          "description": "合同付款阶段明细",
+          "localId": "stageId",
+          "cardinality": "ONE_OR_MORE",
+          "cascadeDelete": true,
+          "attributes": [
+            {
+              "name": "stageId",
+              "label": "付款阶段编号",
+              "type": "String",
+              "required": true
+            },
+            {
+              "name": "stageName",
+              "label": "付款阶段名称",
+              "type": "String",
+              "required": true
+            },
+            {
+              "name": "payRatio",
+              "label": "付款比例（百分比）",
+              "type": "Decimal",
+              "required": true,
+              "refRules": [
+                {
+                  "name": "付款比例合法范围",
+                  "description": "付款比例在 0 到 100 之间",
+                  "expression": "value > 0 AND value <= 100",
+                  "violationMessage": "付款比例应在 0 到 100 之间",
+                  "enforcedAt": "ALWAYS"
+                }
+              ]
+            },
+            {
+              "name": "stageAmount",
+              "label": "阶段应付金额",
+              "type": "Money",
+              "required": true,
+              "description": "派生字段，合同总金额乘以付款比例"
+            },
+            {
+              "name": "invoiceStatus",
+              "label": "阶段开票状态",
+              "type": "Enum",
+              "enumValues": [
+                "未开票",
+                "部分开票",
+                "已足额开票"
+              ],
+              "required": true,
+              "defaultValue": "未开票",
+              "description": "派生字段，由开票分摊累计金额判定"
+            }
+          ]
+        }
+      ],
+      "invariants": [
+        {
+          "name": "采购金额不超过合同金额",
+          "expression": "purchaseAmount <= totalAmount",
+          "violationMessage": "对外采购金额不得大于合同总金额",
+          "enforcedAt": "ALWAYS"
+        },
+        {
+          "name": "付款比例合计等于100",
+          "expression": "SUM(stages.payRatio) == 100",
+          "violationMessage": "付款阶段付款比例合计必须等于 100",
+          "enforcedAt": "ON_CREATE"
+        }
+      ]
+    }
+  },
+  {
+    "id": "reference-example:ENTITY:AGG-CONTRACT-001::付款阶段",
+    "rawId": "AGG-CONTRACT-001::付款阶段",
+    "name": "付款阶段",
+    "kind": "ENTITY",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m1-object-model.yaml",
+    "alias": "PaymentStage",
+    "description": "合同付款阶段明细",
+    "properties": {
+      "name": "付款阶段",
+      "alias": "PaymentStage",
+      "description": "合同付款阶段明细",
+      "localId": "stageId",
+      "cardinality": "ONE_OR_MORE",
+      "cascadeDelete": true,
+      "attributes": [
+        {
+          "name": "stageId",
+          "label": "付款阶段编号",
+          "type": "String",
+          "required": true
+        },
+        {
+          "name": "stageName",
+          "label": "付款阶段名称",
+          "type": "String",
+          "required": true
+        },
+        {
+          "name": "payRatio",
+          "label": "付款比例（百分比）",
+          "type": "Decimal",
+          "required": true,
+          "refRules": [
+            {
+              "name": "付款比例合法范围",
+              "description": "付款比例在 0 到 100 之间",
+              "expression": "value > 0 AND value <= 100",
+              "violationMessage": "付款比例应在 0 到 100 之间",
+              "enforcedAt": "ALWAYS"
+            }
+          ]
+        },
+        {
+          "name": "stageAmount",
+          "label": "阶段应付金额",
+          "type": "Money",
+          "required": true,
+          "description": "派生字段，合同总金额乘以付款比例"
+        },
+        {
+          "name": "invoiceStatus",
+          "label": "阶段开票状态",
+          "type": "Enum",
+          "enumValues": [
+            "未开票",
+            "部分开票",
+            "已足额开票"
+          ],
+          "required": true,
+          "defaultValue": "未开票",
+          "description": "派生字段，由开票分摊累计金额判定"
+        }
+      ]
+    }
+  },
+  {
+    "id": "reference-example:AGGREGATE_ROOT:AGG-INVOICE-001",
+    "rawId": "AGG-INVOICE-001",
+    "name": "开票",
+    "kind": "AGGREGATE_ROOT",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m1-object-model.yaml",
+    "alias": "Invoice",
+    "description": "针对一个合同登记的开票业务记录，通过分摊关系覆盖一个或多个付款阶段",
+    "properties": {
+      "id": "AGG-INVOICE-001",
+      "name": "开票",
+      "alias": "Invoice",
+      "aggregateType": "AGGREGATE_ROOT",
+      "description": "针对一个合同登记的开票业务记录，通过分摊关系覆盖一个或多个付款阶段",
+      "lifecycle": [
+        "草稿",
+        "待财务经理审批",
+        "已批准",
+        "已驳回",
+        "已作废"
+      ],
+      "tags": [
+        "核心域"
+      ],
+      "attributes": [
+        {
+          "name": "invoiceNo",
+          "label": "开票编号",
+          "type": "String",
+          "required": true,
+          "unique": true
+        },
+        {
+          "name": "contractId",
+          "label": "对应合同",
+          "type": "AggregateRootRef",
+          "targetAggregate": "AGG-CONTRACT-001",
+          "required": true
+        },
+        {
+          "name": "invoiceAmount",
+          "label": "开票金额（含税）",
+          "type": "Money",
+          "required": true,
+          "refRules": [
+            {
+              "name": "开票金额必须为正数",
+              "description": "开票金额必须大于 0",
+              "expression": "value > 0",
+              "violationMessage": "开票金额必须大于 0",
+              "enforcedAt": "ALWAYS"
+            }
+          ]
+        },
+        {
+          "name": "invoiceTaxRate",
+          "label": "开票税率",
+          "type": "Decimal",
+          "required": true,
+          "refRules": [
+            {
+              "name": "开票税率合法范围",
+              "description": "开票税率取值在 0 到 1 之间",
+              "expression": "value >= 0 AND value <= 1",
+              "violationMessage": "开票税率应在 0 到 1 之间",
+              "enforcedAt": "ALWAYS"
+            }
+          ]
+        },
+        {
+          "name": "invoiceDate",
+          "label": "开票时间",
+          "type": "Date",
+          "required": true
+        },
+        {
+          "name": "receivedFlag",
+          "label": "是否收款",
+          "type": "Boolean",
+          "required": true,
+          "defaultValue": false
+        },
+        {
+          "name": "receivedAmount",
+          "label": "已收款金额",
+          "type": "Money",
+          "required": true,
+          "defaultValue": 0,
+          "description": "由有效收款累计得到"
+        },
+        {
+          "name": "receivedDate",
+          "label": "收款完成时间",
+          "type": "DateTime",
+          "required": false,
+          "description": "全部收齐后由系统更新"
+        },
+        {
+          "name": "approvalStatus",
+          "label": "开票审批状态",
+          "type": "Enum",
+          "enumValues": [
+            "草稿",
+            "待财务经理审批",
+            "已批准",
+            "已驳回",
+            "已作废"
+          ],
+          "required": true,
+          "defaultValue": "草稿"
+        }
+      ],
+      "entities": [
+        {
+          "name": "开票付款阶段分摊",
+          "alias": "InvoiceStageAllocation",
+          "description": "开票与付款阶段之间的多对多分摊关系",
+          "localId": "allocationId",
+          "cardinality": "ONE_OR_MORE",
+          "cascadeDelete": true,
+          "attributes": [
+            {
+              "name": "allocationId",
+              "label": "分摊标识",
+              "type": "String",
+              "required": true,
+              "description": "聚合内唯一标识"
+            },
+            {
+              "name": "contractId",
+              "label": "对应合同",
+              "type": "AggregateRootRef",
+              "targetAggregate": "AGG-CONTRACT-001",
+              "required": true
+            },
+            {
+              "name": "stageId",
+              "label": "对应付款阶段",
+              "type": "String",
+              "required": true,
+              "description": "付款阶段编号，配合 contractId 定位"
+            },
+            {
+              "name": "allocatedAmount",
+              "label": "分摊金额",
+              "type": "Money",
+              "required": true,
+              "refRules": [
+                {
+                  "name": "分摊金额必须为正数",
+                  "description": "分摊金额必须大于 0",
+                  "expression": "value > 0",
+                  "violationMessage": "分摊金额必须大于 0",
+                  "enforcedAt": "ALWAYS"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "invariants": [
+        {
+          "name": "开票分摊金额平衡",
+          "expression": "SUM(allocations.allocatedAmount) == invoiceAmount",
+          "violationMessage": "同一开票的分摊金额合计必须等于开票金额",
+          "enforcedAt": "ALWAYS"
+        },
+        {
+          "name": "已收款金额范围",
+          "expression": "receivedAmount >= 0 AND receivedAmount <= invoiceAmount",
+          "violationMessage": "已收款金额应在 0 到开票金额之间",
+          "enforcedAt": "ALWAYS"
+        },
+        {
+          "name": "收款完成信息一致",
+          "expression": "IF receivedFlag == true THEN receivedAmount == invoiceAmount AND receivedDate != null",
+          "violationMessage": "是否收款为是时，已收款金额须等于开票金额且完成时间非空",
+          "enforcedAt": "ALWAYS"
+        }
+      ]
+    }
+  },
+  {
+    "id": "reference-example:ENTITY:AGG-INVOICE-001::开票付款阶段分摊",
+    "rawId": "AGG-INVOICE-001::开票付款阶段分摊",
+    "name": "开票付款阶段分摊",
+    "kind": "ENTITY",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m1-object-model.yaml",
+    "alias": "InvoiceStageAllocation",
+    "description": "开票与付款阶段之间的多对多分摊关系",
+    "properties": {
+      "name": "开票付款阶段分摊",
+      "alias": "InvoiceStageAllocation",
+      "description": "开票与付款阶段之间的多对多分摊关系",
+      "localId": "allocationId",
+      "cardinality": "ONE_OR_MORE",
+      "cascadeDelete": true,
+      "attributes": [
+        {
+          "name": "allocationId",
+          "label": "分摊标识",
+          "type": "String",
+          "required": true,
+          "description": "聚合内唯一标识"
+        },
+        {
+          "name": "contractId",
+          "label": "对应合同",
+          "type": "AggregateRootRef",
+          "targetAggregate": "AGG-CONTRACT-001",
+          "required": true
+        },
+        {
+          "name": "stageId",
+          "label": "对应付款阶段",
+          "type": "String",
+          "required": true,
+          "description": "付款阶段编号，配合 contractId 定位"
+        },
+        {
+          "name": "allocatedAmount",
+          "label": "分摊金额",
+          "type": "Money",
+          "required": true,
+          "refRules": [
+            {
+              "name": "分摊金额必须为正数",
+              "description": "分摊金额必须大于 0",
+              "expression": "value > 0",
+              "violationMessage": "分摊金额必须大于 0",
+              "enforcedAt": "ALWAYS"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "reference-example:AGGREGATE_ROOT:AGG-RECEIPT-001",
+    "rawId": "AGG-RECEIPT-001",
+    "name": "收款",
+    "kind": "AGGREGATE_ROOT",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m1-object-model.yaml",
+    "alias": "Receipt",
+    "description": "独立记录客户针对具体合同和开票的每笔收款",
+    "properties": {
+      "id": "AGG-RECEIPT-001",
+      "name": "收款",
+      "alias": "Receipt",
+      "aggregateType": "AGGREGATE_ROOT",
+      "description": "独立记录客户针对具体合同和开票的每笔收款",
+      "lifecycle": [
+        "已登记",
+        "已冲销"
+      ],
+      "tags": [
+        "核心域"
+      ],
+      "attributes": [
+        {
+          "name": "receiptNo",
+          "label": "收款编号",
+          "type": "String",
+          "required": true,
+          "unique": true
+        },
+        {
+          "name": "contractId",
+          "label": "对应合同",
+          "type": "AggregateRootRef",
+          "targetAggregate": "AGG-CONTRACT-001",
+          "required": true
+        },
+        {
+          "name": "invoiceId",
+          "label": "对应开票",
+          "type": "AggregateRootRef",
+          "targetAggregate": "AGG-INVOICE-001",
+          "required": true
+        },
+        {
+          "name": "receiptAmount",
+          "label": "收款金额",
+          "type": "Money",
+          "required": true,
+          "refRules": [
+            {
+              "name": "收款金额必须为正数",
+              "description": "收款金额必须大于 0",
+              "expression": "value > 0",
+              "violationMessage": "收款金额必须大于 0",
+              "enforcedAt": "ALWAYS"
+            }
+          ]
+        },
+        {
+          "name": "receiptTime",
+          "label": "收款时间",
+          "type": "DateTime",
+          "required": true
+        },
+        {
+          "name": "receiptMethod",
+          "label": "收款方式",
+          "type": "DictionaryRef",
+          "dictionaryRef": {
+            "dictionaryId": "DICT-RECEIPT-METHOD",
+            "typeCode": "RECEIPT_METHOD"
+          },
+          "required": false
+        },
+        {
+          "name": "status",
+          "label": "收款状态",
+          "type": "Enum",
+          "enumValues": [
+            "已登记",
+            "已冲销"
+          ],
+          "required": true,
+          "defaultValue": "已登记"
+        },
+        {
+          "name": "remark",
+          "label": "备注",
+          "type": "String",
+          "required": false
+        }
+      ]
+    }
+  },
+  {
+    "id": "reference-example:AGGREGATE_ROOT:AGG-APPROVAL-001",
+    "rawId": "AGG-APPROVAL-001",
+    "name": "审批记录",
+    "kind": "AGGREGATE_ROOT",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m1-object-model.yaml",
+    "alias": "ApprovalRecord",
+    "description": "记录合同登记审批和开票审批的人工处理历史",
+    "properties": {
+      "id": "AGG-APPROVAL-001",
+      "name": "审批记录",
+      "alias": "ApprovalRecord",
+      "aggregateType": "AGGREGATE_ROOT",
+      "description": "记录合同登记审批和开票审批的人工处理历史",
+      "lifecycle": [
+        "已记录"
+      ],
+      "tags": [
+        "支撑域"
+      ],
+      "attributes": [
+        {
+          "name": "approvalRecordNo",
+          "label": "审批记录编号",
+          "type": "String",
+          "required": true,
+          "unique": true
+        },
+        {
+          "name": "bizType",
+          "label": "业务类型",
+          "type": "DictionaryRef",
+          "dictionaryRef": {
+            "dictionaryId": "DICT-BIZ-TYPE",
+            "typeCode": "BIZ_TYPE"
+          },
+          "required": true
+        },
+        {
+          "name": "bizNo",
+          "label": "业务单据编号",
+          "type": "String",
+          "required": true
+        },
+        {
+          "name": "approvalNode",
+          "label": "审批节点",
+          "type": "DictionaryRef",
+          "dictionaryRef": {
+            "dictionaryId": "DICT-APPROVAL-NODE",
+            "typeCode": "APPROVAL_NODE"
+          },
+          "required": true
+        },
+        {
+          "name": "approvalRoleId",
+          "label": "审批角色",
+          "type": "String",
+          "required": true,
+          "description": "引用 M5 角色 roleId"
+        },
+        {
+          "name": "approverId",
+          "label": "审批人员",
+          "type": "AggregateRootRef",
+          "targetAggregate": "AGG-EMPLOYEE-001",
+          "required": true
+        },
+        {
+          "name": "approvalResult",
+          "label": "审批结果",
+          "type": "DictionaryRef",
+          "dictionaryRef": {
+            "dictionaryId": "DICT-APPROVAL-RESULT",
+            "typeCode": "APPROVAL_RESULT"
+          },
+          "required": true
+        },
+        {
+          "name": "approvalComment",
+          "label": "审批意见",
+          "type": "String",
+          "required": false
+        },
+        {
+          "name": "approvalTime",
+          "label": "审批时间",
+          "type": "DateTime",
+          "required": true
+        }
+      ]
+    }
+  },
+  {
+    "id": "reference-example:DATA_DICTIONARY:DICT-CONTRACT-TYPE",
+    "rawId": "DICT-CONTRACT-TYPE",
+    "name": "合同类型字典",
+    "kind": "DATA_DICTIONARY",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m1-object-model.yaml",
+    "properties": {
+      "id": "DICT-CONTRACT-TYPE",
+      "name": "合同类型字典",
+      "types": [
+        {
+          "typeCode": "CONTRACT_TYPE",
+          "typeName": "合同类型",
+          "items": [
+            {
+              "code": "PRODUCT",
+              "label": "产品合同",
+              "enabled": true,
+              "sortOrder": 10
+            },
+            {
+              "code": "SERVICE",
+              "label": "服务合同",
+              "enabled": true,
+              "sortOrder": 20
+            },
+            {
+              "code": "INTEGRATION",
+              "label": "集成合同",
+              "enabled": true,
+              "sortOrder": 30
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "reference-example:DATA_DICTIONARY:DICT-RECEIPT-METHOD",
+    "rawId": "DICT-RECEIPT-METHOD",
+    "name": "收款方式字典",
+    "kind": "DATA_DICTIONARY",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m1-object-model.yaml",
+    "properties": {
+      "id": "DICT-RECEIPT-METHOD",
+      "name": "收款方式字典",
+      "types": [
+        {
+          "typeCode": "RECEIPT_METHOD",
+          "typeName": "收款方式",
+          "items": [
+            {
+              "code": "BANK",
+              "label": "银行转账",
+              "enabled": true,
+              "sortOrder": 10
+            },
+            {
+              "code": "BILL",
+              "label": "票据",
+              "enabled": true,
+              "sortOrder": 20
+            },
+            {
+              "code": "OTHER",
+              "label": "其他",
+              "enabled": true,
+              "sortOrder": 30
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "reference-example:DATA_DICTIONARY:DICT-APPROVAL-NODE",
+    "rawId": "DICT-APPROVAL-NODE",
+    "name": "审批节点字典",
+    "kind": "DATA_DICTIONARY",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m1-object-model.yaml",
+    "properties": {
+      "id": "DICT-APPROVAL-NODE",
+      "name": "审批节点字典",
+      "types": [
+        {
+          "typeCode": "APPROVAL_NODE",
+          "typeName": "审批节点",
+          "items": [
+            {
+              "code": "FINANCE_MANAGER",
+              "label": "财务经理审批",
+              "enabled": true,
+              "sortOrder": 10
+            },
+            {
+              "code": "GENERAL_MANAGER",
+              "label": "总经理审批",
+              "enabled": true,
+              "sortOrder": 20
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "reference-example:DATA_DICTIONARY:DICT-APPROVAL-RESULT",
+    "rawId": "DICT-APPROVAL-RESULT",
+    "name": "审批结果字典",
+    "kind": "DATA_DICTIONARY",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m1-object-model.yaml",
+    "properties": {
+      "id": "DICT-APPROVAL-RESULT",
+      "name": "审批结果字典",
+      "types": [
+        {
+          "typeCode": "APPROVAL_RESULT",
+          "typeName": "审批结果",
+          "items": [
+            {
+              "code": "APPROVE",
+              "label": "通过",
+              "enabled": true,
+              "sortOrder": 10
+            },
+            {
+              "code": "REJECT",
+              "label": "驳回",
+              "enabled": true,
+              "sortOrder": 20
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "reference-example:DATA_DICTIONARY:DICT-BIZ-TYPE",
+    "rawId": "DICT-BIZ-TYPE",
+    "name": "审批业务类型字典",
+    "kind": "DATA_DICTIONARY",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m1-object-model.yaml",
+    "properties": {
+      "id": "DICT-BIZ-TYPE",
+      "name": "审批业务类型字典",
+      "types": [
+        {
+          "typeCode": "BIZ_TYPE",
+          "typeName": "业务类型",
+          "items": [
+            {
+              "code": "CONTRACT_REG",
+              "label": "合同登记",
+              "enabled": true,
+              "sortOrder": 10
+            },
+            {
+              "code": "INVOICE",
+              "label": "开票",
+              "enabled": true,
+              "sortOrder": 20
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "reference-example:DATA_DICTIONARY:DICT-PRODUCT-TYPE",
+    "rawId": "DICT-PRODUCT-TYPE",
+    "name": "产品类型字典",
+    "kind": "DATA_DICTIONARY",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m1-object-model.yaml",
+    "properties": {
+      "id": "DICT-PRODUCT-TYPE",
+      "name": "产品类型字典",
+      "types": [
+        {
+          "typeCode": "PRODUCT_TYPE",
+          "typeName": "产品类型",
+          "items": []
+        }
+      ]
+    }
+  },
+  {
+    "id": "reference-example:DATA_DICTIONARY:DICT-CUSTOMER-TYPE",
+    "rawId": "DICT-CUSTOMER-TYPE",
+    "name": "客户类型字典",
+    "kind": "DATA_DICTIONARY",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m1-object-model.yaml",
+    "properties": {
+      "id": "DICT-CUSTOMER-TYPE",
+      "name": "客户类型字典",
+      "types": [
+        {
+          "typeCode": "CUSTOMER_TYPE",
+          "typeName": "客户类型",
+          "items": []
+        }
+      ]
+    }
+  },
+  {
+    "id": "reference-example:BEHAVIOR:Contract_SaveAsDraft",
+    "rawId": "Contract_SaveAsDraft",
+    "name": "保存合同草稿",
+    "kind": "BEHAVIOR",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m2-behavior-model.yaml",
+    "properties": {
+      "id": "Contract_SaveAsDraft",
+      "name": "保存合同草稿",
+      "ownerEntity": "AGG-CONTRACT-001",
+      "behaviorType": "COMMAND",
+      "triggerType": "USER_ACTION",
+      "preconditions": [
+        "合同已完成线下签字盖章",
+        "引用的产品、客户、部门、人员有效"
+      ],
+      "postconditions": [
+        {
+          "field": "contract.status",
+          "setValue": "草稿"
+        }
+      ],
+      "appliedRules": [
+        "RULE-OWNER-DEPT-CONSISTENT"
+      ],
+      "requiredPermissions": [
+        "PERM-CONTRACT-CREATE"
+      ],
+      "syncTriggers": []
+    }
+  },
+  {
+    "id": "reference-example:BEHAVIOR:Contract_Submit",
+    "rawId": "Contract_Submit",
+    "name": "提交合同审批",
+    "kind": "BEHAVIOR",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m2-behavior-model.yaml",
+    "properties": {
+      "id": "Contract_Submit",
+      "name": "提交合同审批",
+      "ownerEntity": "AGG-CONTRACT-001",
+      "behaviorType": "COMMAND",
+      "triggerType": "USER_ACTION",
+      "preconditions": [
+        "contract.status == '草稿'",
+        "付款比例合计等于 100%"
+      ],
+      "postconditions": [
+        {
+          "field": "contract.status",
+          "setValue": "待财务经理审批"
+        }
+      ],
+      "appliedRules": [
+        "RULE-CONTRACT-APPROVAL-LEVEL",
+        "RULE-OWNER-DEPT-CONSISTENT"
+      ],
+      "requiredPermissions": [
+        "PERM-CONTRACT-CREATE"
+      ],
+      "syncTriggers": []
+    }
+  },
+  {
+    "id": "reference-example:BEHAVIOR:Contract_Resubmit",
+    "rawId": "Contract_Resubmit",
+    "name": "修改并重新提交合同",
+    "kind": "BEHAVIOR",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m2-behavior-model.yaml",
+    "properties": {
+      "id": "Contract_Resubmit",
+      "name": "修改并重新提交合同",
+      "ownerEntity": "AGG-CONTRACT-001",
+      "behaviorType": "COMMAND",
+      "triggerType": "USER_ACTION",
+      "preconditions": [
+        "contract.status == '已驳回'"
+      ],
+      "postconditions": [
+        {
+          "field": "contract.status",
+          "setValue": "待财务经理审批"
+        }
+      ],
+      "appliedRules": [
+        "RULE-CONTRACT-APPROVAL-LEVEL",
+        "RULE-OWNER-DEPT-CONSISTENT"
+      ],
+      "requiredPermissions": [
+        "PERM-CONTRACT-CREATE"
+      ],
+      "syncTriggers": []
+    }
+  },
+  {
+    "id": "reference-example:BEHAVIOR:Invoice_SaveAsDraft",
+    "rawId": "Invoice_SaveAsDraft",
+    "name": "保存开票草稿",
+    "kind": "BEHAVIOR",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m2-behavior-model.yaml",
+    "properties": {
+      "id": "Invoice_SaveAsDraft",
+      "name": "保存开票草稿",
+      "ownerEntity": "AGG-INVOICE-001",
+      "behaviorType": "COMMAND",
+      "triggerType": "USER_ACTION",
+      "preconditions": [
+        "对应合同已纳入管理且未作废、未归档"
+      ],
+      "postconditions": [
+        {
+          "field": "invoice.approvalStatus",
+          "setValue": "草稿"
+        }
+      ],
+      "appliedRules": [
+        "RULE-CONTRACT-INVOICE-ELIGIBLE",
+        "RULE-PAYSTAGE-REMAIN-QUOTA",
+        "RULE-INVOICE-TAXRATE-CONSISTENT",
+        "RULE-ALLOCATION-CONTRACT-CONSISTENT"
+      ],
+      "requiredPermissions": [
+        "PERM-INVOICE-ISSUE"
+      ],
+      "syncTriggers": []
+    }
+  },
+  {
+    "id": "reference-example:BEHAVIOR:Invoice_Submit",
+    "rawId": "Invoice_Submit",
+    "name": "提交开票审批",
+    "kind": "BEHAVIOR",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m2-behavior-model.yaml",
+    "properties": {
+      "id": "Invoice_Submit",
+      "name": "提交开票审批",
+      "ownerEntity": "AGG-INVOICE-001",
+      "behaviorType": "COMMAND",
+      "triggerType": "USER_ACTION",
+      "preconditions": [
+        "invoice.approvalStatus == '草稿'",
+        "分摊金额合计等于开票金额"
+      ],
+      "postconditions": [
+        {
+          "field": "invoice.approvalStatus",
+          "setValue": "待财务经理审批"
+        }
+      ],
+      "appliedRules": [
+        "RULE-CONTRACT-INVOICE-ELIGIBLE",
+        "RULE-PAYSTAGE-REMAIN-QUOTA",
+        "RULE-INVOICE-TAXRATE-CONSISTENT",
+        "RULE-ALLOCATION-CONTRACT-CONSISTENT"
+      ],
+      "requiredPermissions": [
+        "PERM-INVOICE-ISSUE"
+      ],
+      "syncTriggers": []
+    }
+  },
+  {
+    "id": "reference-example:BEHAVIOR:Invoice_Resubmit",
+    "rawId": "Invoice_Resubmit",
+    "name": "修改并重新提交开票",
+    "kind": "BEHAVIOR",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m2-behavior-model.yaml",
+    "properties": {
+      "id": "Invoice_Resubmit",
+      "name": "修改并重新提交开票",
+      "ownerEntity": "AGG-INVOICE-001",
+      "behaviorType": "COMMAND",
+      "triggerType": "USER_ACTION",
+      "preconditions": [
+        "invoice.approvalStatus == '已驳回'"
+      ],
+      "postconditions": [
+        {
+          "field": "invoice.approvalStatus",
+          "setValue": "待财务经理审批"
+        }
+      ],
+      "appliedRules": [
+        "RULE-CONTRACT-INVOICE-ELIGIBLE",
+        "RULE-PAYSTAGE-REMAIN-QUOTA",
+        "RULE-INVOICE-TAXRATE-CONSISTENT",
+        "RULE-ALLOCATION-CONTRACT-CONSISTENT"
+      ],
+      "requiredPermissions": [
+        "PERM-INVOICE-ISSUE"
+      ],
+      "syncTriggers": []
+    }
+  },
+  {
+    "id": "reference-example:BEHAVIOR:Receipt_Record",
+    "rawId": "Receipt_Record",
+    "name": "录入合同收款",
+    "kind": "BEHAVIOR",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m2-behavior-model.yaml",
+    "properties": {
+      "id": "Receipt_Record",
+      "name": "录入合同收款",
+      "ownerEntity": "AGG-RECEIPT-001",
+      "behaviorType": "COMMAND",
+      "triggerType": "USER_ACTION",
+      "preconditions": [
+        "对应开票已批准且未作废",
+        "对应合同未作废",
+        "累计有效收款不超过开票金额"
+      ],
+      "postconditions": [
+        {
+          "field": "receipt.status",
+          "setValue": "已登记"
+        }
+      ],
+      "appliedRules": [
+        "RULE-INVOICE-REMAIN-RECEIPT-QUOTA",
+        "RULE-RECEIPT-CONTRACT-CONSISTENT"
+      ],
+      "requiredPermissions": [
+        "PERM-RECEIPT-RECORD"
+      ],
+      "syncTriggers": [
+        {
+          "behaviorRef": "Invoice_UpdateReceiptStatus",
+          "description": "收款登记后同步更新开票收款状态"
+        }
+      ]
+    }
+  },
+  {
+    "id": "reference-example:BEHAVIOR:Receipt_Reverse",
+    "rawId": "Receipt_Reverse",
+    "name": "冲销错误收款",
+    "kind": "BEHAVIOR",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m2-behavior-model.yaml",
+    "properties": {
+      "id": "Receipt_Reverse",
+      "name": "冲销错误收款",
+      "ownerEntity": "AGG-RECEIPT-001",
+      "behaviorType": "COMMAND",
+      "triggerType": "USER_ACTION",
+      "preconditions": [
+        "receipt.status == '已登记'"
+      ],
+      "postconditions": [
+        {
+          "field": "receipt.status",
+          "setValue": "已冲销"
+        }
+      ],
+      "appliedRules": [],
+      "requiredPermissions": [
+        "PERM-RECEIPT-REVERSE"
+      ],
+      "syncTriggers": [
+        {
+          "behaviorRef": "Invoice_UpdateReceiptStatus",
+          "description": "收款冲销后同步重算开票收款状态"
+        }
+      ]
+    }
+  },
+  {
+    "id": "reference-example:BEHAVIOR:Contract_VoidOrArchive",
+    "rawId": "Contract_VoidOrArchive",
+    "name": "作废或归档合同",
+    "kind": "BEHAVIOR",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m2-behavior-model.yaml",
+    "properties": {
+      "id": "Contract_VoidOrArchive",
+      "name": "作废或归档合同",
+      "ownerEntity": "AGG-CONTRACT-001",
+      "behaviorType": "COMMAND",
+      "triggerType": "USER_ACTION",
+      "preconditions": [
+        "作废时不存在已批准开票或有效收款；归档时合同已结束执行"
+      ],
+      "postconditions": [
+        {
+          "field": "contract.status",
+          "setValue": "已作废或已归档"
+        }
+      ],
+      "appliedRules": [
+        "RULE-CONTRACT-VOID-ELIGIBLE"
+      ],
+      "requiredPermissions": [
+        "PERM-CONTRACT-VOID"
+      ],
+      "syncTriggers": []
+    }
+  },
+  {
+    "id": "reference-example:BEHAVIOR:Invoice_Void",
+    "rawId": "Invoice_Void",
+    "name": "作废开票",
+    "kind": "BEHAVIOR",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m2-behavior-model.yaml",
+    "properties": {
+      "id": "Invoice_Void",
+      "name": "作废开票",
+      "ownerEntity": "AGG-INVOICE-001",
+      "behaviorType": "COMMAND",
+      "triggerType": "USER_ACTION",
+      "preconditions": [
+        "invoice.approvalStatus == '已批准'",
+        "不存在有效收款"
+      ],
+      "postconditions": [
+        {
+          "field": "invoice.approvalStatus",
+          "setValue": "已作废"
+        }
+      ],
+      "appliedRules": [
+        "RULE-INVOICE-VOID-ELIGIBLE"
+      ],
+      "requiredPermissions": [
+        "PERM-INVOICE-VOID"
+      ],
+      "syncTriggers": [
+        {
+          "behaviorRef": "PaymentStage_UpdateInvoiceStatus",
+          "description": "开票作废后同步释放付款阶段开票额度"
+        }
+      ]
+    }
+  },
+  {
+    "id": "reference-example:BEHAVIOR:Product_Maintain",
+    "rawId": "Product_Maintain",
+    "name": "维护产品信息",
+    "kind": "BEHAVIOR",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m2-behavior-model.yaml",
+    "properties": {
+      "id": "Product_Maintain",
+      "name": "维护产品信息",
+      "ownerEntity": "AGG-PRODUCT-001",
+      "behaviorType": "COMMAND",
+      "triggerType": "USER_ACTION",
+      "preconditions": [
+        "具备主数据维护权限"
+      ],
+      "postconditions": [],
+      "appliedRules": [],
+      "requiredPermissions": [
+        "PERM-MASTERDATA-MAINTAIN"
+      ],
+      "syncTriggers": []
+    }
+  },
+  {
+    "id": "reference-example:BEHAVIOR:Customer_Maintain",
+    "rawId": "Customer_Maintain",
+    "name": "维护客户信息",
+    "kind": "BEHAVIOR",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m2-behavior-model.yaml",
+    "properties": {
+      "id": "Customer_Maintain",
+      "name": "维护客户信息",
+      "ownerEntity": "AGG-CUSTOMER-001",
+      "behaviorType": "COMMAND",
+      "triggerType": "USER_ACTION",
+      "preconditions": [
+        "具备主数据维护权限"
+      ],
+      "postconditions": [],
+      "appliedRules": [],
+      "requiredPermissions": [
+        "PERM-MASTERDATA-MAINTAIN"
+      ],
+      "syncTriggers": []
+    }
+  },
+  {
+    "id": "reference-example:BEHAVIOR:Department_Maintain",
+    "rawId": "Department_Maintain",
+    "name": "维护部门信息",
+    "kind": "BEHAVIOR",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m2-behavior-model.yaml",
+    "properties": {
+      "id": "Department_Maintain",
+      "name": "维护部门信息",
+      "ownerEntity": "AGG-DEPARTMENT-001",
+      "behaviorType": "COMMAND",
+      "triggerType": "USER_ACTION",
+      "preconditions": [
+        "具备主数据维护权限"
+      ],
+      "postconditions": [],
+      "appliedRules": [],
+      "requiredPermissions": [
+        "PERM-MASTERDATA-MAINTAIN"
+      ],
+      "syncTriggers": []
+    }
+  },
+  {
+    "id": "reference-example:BEHAVIOR:Employee_Maintain",
+    "rawId": "Employee_Maintain",
+    "name": "维护人员信息",
+    "kind": "BEHAVIOR",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m2-behavior-model.yaml",
+    "properties": {
+      "id": "Employee_Maintain",
+      "name": "维护人员信息",
+      "ownerEntity": "AGG-EMPLOYEE-001",
+      "behaviorType": "COMMAND",
+      "triggerType": "USER_ACTION",
+      "preconditions": [
+        "具备主数据维护权限"
+      ],
+      "postconditions": [],
+      "appliedRules": [],
+      "requiredPermissions": [
+        "PERM-MASTERDATA-MAINTAIN"
+      ],
+      "syncTriggers": []
+    }
+  },
+  {
+    "id": "reference-example:BEHAVIOR:Contract_QueryList",
+    "rawId": "Contract_QueryList",
+    "name": "查询合同列表",
+    "kind": "BEHAVIOR",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m2-behavior-model.yaml",
+    "properties": {
+      "id": "Contract_QueryList",
+      "name": "查询合同列表",
+      "ownerEntity": "AGG-CONTRACT-001",
+      "behaviorType": "QUERY",
+      "triggerType": "USER_ACTION",
+      "preconditions": [],
+      "postconditions": [],
+      "appliedRules": [],
+      "requiredPermissions": [
+        "PERM-CONTRACT-QUERY-LIST",
+        "PERM-CONTRACT-QUERY-LIST-OWN-DEPT"
+      ],
+      "syncTriggers": [],
+      "queryReportRef": "REP-CONTRACT-LIST"
+    }
+  },
+  {
+    "id": "reference-example:BEHAVIOR:Contract_QueryDetail",
+    "rawId": "Contract_QueryDetail",
+    "name": "查看合同详情",
+    "kind": "BEHAVIOR",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m2-behavior-model.yaml",
+    "properties": {
+      "id": "Contract_QueryDetail",
+      "name": "查看合同详情",
+      "ownerEntity": "AGG-CONTRACT-001",
+      "behaviorType": "QUERY",
+      "triggerType": "USER_ACTION",
+      "preconditions": [],
+      "postconditions": [],
+      "appliedRules": [],
+      "requiredPermissions": [
+        "PERM-CONTRACT-QUERY-DETAIL",
+        "PERM-CONTRACT-QUERY-DETAIL-OWN-DEPT"
+      ],
+      "syncTriggers": [],
+      "queryReportRef": "REP-CONTRACT-DETAIL"
+    }
+  },
+  {
+    "id": "reference-example:BEHAVIOR:Contract_QueryExecutionAnalysis",
+    "rawId": "Contract_QueryExecutionAnalysis",
+    "name": "查询合同执行情况分析",
+    "kind": "BEHAVIOR",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m2-behavior-model.yaml",
+    "properties": {
+      "id": "Contract_QueryExecutionAnalysis",
+      "name": "查询合同执行情况分析",
+      "ownerEntity": "AGG-CONTRACT-001",
+      "behaviorType": "QUERY",
+      "triggerType": "USER_ACTION",
+      "preconditions": [],
+      "postconditions": [],
+      "appliedRules": [],
+      "requiredPermissions": [
+        "PERM-CONTRACT-QUERY-EXECUTION",
+        "PERM-CONTRACT-QUERY-EXECUTION-OWN-DEPT"
+      ],
+      "syncTriggers": [],
+      "queryReportRef": "REP-CONTRACT-EXECUTION"
+    }
+  },
+  {
+    "id": "reference-example:BEHAVIOR:Contract_QueryDepartmentSummary",
+    "rawId": "Contract_QueryDepartmentSummary",
+    "name": "查询部门合同统计分析",
+    "kind": "BEHAVIOR",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m2-behavior-model.yaml",
+    "properties": {
+      "id": "Contract_QueryDepartmentSummary",
+      "name": "查询部门合同统计分析",
+      "ownerEntity": "AGG-CONTRACT-001",
+      "behaviorType": "QUERY",
+      "triggerType": "USER_ACTION",
+      "preconditions": [],
+      "postconditions": [],
+      "appliedRules": [],
+      "requiredPermissions": [
+        "PERM-CONTRACT-QUERY-DEPT-SUMMARY",
+        "PERM-CONTRACT-QUERY-DEPT-SUMMARY-OWN-DEPT"
+      ],
+      "syncTriggers": [],
+      "queryReportRef": "REP-DEPT-CONTRACT-SUMMARY"
+    }
+  },
+  {
+    "id": "reference-example:BEHAVIOR:Contract_QueryInvoicedUnreceived",
+    "rawId": "Contract_QueryInvoicedUnreceived",
+    "name": "查询已开票未收款合同",
+    "kind": "BEHAVIOR",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m2-behavior-model.yaml",
+    "properties": {
+      "id": "Contract_QueryInvoicedUnreceived",
+      "name": "查询已开票未收款合同",
+      "ownerEntity": "AGG-CONTRACT-001",
+      "behaviorType": "QUERY",
+      "triggerType": "USER_ACTION",
+      "preconditions": [],
+      "postconditions": [],
+      "appliedRules": [],
+      "requiredPermissions": [
+        "PERM-CONTRACT-QUERY-UNRECEIVED",
+        "PERM-CONTRACT-QUERY-UNRECEIVED-OWN-DEPT"
+      ],
+      "syncTriggers": [],
+      "queryReportRef": "REP-INVOICED-UNRECEIVED"
+    }
+  },
+  {
+    "id": "reference-example:BEHAVIOR:Contract_ApproveFinance",
+    "rawId": "Contract_ApproveFinance",
+    "name": "财务经理审批合同",
+    "kind": "BEHAVIOR",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m2-behavior-model.yaml",
+    "properties": {
+      "id": "Contract_ApproveFinance",
+      "name": "财务经理审批合同",
+      "ownerEntity": "AGG-CONTRACT-001",
+      "behaviorType": "COMMAND",
+      "triggerType": "USER_ACTION",
+      "preconditions": [
+        "contract.status == '待财务经理审批'",
+        "审批人不是提交人"
+      ],
+      "postconditions": [
+        {
+          "field": "contract.status",
+          "setValue": "已纳入管理 / 待总经理审批 / 已驳回"
+        }
+      ],
+      "appliedRules": [
+        "RULE-APPROVAL-SOD",
+        "RULE-CONTRACT-APPROVAL-LEVEL"
+      ],
+      "requiredPermissions": [
+        "PERM-CONTRACT-APPROVE-FINANCE"
+      ],
+      "syncTriggers": []
+    }
+  },
+  {
+    "id": "reference-example:BEHAVIOR:Contract_ApproveGeneralManager",
+    "rawId": "Contract_ApproveGeneralManager",
+    "name": "总经理审批合同",
+    "kind": "BEHAVIOR",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m2-behavior-model.yaml",
+    "properties": {
+      "id": "Contract_ApproveGeneralManager",
+      "name": "总经理审批合同",
+      "ownerEntity": "AGG-CONTRACT-001",
+      "behaviorType": "COMMAND",
+      "triggerType": "USER_ACTION",
+      "preconditions": [
+        "contract.status == '待总经理审批'",
+        "审批人不是提交人"
+      ],
+      "postconditions": [
+        {
+          "field": "contract.status",
+          "setValue": "已纳入管理 / 已驳回"
+        }
+      ],
+      "appliedRules": [
+        "RULE-APPROVAL-SOD"
+      ],
+      "requiredPermissions": [
+        "PERM-CONTRACT-APPROVE-LARGE"
+      ],
+      "syncTriggers": []
+    }
+  },
+  {
+    "id": "reference-example:BEHAVIOR:Invoice_ApproveFinance",
+    "rawId": "Invoice_ApproveFinance",
+    "name": "财务经理审批开票",
+    "kind": "BEHAVIOR",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m2-behavior-model.yaml",
+    "properties": {
+      "id": "Invoice_ApproveFinance",
+      "name": "财务经理审批开票",
+      "ownerEntity": "AGG-INVOICE-001",
+      "behaviorType": "COMMAND",
+      "triggerType": "USER_ACTION",
+      "preconditions": [
+        "invoice.approvalStatus == '待财务经理审批'",
+        "审批人不是提交人"
+      ],
+      "postconditions": [
+        {
+          "field": "invoice.approvalStatus",
+          "setValue": "已批准 / 已驳回"
+        }
+      ],
+      "appliedRules": [
+        "RULE-APPROVAL-SOD"
+      ],
+      "requiredPermissions": [
+        "PERM-INVOICE-APPROVE"
+      ],
+      "syncTriggers": [
+        {
+          "behaviorRef": "PaymentStage_UpdateInvoiceStatus",
+          "description": "审批通过后同步更新付款阶段开票状态"
+        }
+      ]
+    }
+  },
+  {
+    "id": "reference-example:BEHAVIOR:PaymentStage_UpdateInvoiceStatus",
+    "rawId": "PaymentStage_UpdateInvoiceStatus",
+    "name": "更新付款阶段开票状态",
+    "kind": "BEHAVIOR",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m2-behavior-model.yaml",
+    "properties": {
+      "id": "PaymentStage_UpdateInvoiceStatus",
+      "name": "更新付款阶段开票状态",
+      "ownerEntity": "AGG-CONTRACT-001",
+      "behaviorType": "COMMAND",
+      "triggerType": "SYSTEM",
+      "preconditions": [
+        "开票批准或作废后触发"
+      ],
+      "postconditions": [
+        {
+          "field": "paymentStage.invoiceStatus",
+          "setValue": "未开票 / 部分开票 / 已足额开票"
+        }
+      ],
+      "appliedRules": [],
+      "requiredPermissions": [],
+      "syncTriggers": [
+        {
+          "ruleRef": "RULE-CONTRACT-SETTLEMENT",
+          "behaviorRef": "Contract_UpdateSettlementStatus",
+          "description": "付款阶段开票状态更新后判断合同结清资格"
+        }
+      ]
+    }
+  },
+  {
+    "id": "reference-example:BEHAVIOR:Invoice_UpdateReceiptStatus",
+    "rawId": "Invoice_UpdateReceiptStatus",
+    "name": "更新开票收款状态",
+    "kind": "BEHAVIOR",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m2-behavior-model.yaml",
+    "properties": {
+      "id": "Invoice_UpdateReceiptStatus",
+      "name": "更新开票收款状态",
+      "ownerEntity": "AGG-INVOICE-001",
+      "behaviorType": "COMMAND",
+      "triggerType": "SYSTEM",
+      "preconditions": [
+        "收款登记或冲销后触发"
+      ],
+      "postconditions": [
+        {
+          "field": "invoice.receivedAmount",
+          "setValue": "有效收款累计金额"
+        },
+        {
+          "field": "invoice.receivedFlag",
+          "setValue": "是否全部收齐"
+        },
+        {
+          "field": "invoice.receivedDate",
+          "setValue": "全部收齐时更新为收款完成时间"
+        }
+      ],
+      "appliedRules": [
+        "RULE-INVOICE-RECEIPT-STATUS"
+      ],
+      "requiredPermissions": [],
+      "syncTriggers": [
+        {
+          "ruleRef": "RULE-CONTRACT-SETTLEMENT",
+          "behaviorRef": "Contract_UpdateSettlementStatus",
+          "description": "开票收款状态更新后判断合同结清资格"
+        }
+      ]
+    }
+  },
+  {
+    "id": "reference-example:BEHAVIOR:Contract_UpdateSettlementStatus",
+    "rawId": "Contract_UpdateSettlementStatus",
+    "name": "更新合同结清状态",
+    "kind": "BEHAVIOR",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m2-behavior-model.yaml",
+    "properties": {
+      "id": "Contract_UpdateSettlementStatus",
+      "name": "更新合同结清状态",
+      "ownerEntity": "AGG-CONTRACT-001",
+      "behaviorType": "COMMAND",
+      "triggerType": "SYSTEM",
+      "preconditions": [
+        "RULE-CONTRACT-SETTLEMENT 判定后触发"
+      ],
+      "postconditions": [
+        {
+          "field": "contract.status",
+          "setValue": "已结清 / 已纳入管理"
+        }
+      ],
+      "appliedRules": [
+        "RULE-CONTRACT-SETTLEMENT"
+      ],
+      "requiredPermissions": [],
+      "syncTriggers": []
+    }
+  },
+  {
+    "id": "reference-example:RULE:RULE-CONTRACT-APPROVAL-LEVEL",
+    "rawId": "RULE-CONTRACT-APPROVAL-LEVEL",
+    "name": "合同审批层级判定",
+    "kind": "RULE",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m3-rule-model.yaml",
+    "properties": {
+      "id": "RULE-CONTRACT-APPROVAL-LEVEL",
+      "name": "合同审批层级判定",
+      "ruleType": "VALIDATION",
+      "description": "判断合同含税总金额是否大于等于 100 万元，决定是否需要总经理审批",
+      "inputParams": [
+        {
+          "name": "totalAmount",
+          "type": "Decimal",
+          "sourceField": "Contract.totalAmount",
+          "required": true
+        }
+      ],
+      "outputType": "Boolean",
+      "expression": "totalAmount >= 1000000\n",
+      "reusedBy": [
+        "Contract_Submit",
+        "Contract_Resubmit",
+        "Contract_ApproveFinance"
+      ],
+      "version": "1.0"
+    }
+  },
+  {
+    "id": "reference-example:RULE:RULE-CONTRACT-INVOICE-ELIGIBLE",
+    "rawId": "RULE-CONTRACT-INVOICE-ELIGIBLE",
+    "name": "合同可开票资格",
+    "kind": "RULE",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m3-rule-model.yaml",
+    "properties": {
+      "id": "RULE-CONTRACT-INVOICE-ELIGIBLE",
+      "name": "合同可开票资格",
+      "ruleType": "VALIDATION",
+      "description": "判断合同是否已纳入管理且未作废、未归档，从而允许开票",
+      "inputParams": [
+        {
+          "name": "contractStatus",
+          "type": "Enum",
+          "sourceField": "Contract.status",
+          "required": true
+        }
+      ],
+      "outputType": "Boolean",
+      "expression": "contractStatus == '已纳入管理' OR contractStatus == '已结清'\n",
+      "reusedBy": [
+        "Invoice_SaveAsDraft",
+        "Invoice_Submit",
+        "Invoice_Resubmit"
+      ],
+      "version": "1.0"
+    }
+  },
+  {
+    "id": "reference-example:RULE:RULE-PAYSTAGE-REMAIN-QUOTA",
+    "rawId": "RULE-PAYSTAGE-REMAIN-QUOTA",
+    "name": "付款阶段剩余可开票额度",
+    "kind": "RULE",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m3-rule-model.yaml",
+    "properties": {
+      "id": "RULE-PAYSTAGE-REMAIN-QUOTA",
+      "name": "付款阶段剩余可开票额度",
+      "ruleType": "VALIDATION",
+      "description": "判断本次分摊加历史有效分摊是否不超过阶段应付金额",
+      "inputParams": [
+        {
+          "name": "stageAmount",
+          "type": "Decimal",
+          "sourceField": "PaymentStage.stageAmount",
+          "required": true
+        },
+        {
+          "name": "historicalAllocation",
+          "type": "Decimal",
+          "sourceField": "Invoice.aggregatedAllocation",
+          "required": true
+        },
+        {
+          "name": "currentAllocation",
+          "type": "Decimal",
+          "sourceField": "InvoiceStageAllocation.allocatedAmount",
+          "required": true
+        }
+      ],
+      "outputType": "Boolean",
+      "expression": "historicalAllocation + currentAllocation <= stageAmount\n",
+      "reusedBy": [
+        "Invoice_SaveAsDraft",
+        "Invoice_Submit",
+        "Invoice_Resubmit"
+      ],
+      "version": "1.0"
+    }
+  },
+  {
+    "id": "reference-example:RULE:RULE-INVOICE-REMAIN-RECEIPT-QUOTA",
+    "rawId": "RULE-INVOICE-REMAIN-RECEIPT-QUOTA",
+    "name": "开票剩余可收款额度",
+    "kind": "RULE",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m3-rule-model.yaml",
+    "properties": {
+      "id": "RULE-INVOICE-REMAIN-RECEIPT-QUOTA",
+      "name": "开票剩余可收款额度",
+      "ruleType": "VALIDATION",
+      "description": "判断本次收款加历史有效收款是否不超过开票金额",
+      "inputParams": [
+        {
+          "name": "invoiceAmount",
+          "type": "Decimal",
+          "sourceField": "Invoice.invoiceAmount",
+          "required": true
+        },
+        {
+          "name": "historicalReceipt",
+          "type": "Decimal",
+          "sourceField": "Receipt.aggregatedAmount",
+          "required": true
+        },
+        {
+          "name": "currentReceipt",
+          "type": "Decimal",
+          "sourceField": "Receipt.receiptAmount",
+          "required": true
+        }
+      ],
+      "outputType": "Boolean",
+      "expression": "historicalReceipt + currentReceipt <= invoiceAmount\n",
+      "reusedBy": [
+        "Receipt_Record"
+      ],
+      "version": "1.0"
+    }
+  },
+  {
+    "id": "reference-example:RULE:RULE-INVOICE-RECEIPT-STATUS",
+    "rawId": "RULE-INVOICE-RECEIPT-STATUS",
+    "name": "开票收款状态判定",
+    "kind": "RULE",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m3-rule-model.yaml",
+    "properties": {
+      "id": "RULE-INVOICE-RECEIPT-STATUS",
+      "name": "开票收款状态判定",
+      "ruleType": "DERIVATION",
+      "description": "根据有效收款累计相对开票金额判定开票处于未收款、部分收款或全部收齐",
+      "inputParams": [
+        {
+          "name": "invoiceAmount",
+          "type": "Decimal",
+          "sourceField": "Invoice.invoiceAmount",
+          "required": true
+        },
+        {
+          "name": "receivedAmount",
+          "type": "Decimal",
+          "sourceField": "Receipt.aggregatedAmount",
+          "required": true
+        }
+      ],
+      "outputType": "Enum",
+      "expression": "IF receivedAmount <= 0 THEN '未收款'\nELSE IF receivedAmount >= invoiceAmount THEN '已收款'\nELSE '部分收款'\n",
+      "reusedBy": [
+        "Invoice_UpdateReceiptStatus"
+      ],
+      "version": "1.0"
+    }
+  },
+  {
+    "id": "reference-example:RULE:RULE-CONTRACT-VOID-ELIGIBLE",
+    "rawId": "RULE-CONTRACT-VOID-ELIGIBLE",
+    "name": "合同作废资格",
+    "kind": "RULE",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m3-rule-model.yaml",
+    "properties": {
+      "id": "RULE-CONTRACT-VOID-ELIGIBLE",
+      "name": "合同作废资格",
+      "ruleType": "VALIDATION",
+      "description": "判断是否不存在已批准开票或有效收款，从而允许作废合同",
+      "inputParams": [
+        {
+          "name": "approvedInvoiceCount",
+          "type": "Integer",
+          "sourceField": "Invoice.approvedCount",
+          "required": true
+        },
+        {
+          "name": "validReceiptCount",
+          "type": "Integer",
+          "sourceField": "Receipt.validCount",
+          "required": true
+        }
+      ],
+      "outputType": "Boolean",
+      "expression": "approvedInvoiceCount == 0 AND validReceiptCount == 0\n",
+      "reusedBy": [
+        "Contract_VoidOrArchive"
+      ],
+      "version": "1.0"
+    }
+  },
+  {
+    "id": "reference-example:RULE:RULE-INVOICE-VOID-ELIGIBLE",
+    "rawId": "RULE-INVOICE-VOID-ELIGIBLE",
+    "name": "开票作废资格",
+    "kind": "RULE",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m3-rule-model.yaml",
+    "properties": {
+      "id": "RULE-INVOICE-VOID-ELIGIBLE",
+      "name": "开票作废资格",
+      "ruleType": "VALIDATION",
+      "description": "判断开票是否存在有效收款，从而允许作废",
+      "inputParams": [
+        {
+          "name": "validReceiptCount",
+          "type": "Integer",
+          "sourceField": "Receipt.validCount",
+          "required": true
+        }
+      ],
+      "outputType": "Boolean",
+      "expression": "validReceiptCount == 0\n",
+      "reusedBy": [
+        "Invoice_Void"
+      ],
+      "version": "1.0"
+    }
+  },
+  {
+    "id": "reference-example:RULE:RULE-INVOICE-TAXRATE-CONSISTENT",
+    "rawId": "RULE-INVOICE-TAXRATE-CONSISTENT",
+    "name": "开票税率一致性",
+    "kind": "RULE",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m3-rule-model.yaml",
+    "properties": {
+      "id": "RULE-INVOICE-TAXRATE-CONSISTENT",
+      "name": "开票税率一致性",
+      "ruleType": "VALIDATION",
+      "description": "判断开票税率是否等于合同税率",
+      "inputParams": [
+        {
+          "name": "contractTaxRate",
+          "type": "Decimal",
+          "sourceField": "Contract.taxRate",
+          "required": true
+        },
+        {
+          "name": "invoiceTaxRate",
+          "type": "Decimal",
+          "sourceField": "Invoice.invoiceTaxRate",
+          "required": true
+        }
+      ],
+      "outputType": "Boolean",
+      "expression": "invoiceTaxRate == contractTaxRate\n",
+      "reusedBy": [
+        "Invoice_SaveAsDraft",
+        "Invoice_Submit",
+        "Invoice_Resubmit"
+      ],
+      "version": "1.0"
+    }
+  },
+  {
+    "id": "reference-example:RULE:RULE-APPROVAL-SOD",
+    "rawId": "RULE-APPROVAL-SOD",
+    "name": "提交审批职责分离",
+    "kind": "RULE",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m3-rule-model.yaml",
+    "properties": {
+      "id": "RULE-APPROVAL-SOD",
+      "name": "提交审批职责分离",
+      "ruleType": "VALIDATION",
+      "description": "判断当前审批人是否不是该业务记录的提交人",
+      "inputParams": [
+        {
+          "name": "submitterId",
+          "type": "String",
+          "sourceField": "Contract.registrantId",
+          "required": true
+        },
+        {
+          "name": "approverId",
+          "type": "String",
+          "sourceField": "Actor.actorId",
+          "required": true
+        }
+      ],
+      "outputType": "Boolean",
+      "expression": "approverId != submitterId\n",
+      "reusedBy": [
+        "Contract_ApproveFinance",
+        "Contract_ApproveGeneralManager",
+        "Invoice_ApproveFinance"
+      ],
+      "version": "1.0"
+    }
+  },
+  {
+    "id": "reference-example:RULE:RULE-CONTRACT-SETTLEMENT",
+    "rawId": "RULE-CONTRACT-SETTLEMENT",
+    "name": "合同结清资格判定",
+    "kind": "RULE",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m3-rule-model.yaml",
+    "properties": {
+      "id": "RULE-CONTRACT-SETTLEMENT",
+      "name": "合同结清资格判定",
+      "ruleType": "VALIDATION",
+      "description": "判断所有付款阶段是否均已足额开票，且所有已批准未作废开票均已全部收齐",
+      "inputParams": [
+        {
+          "name": "allStagesFullyInvoiced",
+          "type": "Boolean",
+          "sourceField": "PaymentStage.invoiceStatus",
+          "required": true
+        },
+        {
+          "name": "allInvoicesFullyReceived",
+          "type": "Boolean",
+          "sourceField": "Invoice.receivedFlag",
+          "required": true
+        }
+      ],
+      "outputType": "Boolean",
+      "expression": "allStagesFullyInvoiced == true AND allInvoicesFullyReceived == true\n",
+      "reusedBy": [
+        "PaymentStage_UpdateInvoiceStatus",
+        "Invoice_UpdateReceiptStatus",
+        "Contract_UpdateSettlementStatus"
+      ],
+      "version": "1.0"
+    }
+  },
+  {
+    "id": "reference-example:RULE:RULE-ALLOCATION-CONTRACT-CONSISTENT",
+    "rawId": "RULE-ALLOCATION-CONTRACT-CONSISTENT",
+    "name": "分摊所属合同一致性",
+    "kind": "RULE",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m3-rule-model.yaml",
+    "properties": {
+      "id": "RULE-ALLOCATION-CONTRACT-CONSISTENT",
+      "name": "分摊所属合同一致性",
+      "ruleType": "VALIDATION",
+      "description": "判断分摊记录、开票和付款阶段是否属于同一合同",
+      "inputParams": [
+        {
+          "name": "invoiceContractId",
+          "type": "String",
+          "sourceField": "Invoice.contractId",
+          "required": true
+        },
+        {
+          "name": "allocationContractId",
+          "type": "String",
+          "sourceField": "InvoiceStageAllocation.contractId",
+          "required": true
+        }
+      ],
+      "outputType": "Boolean",
+      "expression": "allocationContractId == invoiceContractId\n",
+      "reusedBy": [
+        "Invoice_SaveAsDraft",
+        "Invoice_Submit",
+        "Invoice_Resubmit"
+      ],
+      "version": "1.0"
+    }
+  },
+  {
+    "id": "reference-example:RULE:RULE-RECEIPT-CONTRACT-CONSISTENT",
+    "rawId": "RULE-RECEIPT-CONTRACT-CONSISTENT",
+    "name": "收款所属合同一致性",
+    "kind": "RULE",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m3-rule-model.yaml",
+    "properties": {
+      "id": "RULE-RECEIPT-CONTRACT-CONSISTENT",
+      "name": "收款所属合同一致性",
+      "ruleType": "VALIDATION",
+      "description": "判断收款所选合同是否等于对应开票所属合同",
+      "inputParams": [
+        {
+          "name": "receiptContractId",
+          "type": "String",
+          "sourceField": "Receipt.contractId",
+          "required": true
+        },
+        {
+          "name": "invoiceContractId",
+          "type": "String",
+          "sourceField": "Invoice.contractId",
+          "required": true
+        }
+      ],
+      "outputType": "Boolean",
+      "expression": "receiptContractId == invoiceContractId\n",
+      "reusedBy": [
+        "Receipt_Record"
+      ],
+      "version": "1.0"
+    }
+  },
+  {
+    "id": "reference-example:RULE:RULE-OWNER-DEPT-CONSISTENT",
+    "rawId": "RULE-OWNER-DEPT-CONSISTENT",
+    "name": "责任人部门一致性",
+    "kind": "RULE",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m3-rule-model.yaml",
+    "properties": {
+      "id": "RULE-OWNER-DEPT-CONSISTENT",
+      "name": "责任人部门一致性",
+      "ruleType": "VALIDATION",
+      "description": "判断责任人所属部门是否等于合同所属部门",
+      "inputParams": [
+        {
+          "name": "ownerDepartmentId",
+          "type": "String",
+          "sourceField": "Employee.departmentId",
+          "required": true
+        },
+        {
+          "name": "contractDepartmentId",
+          "type": "String",
+          "sourceField": "Contract.departmentId",
+          "required": true
+        }
+      ],
+      "outputType": "Boolean",
+      "expression": "ownerDepartmentId == contractDepartmentId\n",
+      "reusedBy": [
+        "Contract_SaveAsDraft",
+        "Contract_Submit",
+        "Contract_Resubmit"
+      ],
+      "version": "1.0"
+    }
+  },
+  {
+    "id": "reference-example:ACTOR:ACTOR-SALES",
+    "rawId": "ACTOR-SALES",
+    "name": "销售人员",
+    "kind": "ACTOR",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m5-actor-model.yaml",
+    "properties": {
+      "actorId": "ACTOR-SALES",
+      "name": "销售人员",
+      "actorType": "HUMAN",
+      "roles": [
+        "ROLE-SALES"
+      ]
+    }
+  },
+  {
+    "id": "reference-example:ACTOR:ACTOR-FINANCE",
+    "rawId": "ACTOR-FINANCE",
+    "name": "财务人员",
+    "kind": "ACTOR",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m5-actor-model.yaml",
+    "properties": {
+      "actorId": "ACTOR-FINANCE",
+      "name": "财务人员",
+      "actorType": "HUMAN",
+      "roles": [
+        "ROLE-FINANCE"
+      ]
+    }
+  },
+  {
+    "id": "reference-example:ACTOR:ACTOR-FINANCE-MANAGER",
+    "rawId": "ACTOR-FINANCE-MANAGER",
+    "name": "财务经理",
+    "kind": "ACTOR",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m5-actor-model.yaml",
+    "properties": {
+      "actorId": "ACTOR-FINANCE-MANAGER",
+      "name": "财务经理",
+      "actorType": "HUMAN",
+      "roles": [
+        "ROLE-FINANCE-MANAGER"
+      ]
+    }
+  },
+  {
+    "id": "reference-example:ACTOR:ACTOR-GENERAL-MANAGER",
+    "rawId": "ACTOR-GENERAL-MANAGER",
+    "name": "总经理",
+    "kind": "ACTOR",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m5-actor-model.yaml",
+    "properties": {
+      "actorId": "ACTOR-GENERAL-MANAGER",
+      "name": "总经理",
+      "actorType": "HUMAN",
+      "roles": [
+        "ROLE-GENERAL-MANAGER"
+      ]
+    }
+  },
+  {
+    "id": "reference-example:ACTOR:ACTOR-EMPLOYEE",
+    "rawId": "ACTOR-EMPLOYEE",
+    "name": "普通员工",
+    "kind": "ACTOR",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m5-actor-model.yaml",
+    "properties": {
+      "actorId": "ACTOR-EMPLOYEE",
+      "name": "普通员工",
+      "actorType": "HUMAN",
+      "roles": [
+        "ROLE-EMPLOYEE"
+      ]
+    }
+  },
+  {
+    "id": "reference-example:ACTOR:ACTOR-SYSTEM",
+    "rawId": "ACTOR-SYSTEM",
+    "name": "系统自动执行主体",
+    "kind": "ACTOR",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m5-actor-model.yaml",
+    "properties": {
+      "actorId": "ACTOR-SYSTEM",
+      "name": "系统自动执行主体",
+      "actorType": "SYSTEM",
+      "roles": [
+        "ROLE-SYSTEM"
+      ]
+    }
+  },
+  {
+    "id": "reference-example:ROLE:ROLE-SALES",
+    "rawId": "ROLE-SALES",
+    "name": "销售人员",
+    "kind": "ROLE",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m5-actor-model.yaml",
+    "properties": {
+      "roleId": "ROLE-SALES",
+      "name": "销售人员",
+      "permissions": [
+        "PERM-CONTRACT-SAVE-DRAFT",
+        "PERM-CONTRACT-SUBMIT",
+        "PERM-CONTRACT-RESUBMIT",
+        "PERM-CONTRACT-QUERY-LIST",
+        "PERM-CONTRACT-QUERY-DETAIL",
+        "PERM-CONTRACT-QUERY-EXECUTION",
+        "PERM-CONTRACT-QUERY-DEPT-SUMMARY",
+        "PERM-CONTRACT-QUERY-UNRECEIVED"
+      ]
+    }
+  },
+  {
+    "id": "reference-example:ROLE:ROLE-FINANCE",
+    "rawId": "ROLE-FINANCE",
+    "name": "财务人员",
+    "kind": "ROLE",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m5-actor-model.yaml",
+    "properties": {
+      "roleId": "ROLE-FINANCE",
+      "name": "财务人员",
+      "permissions": [
+        "PERM-CONTRACT-SAVE-DRAFT",
+        "PERM-CONTRACT-SUBMIT",
+        "PERM-CONTRACT-RESUBMIT",
+        "PERM-INVOICE-SAVE-DRAFT",
+        "PERM-INVOICE-SUBMIT",
+        "PERM-INVOICE-RESUBMIT",
+        "PERM-RECEIPT-RECORD",
+        "PERM-RECEIPT-REVERSE",
+        "PERM-INVOICE-VOID",
+        "PERM-CONTRACT-QUERY-LIST",
+        "PERM-CONTRACT-QUERY-DETAIL",
+        "PERM-CONTRACT-QUERY-EXECUTION",
+        "PERM-CONTRACT-QUERY-DEPT-SUMMARY",
+        "PERM-CONTRACT-QUERY-UNRECEIVED"
+      ]
+    }
+  },
+  {
+    "id": "reference-example:ROLE:ROLE-FINANCE-MANAGER",
+    "rawId": "ROLE-FINANCE-MANAGER",
+    "name": "财务经理",
+    "kind": "ROLE",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m5-actor-model.yaml",
+    "properties": {
+      "roleId": "ROLE-FINANCE-MANAGER",
+      "name": "财务经理",
+      "permissions": [
+        "PERM-CONTRACT-VOID",
+        "PERM-PRODUCT-MAINTAIN",
+        "PERM-CUSTOMER-MAINTAIN",
+        "PERM-DEPARTMENT-MAINTAIN",
+        "PERM-EMPLOYEE-MAINTAIN",
+        "PERM-CONTRACT-APPROVE-FINANCE",
+        "PERM-INVOICE-APPROVE",
+        "PERM-CONTRACT-QUERY-LIST",
+        "PERM-CONTRACT-QUERY-DETAIL",
+        "PERM-CONTRACT-QUERY-EXECUTION",
+        "PERM-CONTRACT-QUERY-DEPT-SUMMARY",
+        "PERM-CONTRACT-QUERY-UNRECEIVED"
+      ]
+    }
+  },
+  {
+    "id": "reference-example:ROLE:ROLE-GENERAL-MANAGER",
+    "rawId": "ROLE-GENERAL-MANAGER",
+    "name": "总经理",
+    "kind": "ROLE",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m5-actor-model.yaml",
+    "properties": {
+      "roleId": "ROLE-GENERAL-MANAGER",
+      "name": "总经理",
+      "permissions": [
+        "PERM-CONTRACT-APPROVE-LARGE",
+        "PERM-CONTRACT-QUERY-LIST",
+        "PERM-CONTRACT-QUERY-DETAIL",
+        "PERM-CONTRACT-QUERY-EXECUTION",
+        "PERM-CONTRACT-QUERY-DEPT-SUMMARY",
+        "PERM-CONTRACT-QUERY-UNRECEIVED"
+      ]
+    }
+  },
+  {
+    "id": "reference-example:ROLE:ROLE-EMPLOYEE",
+    "rawId": "ROLE-EMPLOYEE",
+    "name": "普通员工",
+    "kind": "ROLE",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m5-actor-model.yaml",
+    "properties": {
+      "roleId": "ROLE-EMPLOYEE",
+      "name": "普通员工",
+      "permissions": [
+        "PERM-CONTRACT-QUERY-LIST-OWN-DEPT",
+        "PERM-CONTRACT-QUERY-DETAIL-OWN-DEPT",
+        "PERM-CONTRACT-QUERY-EXECUTION-OWN-DEPT",
+        "PERM-CONTRACT-QUERY-DEPT-SUMMARY-OWN-DEPT",
+        "PERM-CONTRACT-QUERY-UNRECEIVED-OWN-DEPT"
+      ]
+    }
+  },
+  {
+    "id": "reference-example:ROLE:ROLE-SYSTEM",
+    "rawId": "ROLE-SYSTEM",
+    "name": "系统自动执行主体",
+    "kind": "ROLE",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m5-actor-model.yaml",
+    "properties": {
+      "roleId": "ROLE-SYSTEM",
+      "name": "系统自动执行主体",
+      "permissions": []
+    }
+  },
+  {
+    "id": "reference-example:PERMISSION:PERM-CONTRACT-SAVE-DRAFT",
+    "rawId": "PERM-CONTRACT-SAVE-DRAFT",
+    "name": "PERM-CONTRACT-SAVE-DRAFT",
+    "kind": "PERMISSION",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m5-actor-model.yaml",
+    "properties": {
+      "permissionId": "PERM-CONTRACT-SAVE-DRAFT",
+      "targetType": "BEHAVIOR",
+      "targetRef": "Contract_SaveAsDraft",
+      "dataScope": "ALL"
+    }
+  },
+  {
+    "id": "reference-example:PERMISSION:PERM-CONTRACT-SUBMIT",
+    "rawId": "PERM-CONTRACT-SUBMIT",
+    "name": "PERM-CONTRACT-SUBMIT",
+    "kind": "PERMISSION",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m5-actor-model.yaml",
+    "properties": {
+      "permissionId": "PERM-CONTRACT-SUBMIT",
+      "targetType": "BEHAVIOR",
+      "targetRef": "Contract_Submit",
+      "dataScope": "ALL"
+    }
+  },
+  {
+    "id": "reference-example:PERMISSION:PERM-CONTRACT-RESUBMIT",
+    "rawId": "PERM-CONTRACT-RESUBMIT",
+    "name": "PERM-CONTRACT-RESUBMIT",
+    "kind": "PERMISSION",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m5-actor-model.yaml",
+    "properties": {
+      "permissionId": "PERM-CONTRACT-RESUBMIT",
+      "targetType": "BEHAVIOR",
+      "targetRef": "Contract_Resubmit",
+      "dataScope": "ALL"
+    }
+  },
+  {
+    "id": "reference-example:PERMISSION:PERM-INVOICE-SAVE-DRAFT",
+    "rawId": "PERM-INVOICE-SAVE-DRAFT",
+    "name": "PERM-INVOICE-SAVE-DRAFT",
+    "kind": "PERMISSION",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m5-actor-model.yaml",
+    "properties": {
+      "permissionId": "PERM-INVOICE-SAVE-DRAFT",
+      "targetType": "BEHAVIOR",
+      "targetRef": "Invoice_SaveAsDraft",
+      "dataScope": "ALL"
+    }
+  },
+  {
+    "id": "reference-example:PERMISSION:PERM-INVOICE-SUBMIT",
+    "rawId": "PERM-INVOICE-SUBMIT",
+    "name": "PERM-INVOICE-SUBMIT",
+    "kind": "PERMISSION",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m5-actor-model.yaml",
+    "properties": {
+      "permissionId": "PERM-INVOICE-SUBMIT",
+      "targetType": "BEHAVIOR",
+      "targetRef": "Invoice_Submit",
+      "dataScope": "ALL"
+    }
+  },
+  {
+    "id": "reference-example:PERMISSION:PERM-INVOICE-RESUBMIT",
+    "rawId": "PERM-INVOICE-RESUBMIT",
+    "name": "PERM-INVOICE-RESUBMIT",
+    "kind": "PERMISSION",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m5-actor-model.yaml",
+    "properties": {
+      "permissionId": "PERM-INVOICE-RESUBMIT",
+      "targetType": "BEHAVIOR",
+      "targetRef": "Invoice_Resubmit",
+      "dataScope": "ALL"
+    }
+  },
+  {
+    "id": "reference-example:PERMISSION:PERM-RECEIPT-RECORD",
+    "rawId": "PERM-RECEIPT-RECORD",
+    "name": "PERM-RECEIPT-RECORD",
+    "kind": "PERMISSION",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m5-actor-model.yaml",
+    "properties": {
+      "permissionId": "PERM-RECEIPT-RECORD",
+      "targetType": "BEHAVIOR",
+      "targetRef": "Receipt_Record",
+      "dataScope": "ALL"
+    }
+  },
+  {
+    "id": "reference-example:PERMISSION:PERM-RECEIPT-REVERSE",
+    "rawId": "PERM-RECEIPT-REVERSE",
+    "name": "PERM-RECEIPT-REVERSE",
+    "kind": "PERMISSION",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m5-actor-model.yaml",
+    "properties": {
+      "permissionId": "PERM-RECEIPT-REVERSE",
+      "targetType": "BEHAVIOR",
+      "targetRef": "Receipt_Reverse",
+      "dataScope": "ALL"
+    }
+  },
+  {
+    "id": "reference-example:PERMISSION:PERM-CONTRACT-VOID",
+    "rawId": "PERM-CONTRACT-VOID",
+    "name": "PERM-CONTRACT-VOID",
+    "kind": "PERMISSION",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m5-actor-model.yaml",
+    "properties": {
+      "permissionId": "PERM-CONTRACT-VOID",
+      "targetType": "BEHAVIOR",
+      "targetRef": "Contract_VoidOrArchive",
+      "dataScope": "ALL"
+    }
+  },
+  {
+    "id": "reference-example:PERMISSION:PERM-INVOICE-VOID",
+    "rawId": "PERM-INVOICE-VOID",
+    "name": "PERM-INVOICE-VOID",
+    "kind": "PERMISSION",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m5-actor-model.yaml",
+    "properties": {
+      "permissionId": "PERM-INVOICE-VOID",
+      "targetType": "BEHAVIOR",
+      "targetRef": "Invoice_Void",
+      "dataScope": "ALL"
+    }
+  },
+  {
+    "id": "reference-example:PERMISSION:PERM-PRODUCT-MAINTAIN",
+    "rawId": "PERM-PRODUCT-MAINTAIN",
+    "name": "PERM-PRODUCT-MAINTAIN",
+    "kind": "PERMISSION",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m5-actor-model.yaml",
+    "properties": {
+      "permissionId": "PERM-PRODUCT-MAINTAIN",
+      "targetType": "BEHAVIOR",
+      "targetRef": "Product_Maintain",
+      "dataScope": "ALL"
+    }
+  },
+  {
+    "id": "reference-example:PERMISSION:PERM-CUSTOMER-MAINTAIN",
+    "rawId": "PERM-CUSTOMER-MAINTAIN",
+    "name": "PERM-CUSTOMER-MAINTAIN",
+    "kind": "PERMISSION",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m5-actor-model.yaml",
+    "properties": {
+      "permissionId": "PERM-CUSTOMER-MAINTAIN",
+      "targetType": "BEHAVIOR",
+      "targetRef": "Customer_Maintain",
+      "dataScope": "ALL"
+    }
+  },
+  {
+    "id": "reference-example:PERMISSION:PERM-DEPARTMENT-MAINTAIN",
+    "rawId": "PERM-DEPARTMENT-MAINTAIN",
+    "name": "PERM-DEPARTMENT-MAINTAIN",
+    "kind": "PERMISSION",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m5-actor-model.yaml",
+    "properties": {
+      "permissionId": "PERM-DEPARTMENT-MAINTAIN",
+      "targetType": "BEHAVIOR",
+      "targetRef": "Department_Maintain",
+      "dataScope": "ALL"
+    }
+  },
+  {
+    "id": "reference-example:PERMISSION:PERM-EMPLOYEE-MAINTAIN",
+    "rawId": "PERM-EMPLOYEE-MAINTAIN",
+    "name": "PERM-EMPLOYEE-MAINTAIN",
+    "kind": "PERMISSION",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m5-actor-model.yaml",
+    "properties": {
+      "permissionId": "PERM-EMPLOYEE-MAINTAIN",
+      "targetType": "BEHAVIOR",
+      "targetRef": "Employee_Maintain",
+      "dataScope": "ALL"
+    }
+  },
+  {
+    "id": "reference-example:PERMISSION:PERM-CONTRACT-QUERY-LIST",
+    "rawId": "PERM-CONTRACT-QUERY-LIST",
+    "name": "PERM-CONTRACT-QUERY-LIST",
+    "kind": "PERMISSION",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m5-actor-model.yaml",
+    "properties": {
+      "permissionId": "PERM-CONTRACT-QUERY-LIST",
+      "targetType": "BEHAVIOR",
+      "targetRef": "Contract_QueryList",
+      "dataScope": "ALL"
+    }
+  },
+  {
+    "id": "reference-example:PERMISSION:PERM-CONTRACT-QUERY-DETAIL",
+    "rawId": "PERM-CONTRACT-QUERY-DETAIL",
+    "name": "PERM-CONTRACT-QUERY-DETAIL",
+    "kind": "PERMISSION",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m5-actor-model.yaml",
+    "properties": {
+      "permissionId": "PERM-CONTRACT-QUERY-DETAIL",
+      "targetType": "BEHAVIOR",
+      "targetRef": "Contract_QueryDetail",
+      "dataScope": "ALL"
+    }
+  },
+  {
+    "id": "reference-example:PERMISSION:PERM-CONTRACT-QUERY-EXECUTION",
+    "rawId": "PERM-CONTRACT-QUERY-EXECUTION",
+    "name": "PERM-CONTRACT-QUERY-EXECUTION",
+    "kind": "PERMISSION",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m5-actor-model.yaml",
+    "properties": {
+      "permissionId": "PERM-CONTRACT-QUERY-EXECUTION",
+      "targetType": "BEHAVIOR",
+      "targetRef": "Contract_QueryExecutionAnalysis",
+      "dataScope": "ALL"
+    }
+  },
+  {
+    "id": "reference-example:PERMISSION:PERM-CONTRACT-QUERY-DEPT-SUMMARY",
+    "rawId": "PERM-CONTRACT-QUERY-DEPT-SUMMARY",
+    "name": "PERM-CONTRACT-QUERY-DEPT-SUMMARY",
+    "kind": "PERMISSION",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m5-actor-model.yaml",
+    "properties": {
+      "permissionId": "PERM-CONTRACT-QUERY-DEPT-SUMMARY",
+      "targetType": "BEHAVIOR",
+      "targetRef": "Contract_QueryDepartmentSummary",
+      "dataScope": "ALL"
+    }
+  },
+  {
+    "id": "reference-example:PERMISSION:PERM-CONTRACT-QUERY-UNRECEIVED",
+    "rawId": "PERM-CONTRACT-QUERY-UNRECEIVED",
+    "name": "PERM-CONTRACT-QUERY-UNRECEIVED",
+    "kind": "PERMISSION",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m5-actor-model.yaml",
+    "properties": {
+      "permissionId": "PERM-CONTRACT-QUERY-UNRECEIVED",
+      "targetType": "BEHAVIOR",
+      "targetRef": "Contract_QueryInvoicedUnreceived",
+      "dataScope": "ALL"
+    }
+  },
+  {
+    "id": "reference-example:PERMISSION:PERM-CONTRACT-QUERY-LIST-OWN-DEPT",
+    "rawId": "PERM-CONTRACT-QUERY-LIST-OWN-DEPT",
+    "name": "PERM-CONTRACT-QUERY-LIST-OWN-DEPT",
+    "kind": "PERMISSION",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m5-actor-model.yaml",
+    "properties": {
+      "permissionId": "PERM-CONTRACT-QUERY-LIST-OWN-DEPT",
+      "targetType": "BEHAVIOR",
+      "targetRef": "Contract_QueryList",
+      "dataScope": "DEPT",
+      "abacCondition": "actor.departmentId == resource.departmentId"
+    }
+  },
+  {
+    "id": "reference-example:PERMISSION:PERM-CONTRACT-QUERY-DETAIL-OWN-DEPT",
+    "rawId": "PERM-CONTRACT-QUERY-DETAIL-OWN-DEPT",
+    "name": "PERM-CONTRACT-QUERY-DETAIL-OWN-DEPT",
+    "kind": "PERMISSION",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m5-actor-model.yaml",
+    "properties": {
+      "permissionId": "PERM-CONTRACT-QUERY-DETAIL-OWN-DEPT",
+      "targetType": "BEHAVIOR",
+      "targetRef": "Contract_QueryDetail",
+      "dataScope": "DEPT",
+      "abacCondition": "actor.departmentId == resource.departmentId"
+    }
+  },
+  {
+    "id": "reference-example:PERMISSION:PERM-CONTRACT-QUERY-EXECUTION-OWN-DEPT",
+    "rawId": "PERM-CONTRACT-QUERY-EXECUTION-OWN-DEPT",
+    "name": "PERM-CONTRACT-QUERY-EXECUTION-OWN-DEPT",
+    "kind": "PERMISSION",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m5-actor-model.yaml",
+    "properties": {
+      "permissionId": "PERM-CONTRACT-QUERY-EXECUTION-OWN-DEPT",
+      "targetType": "BEHAVIOR",
+      "targetRef": "Contract_QueryExecutionAnalysis",
+      "dataScope": "DEPT",
+      "abacCondition": "actor.departmentId == resource.departmentId"
+    }
+  },
+  {
+    "id": "reference-example:PERMISSION:PERM-CONTRACT-QUERY-DEPT-SUMMARY-OWN-DEPT",
+    "rawId": "PERM-CONTRACT-QUERY-DEPT-SUMMARY-OWN-DEPT",
+    "name": "PERM-CONTRACT-QUERY-DEPT-SUMMARY-OWN-DEPT",
+    "kind": "PERMISSION",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m5-actor-model.yaml",
+    "properties": {
+      "permissionId": "PERM-CONTRACT-QUERY-DEPT-SUMMARY-OWN-DEPT",
+      "targetType": "BEHAVIOR",
+      "targetRef": "Contract_QueryDepartmentSummary",
+      "dataScope": "DEPT",
+      "abacCondition": "actor.departmentId == resource.departmentId"
+    }
+  },
+  {
+    "id": "reference-example:PERMISSION:PERM-CONTRACT-QUERY-UNRECEIVED-OWN-DEPT",
+    "rawId": "PERM-CONTRACT-QUERY-UNRECEIVED-OWN-DEPT",
+    "name": "PERM-CONTRACT-QUERY-UNRECEIVED-OWN-DEPT",
+    "kind": "PERMISSION",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m5-actor-model.yaml",
+    "properties": {
+      "permissionId": "PERM-CONTRACT-QUERY-UNRECEIVED-OWN-DEPT",
+      "targetType": "BEHAVIOR",
+      "targetRef": "Contract_QueryInvoicedUnreceived",
+      "dataScope": "DEPT",
+      "abacCondition": "actor.departmentId == resource.departmentId"
+    }
+  },
+  {
+    "id": "reference-example:PERMISSION:PERM-CONTRACT-APPROVE-FINANCE",
+    "rawId": "PERM-CONTRACT-APPROVE-FINANCE",
+    "name": "PERM-CONTRACT-APPROVE-FINANCE",
+    "kind": "PERMISSION",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m5-actor-model.yaml",
+    "properties": {
+      "permissionId": "PERM-CONTRACT-APPROVE-FINANCE",
+      "targetType": "BEHAVIOR",
+      "targetRef": "Contract_ApproveFinance",
+      "dataScope": "ALL"
+    }
+  },
+  {
+    "id": "reference-example:PERMISSION:PERM-CONTRACT-APPROVE-LARGE",
+    "rawId": "PERM-CONTRACT-APPROVE-LARGE",
+    "name": "PERM-CONTRACT-APPROVE-LARGE",
+    "kind": "PERMISSION",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m5-actor-model.yaml",
+    "properties": {
+      "permissionId": "PERM-CONTRACT-APPROVE-LARGE",
+      "targetType": "BEHAVIOR",
+      "targetRef": "Contract_ApproveGeneralManager",
+      "dataScope": "ALL"
+    }
+  },
+  {
+    "id": "reference-example:PERMISSION:PERM-INVOICE-APPROVE",
+    "rawId": "PERM-INVOICE-APPROVE",
+    "name": "PERM-INVOICE-APPROVE",
+    "kind": "PERMISSION",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m5-actor-model.yaml",
+    "properties": {
+      "permissionId": "PERM-INVOICE-APPROVE",
+      "targetType": "BEHAVIOR",
+      "targetRef": "Invoice_ApproveFinance",
+      "dataScope": "ALL"
+    }
+  },
+  {
+    "id": "reference-example:FLOW:FLOW-CONTRACT-001",
+    "rawId": "FLOW-CONTRACT-001",
+    "name": "合同全生命周期流程",
+    "kind": "FLOW",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m6-flow-model.yaml",
+    "properties": {
+      "id": "FLOW-CONTRACT-001",
+      "name": "合同全生命周期流程",
+      "flowType": "COLLABORATION",
+      "description": "从合同创建、审批、生效、开票和收款到合同关闭的端到端协同流程",
+      "businessObjectRefs": [
+        "AGG-CONTRACT-001",
+        "AGG-INVOICE-001",
+        "AGG-RECEIPT-001"
+      ],
+      "roleRefs": [
+        "ROLE-SALES",
+        "ROLE-FINANCE",
+        "ROLE-FINANCE-MANAGER",
+        "ROLE-GENERAL-MANAGER"
+      ],
+      "trigger": {
+        "triggerType": "MANUAL"
+      },
+      "preconditions": [
+        "销售合同已完成线下签字盖章，具备登记条件"
+      ],
+      "postconditions": [
+        "合同已归档或流程已明确终止"
+      ],
+      "startActivity": "A01",
+      "endActivities": [
+        "A09"
+      ],
+      "activities": [
+        {
+          "activityId": "A01",
+          "name": "开始",
+          "activityType": "START",
+          "nextActivities": [
+            "A02"
+          ]
+        },
+        {
+          "activityId": "A02",
+          "name": "创建合同（保存草稿/提交审批）",
+          "activityType": "USER_TASK",
+          "roleRef": "ROLE-SALES",
+          "behaviorRef": "Contract_Submit",
+          "nextActivities": [
+            "A03"
+          ]
+        },
+        {
+          "activityId": "A03",
+          "name": "合同登记审批",
+          "activityType": "SUB_FLOW_CALL",
+          "subFlowRef": "FLOW-CONTRACT-APPROVAL-001",
+          "nextActivities": [
+            "A04"
+          ]
+        },
+        {
+          "activityId": "A04",
+          "name": "审批结果判断",
+          "activityType": "GATEWAY",
+          "branches": [
+            {
+              "branchName": "审批通过",
+              "conditionExpression": "approval.outcome == 'APPROVE'",
+              "targetActivity": "A05",
+              "isDefault": true
+            },
+            {
+              "branchName": "驳回后修改重提",
+              "conditionExpression": "approval.outcome == 'REJECT'",
+              "targetActivity": "A02",
+              "isDefault": false
+            },
+            {
+              "branchName": "终止且不再提交",
+              "conditionExpression": "approval.outcome == 'TERMINATE'",
+              "targetActivity": "A09",
+              "isDefault": false
+            }
+          ]
+        },
+        {
+          "activityId": "A05",
+          "name": "开票与收款循环",
+          "activityType": "SUB_FLOW_CALL",
+          "subFlowRef": "FLOW-CONTRACT-INVOICE-002",
+          "nextActivities": [
+            "A06"
+          ]
+        },
+        {
+          "activityId": "A06",
+          "name": "合同结清判断",
+          "activityType": "GATEWAY",
+          "branches": [
+            {
+              "branchName": "满足结清条件",
+              "ruleRef": "RULE-CONTRACT-SETTLEMENT",
+              "targetActivity": "A07",
+              "isDefault": false
+            },
+            {
+              "branchName": "未结清，继续开票收款",
+              "conditionExpression": null,
+              "targetActivity": "A05",
+              "isDefault": true
+            }
+          ]
+        },
+        {
+          "activityId": "A07",
+          "name": "合同结清（由同步联动自动触发）",
+          "activityType": "SYSTEM_TASK",
+          "behaviorRef": "Contract_UpdateSettlementStatus",
+          "nextActivities": [
+            "A08"
+          ]
+        },
+        {
+          "activityId": "A08",
+          "name": "合同作废或归档",
+          "activityType": "USER_TASK",
+          "roleRef": "ROLE-FINANCE-MANAGER",
+          "behaviorRef": "Contract_VoidOrArchive",
+          "nextActivities": [
+            "A09"
+          ]
+        },
+        {
+          "activityId": "A09",
+          "name": "结束",
+          "activityType": "END",
+          "nextActivities": []
+        }
+      ]
+    }
+  },
+  {
+    "id": "reference-example:ACTIVITY:A01",
+    "rawId": "A01",
+    "name": "开始",
+    "kind": "ACTIVITY",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m6-flow-model.yaml",
+    "properties": {
+      "activityId": "A01",
+      "name": "开始",
+      "activityType": "START",
+      "nextActivities": [
+        "A02"
+      ]
+    }
+  },
+  {
+    "id": "reference-example:ACTIVITY:A02",
+    "rawId": "A02",
+    "name": "创建合同（保存草稿/提交审批）",
+    "kind": "ACTIVITY",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m6-flow-model.yaml",
+    "properties": {
+      "activityId": "A02",
+      "name": "创建合同（保存草稿/提交审批）",
+      "activityType": "USER_TASK",
+      "roleRef": "ROLE-SALES",
+      "behaviorRef": "Contract_Submit",
+      "nextActivities": [
+        "A03"
+      ]
+    }
+  },
+  {
+    "id": "reference-example:ACTIVITY:A03",
+    "rawId": "A03",
+    "name": "合同登记审批",
+    "kind": "ACTIVITY",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m6-flow-model.yaml",
+    "properties": {
+      "activityId": "A03",
+      "name": "合同登记审批",
+      "activityType": "SUB_FLOW_CALL",
+      "subFlowRef": "FLOW-CONTRACT-APPROVAL-001",
+      "nextActivities": [
+        "A04"
+      ]
+    }
+  },
+  {
+    "id": "reference-example:ACTIVITY:A04",
+    "rawId": "A04",
+    "name": "审批结果判断",
+    "kind": "ACTIVITY",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m6-flow-model.yaml",
+    "properties": {
+      "activityId": "A04",
+      "name": "审批结果判断",
+      "activityType": "GATEWAY",
+      "branches": [
+        {
+          "branchName": "审批通过",
+          "conditionExpression": "approval.outcome == 'APPROVE'",
+          "targetActivity": "A05",
+          "isDefault": true
+        },
+        {
+          "branchName": "驳回后修改重提",
+          "conditionExpression": "approval.outcome == 'REJECT'",
+          "targetActivity": "A02",
+          "isDefault": false
+        },
+        {
+          "branchName": "终止且不再提交",
+          "conditionExpression": "approval.outcome == 'TERMINATE'",
+          "targetActivity": "A09",
+          "isDefault": false
+        }
+      ]
+    }
+  },
+  {
+    "id": "reference-example:ACTIVITY:A05",
+    "rawId": "A05",
+    "name": "开票与收款循环",
+    "kind": "ACTIVITY",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m6-flow-model.yaml",
+    "properties": {
+      "activityId": "A05",
+      "name": "开票与收款循环",
+      "activityType": "SUB_FLOW_CALL",
+      "subFlowRef": "FLOW-CONTRACT-INVOICE-002",
+      "nextActivities": [
+        "A06"
+      ]
+    }
+  },
+  {
+    "id": "reference-example:ACTIVITY:A06",
+    "rawId": "A06",
+    "name": "合同结清判断",
+    "kind": "ACTIVITY",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m6-flow-model.yaml",
+    "properties": {
+      "activityId": "A06",
+      "name": "合同结清判断",
+      "activityType": "GATEWAY",
+      "branches": [
+        {
+          "branchName": "满足结清条件",
+          "ruleRef": "RULE-CONTRACT-SETTLEMENT",
+          "targetActivity": "A07",
+          "isDefault": false
+        },
+        {
+          "branchName": "未结清，继续开票收款",
+          "conditionExpression": null,
+          "targetActivity": "A05",
+          "isDefault": true
+        }
+      ]
+    }
+  },
+  {
+    "id": "reference-example:ACTIVITY:A07",
+    "rawId": "A07",
+    "name": "合同结清（由同步联动自动触发）",
+    "kind": "ACTIVITY",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m6-flow-model.yaml",
+    "properties": {
+      "activityId": "A07",
+      "name": "合同结清（由同步联动自动触发）",
+      "activityType": "SYSTEM_TASK",
+      "behaviorRef": "Contract_UpdateSettlementStatus",
+      "nextActivities": [
+        "A08"
+      ]
+    }
+  },
+  {
+    "id": "reference-example:ACTIVITY:A08",
+    "rawId": "A08",
+    "name": "合同作废或归档",
+    "kind": "ACTIVITY",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m6-flow-model.yaml",
+    "properties": {
+      "activityId": "A08",
+      "name": "合同作废或归档",
+      "activityType": "USER_TASK",
+      "roleRef": "ROLE-FINANCE-MANAGER",
+      "behaviorRef": "Contract_VoidOrArchive",
+      "nextActivities": [
+        "A09"
+      ]
+    }
+  },
+  {
+    "id": "reference-example:ACTIVITY:A09",
+    "rawId": "A09",
+    "name": "结束",
+    "kind": "ACTIVITY",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m6-flow-model.yaml",
+    "properties": {
+      "activityId": "A09",
+      "name": "结束",
+      "activityType": "END",
+      "nextActivities": []
+    }
+  },
+  {
+    "id": "reference-example:FLOW:FLOW-CONTRACT-INVOICE-002",
+    "rawId": "FLOW-CONTRACT-INVOICE-002",
+    "name": "合同开票与收款流程",
+    "kind": "FLOW",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m6-flow-model.yaml",
+    "properties": {
+      "id": "FLOW-CONTRACT-INVOICE-002",
+      "name": "合同开票与收款流程",
+      "flowType": "COLLABORATION",
+      "description": "根据客户付款通知完成开票审批、付款阶段占用、收款登记和状态联动",
+      "businessObjectRefs": [
+        "AGG-CONTRACT-001",
+        "AGG-INVOICE-001",
+        "AGG-RECEIPT-001"
+      ],
+      "roleRefs": [
+        "ROLE-FINANCE",
+        "ROLE-FINANCE-MANAGER"
+      ],
+      "trigger": {
+        "triggerType": "MANUAL"
+      },
+      "preconditions": [
+        "合同已纳入管理且客户已发出付款通知"
+      ],
+      "postconditions": [
+        "本次有效开票已全部收齐，或开票审批终止/开票作废"
+      ],
+      "startActivity": "B01",
+      "endActivities": [
+        "B09"
+      ],
+      "activities": [
+        {
+          "activityId": "B01",
+          "name": "开始",
+          "activityType": "START",
+          "nextActivities": [
+            "B02"
+          ]
+        },
+        {
+          "activityId": "B02",
+          "name": "开票登记（保存草稿/提交审批）",
+          "activityType": "USER_TASK",
+          "roleRef": "ROLE-FINANCE",
+          "behaviorRef": "Invoice_Submit",
+          "nextActivities": [
+            "B03"
+          ]
+        },
+        {
+          "activityId": "B03",
+          "name": "开票审批",
+          "activityType": "SUB_FLOW_CALL",
+          "subFlowRef": "FLOW-INVOICE-APPROVAL-002",
+          "nextActivities": [
+            "B04"
+          ]
+        },
+        {
+          "activityId": "B04",
+          "name": "审批结果判断",
+          "activityType": "GATEWAY",
+          "branches": [
+            {
+              "branchName": "审批通过",
+              "conditionExpression": "approval.outcome == 'APPROVE'",
+              "targetActivity": "B05",
+              "isDefault": true
+            },
+            {
+              "branchName": "驳回后修改重提",
+              "conditionExpression": "approval.outcome == 'REJECT'",
+              "targetActivity": "B02",
+              "isDefault": false
+            },
+            {
+              "branchName": "终止且不再提交",
+              "conditionExpression": "approval.outcome == 'TERMINATE'",
+              "targetActivity": "B09",
+              "isDefault": false
+            }
+          ]
+        },
+        {
+          "activityId": "B05",
+          "name": "更新付款阶段开票状态（同步联动自动触发）",
+          "activityType": "SYSTEM_TASK",
+          "behaviorRef": "PaymentStage_UpdateInvoiceStatus",
+          "nextActivities": [
+            "B06"
+          ]
+        },
+        {
+          "activityId": "B06",
+          "name": "录入收款",
+          "activityType": "USER_TASK",
+          "roleRef": "ROLE-FINANCE",
+          "behaviorRef": "Receipt_Record",
+          "nextActivities": [
+            "B07"
+          ]
+        },
+        {
+          "activityId": "B07",
+          "name": "更新开票收款状态（同步联动自动触发）",
+          "activityType": "SYSTEM_TASK",
+          "behaviorRef": "Invoice_UpdateReceiptStatus",
+          "nextActivities": [
+            "B08"
+          ]
+        },
+        {
+          "activityId": "B08",
+          "name": "开票是否全部收齐",
+          "activityType": "GATEWAY",
+          "branches": [
+            {
+              "branchName": "已全部收齐",
+              "ruleRef": "RULE-INVOICE-RECEIPT-STATUS",
+              "targetActivity": "B09",
+              "isDefault": false
+            },
+            {
+              "branchName": "未收齐，继续收款",
+              "conditionExpression": null,
+              "targetActivity": "B06",
+              "isDefault": true
+            }
+          ]
+        },
+        {
+          "activityId": "B09",
+          "name": "结束",
+          "activityType": "END",
+          "nextActivities": []
+        }
+      ]
+    }
+  },
+  {
+    "id": "reference-example:ACTIVITY:B01",
+    "rawId": "B01",
+    "name": "开始",
+    "kind": "ACTIVITY",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m6-flow-model.yaml",
+    "properties": {
+      "activityId": "B01",
+      "name": "开始",
+      "activityType": "START",
+      "nextActivities": [
+        "B02"
+      ]
+    }
+  },
+  {
+    "id": "reference-example:ACTIVITY:B02",
+    "rawId": "B02",
+    "name": "开票登记（保存草稿/提交审批）",
+    "kind": "ACTIVITY",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m6-flow-model.yaml",
+    "properties": {
+      "activityId": "B02",
+      "name": "开票登记（保存草稿/提交审批）",
+      "activityType": "USER_TASK",
+      "roleRef": "ROLE-FINANCE",
+      "behaviorRef": "Invoice_Submit",
+      "nextActivities": [
+        "B03"
+      ]
+    }
+  },
+  {
+    "id": "reference-example:ACTIVITY:B03",
+    "rawId": "B03",
+    "name": "开票审批",
+    "kind": "ACTIVITY",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m6-flow-model.yaml",
+    "properties": {
+      "activityId": "B03",
+      "name": "开票审批",
+      "activityType": "SUB_FLOW_CALL",
+      "subFlowRef": "FLOW-INVOICE-APPROVAL-002",
+      "nextActivities": [
+        "B04"
+      ]
+    }
+  },
+  {
+    "id": "reference-example:ACTIVITY:B04",
+    "rawId": "B04",
+    "name": "审批结果判断",
+    "kind": "ACTIVITY",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m6-flow-model.yaml",
+    "properties": {
+      "activityId": "B04",
+      "name": "审批结果判断",
+      "activityType": "GATEWAY",
+      "branches": [
+        {
+          "branchName": "审批通过",
+          "conditionExpression": "approval.outcome == 'APPROVE'",
+          "targetActivity": "B05",
+          "isDefault": true
+        },
+        {
+          "branchName": "驳回后修改重提",
+          "conditionExpression": "approval.outcome == 'REJECT'",
+          "targetActivity": "B02",
+          "isDefault": false
+        },
+        {
+          "branchName": "终止且不再提交",
+          "conditionExpression": "approval.outcome == 'TERMINATE'",
+          "targetActivity": "B09",
+          "isDefault": false
+        }
+      ]
+    }
+  },
+  {
+    "id": "reference-example:ACTIVITY:B05",
+    "rawId": "B05",
+    "name": "更新付款阶段开票状态（同步联动自动触发）",
+    "kind": "ACTIVITY",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m6-flow-model.yaml",
+    "properties": {
+      "activityId": "B05",
+      "name": "更新付款阶段开票状态（同步联动自动触发）",
+      "activityType": "SYSTEM_TASK",
+      "behaviorRef": "PaymentStage_UpdateInvoiceStatus",
+      "nextActivities": [
+        "B06"
+      ]
+    }
+  },
+  {
+    "id": "reference-example:ACTIVITY:B06",
+    "rawId": "B06",
+    "name": "录入收款",
+    "kind": "ACTIVITY",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m6-flow-model.yaml",
+    "properties": {
+      "activityId": "B06",
+      "name": "录入收款",
+      "activityType": "USER_TASK",
+      "roleRef": "ROLE-FINANCE",
+      "behaviorRef": "Receipt_Record",
+      "nextActivities": [
+        "B07"
+      ]
+    }
+  },
+  {
+    "id": "reference-example:ACTIVITY:B07",
+    "rawId": "B07",
+    "name": "更新开票收款状态（同步联动自动触发）",
+    "kind": "ACTIVITY",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m6-flow-model.yaml",
+    "properties": {
+      "activityId": "B07",
+      "name": "更新开票收款状态（同步联动自动触发）",
+      "activityType": "SYSTEM_TASK",
+      "behaviorRef": "Invoice_UpdateReceiptStatus",
+      "nextActivities": [
+        "B08"
+      ]
+    }
+  },
+  {
+    "id": "reference-example:ACTIVITY:B08",
+    "rawId": "B08",
+    "name": "开票是否全部收齐",
+    "kind": "ACTIVITY",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m6-flow-model.yaml",
+    "properties": {
+      "activityId": "B08",
+      "name": "开票是否全部收齐",
+      "activityType": "GATEWAY",
+      "branches": [
+        {
+          "branchName": "已全部收齐",
+          "ruleRef": "RULE-INVOICE-RECEIPT-STATUS",
+          "targetActivity": "B09",
+          "isDefault": false
+        },
+        {
+          "branchName": "未收齐，继续收款",
+          "conditionExpression": null,
+          "targetActivity": "B06",
+          "isDefault": true
+        }
+      ]
+    }
+  },
+  {
+    "id": "reference-example:ACTIVITY:B09",
+    "rawId": "B09",
+    "name": "结束",
+    "kind": "ACTIVITY",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m6-flow-model.yaml",
+    "properties": {
+      "activityId": "B09",
+      "name": "结束",
+      "activityType": "END",
+      "nextActivities": []
+    }
+  },
+  {
+    "id": "reference-example:FLOW:FLOW-CONTRACT-APPROVAL-001",
+    "rawId": "FLOW-CONTRACT-APPROVAL-001",
+    "name": "合同登记审批",
+    "kind": "FLOW",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m6-flow-model.yaml",
+    "properties": {
+      "id": "FLOW-CONTRACT-APPROVAL-001",
+      "name": "合同登记审批",
+      "flowType": "APPROVAL",
+      "description": "合同先由财务经理审批，金额大于等于100万元时增加总经理审批",
+      "businessObjectRefs": [
+        "AGG-CONTRACT-001"
+      ],
+      "roleRefs": [
+        "ROLE-FINANCE-MANAGER",
+        "ROLE-GENERAL-MANAGER"
+      ],
+      "trigger": {
+        "triggerType": "BEHAVIOR",
+        "behaviorRef": "Contract_Submit"
+      },
+      "preconditions": [
+        "contract.status == '待财务经理审批'"
+      ],
+      "postconditions": [
+        "合同审批通过、驳回或终止"
+      ],
+      "startActivity": "P01",
+      "endActivities": [
+        "P07",
+        "P08"
+      ],
+      "activities": [
+        {
+          "activityId": "P01",
+          "name": "开始",
+          "activityType": "START",
+          "nextActivities": [
+            "P02"
+          ]
+        },
+        {
+          "activityId": "P02",
+          "name": "财务经理审批",
+          "activityType": "APPROVAL_TASK",
+          "roleRef": "ROLE-FINANCE-MANAGER",
+          "behaviorRef": "Contract_ApproveFinance",
+          "approvalOutcomes": [
+            "APPROVE",
+            "REJECT"
+          ],
+          "nextActivities": [
+            "P03"
+          ]
+        },
+        {
+          "activityId": "P03",
+          "name": "财务审批结果判断",
+          "activityType": "GATEWAY",
+          "branches": [
+            {
+              "branchName": "驳回",
+              "conditionExpression": "approval.outcome == 'REJECT'",
+              "targetActivity": "P08",
+              "isDefault": false
+            },
+            {
+              "branchName": "通过",
+              "conditionExpression": "approval.outcome == 'APPROVE'",
+              "targetActivity": "P04",
+              "isDefault": true
+            }
+          ]
+        },
+        {
+          "activityId": "P04",
+          "name": "大额合同判断",
+          "activityType": "GATEWAY",
+          "branches": [
+            {
+              "branchName": "金额大于等于100万元",
+              "ruleRef": "RULE-CONTRACT-APPROVAL-LEVEL",
+              "targetActivity": "P05",
+              "isDefault": false
+            },
+            {
+              "branchName": "普通金额合同",
+              "conditionExpression": null,
+              "targetActivity": "P06",
+              "isDefault": true
+            }
+          ]
+        },
+        {
+          "activityId": "P05",
+          "name": "总经理审批",
+          "activityType": "APPROVAL_TASK",
+          "roleRef": "ROLE-GENERAL-MANAGER",
+          "behaviorRef": "Contract_ApproveGeneralManager",
+          "approvalOutcomes": [
+            "APPROVE",
+            "REJECT"
+          ],
+          "nextActivities": [
+            "P06"
+          ]
+        },
+        {
+          "activityId": "P06",
+          "name": "标记审批通过（合同已纳入管理）",
+          "activityType": "BEHAVIOR_CALL",
+          "behaviorRef": "Contract_ApproveGeneralManager",
+          "nextActivities": [
+            "P07"
+          ]
+        },
+        {
+          "activityId": "P07",
+          "name": "审批通过结束",
+          "activityType": "END",
+          "nextActivities": []
+        },
+        {
+          "activityId": "P08",
+          "name": "驳回结束",
+          "activityType": "END",
+          "nextActivities": []
+        }
+      ]
+    }
+  },
+  {
+    "id": "reference-example:ACTIVITY:P01",
+    "rawId": "P01",
+    "name": "开始",
+    "kind": "ACTIVITY",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m6-flow-model.yaml",
+    "properties": {
+      "activityId": "P01",
+      "name": "开始",
+      "activityType": "START",
+      "nextActivities": [
+        "P02"
+      ]
+    }
+  },
+  {
+    "id": "reference-example:ACTIVITY:P02",
+    "rawId": "P02",
+    "name": "财务经理审批",
+    "kind": "ACTIVITY",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m6-flow-model.yaml",
+    "properties": {
+      "activityId": "P02",
+      "name": "财务经理审批",
+      "activityType": "APPROVAL_TASK",
+      "roleRef": "ROLE-FINANCE-MANAGER",
+      "behaviorRef": "Contract_ApproveFinance",
+      "approvalOutcomes": [
+        "APPROVE",
+        "REJECT"
+      ],
+      "nextActivities": [
+        "P03"
+      ]
+    }
+  },
+  {
+    "id": "reference-example:ACTIVITY:P03",
+    "rawId": "P03",
+    "name": "财务审批结果判断",
+    "kind": "ACTIVITY",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m6-flow-model.yaml",
+    "properties": {
+      "activityId": "P03",
+      "name": "财务审批结果判断",
+      "activityType": "GATEWAY",
+      "branches": [
+        {
+          "branchName": "驳回",
+          "conditionExpression": "approval.outcome == 'REJECT'",
+          "targetActivity": "P08",
+          "isDefault": false
+        },
+        {
+          "branchName": "通过",
+          "conditionExpression": "approval.outcome == 'APPROVE'",
+          "targetActivity": "P04",
+          "isDefault": true
+        }
+      ]
+    }
+  },
+  {
+    "id": "reference-example:ACTIVITY:P04",
+    "rawId": "P04",
+    "name": "大额合同判断",
+    "kind": "ACTIVITY",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m6-flow-model.yaml",
+    "properties": {
+      "activityId": "P04",
+      "name": "大额合同判断",
+      "activityType": "GATEWAY",
+      "branches": [
+        {
+          "branchName": "金额大于等于100万元",
+          "ruleRef": "RULE-CONTRACT-APPROVAL-LEVEL",
+          "targetActivity": "P05",
+          "isDefault": false
+        },
+        {
+          "branchName": "普通金额合同",
+          "conditionExpression": null,
+          "targetActivity": "P06",
+          "isDefault": true
+        }
+      ]
+    }
+  },
+  {
+    "id": "reference-example:ACTIVITY:P05",
+    "rawId": "P05",
+    "name": "总经理审批",
+    "kind": "ACTIVITY",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m6-flow-model.yaml",
+    "properties": {
+      "activityId": "P05",
+      "name": "总经理审批",
+      "activityType": "APPROVAL_TASK",
+      "roleRef": "ROLE-GENERAL-MANAGER",
+      "behaviorRef": "Contract_ApproveGeneralManager",
+      "approvalOutcomes": [
+        "APPROVE",
+        "REJECT"
+      ],
+      "nextActivities": [
+        "P06"
+      ]
+    }
+  },
+  {
+    "id": "reference-example:ACTIVITY:P06",
+    "rawId": "P06",
+    "name": "标记审批通过（合同已纳入管理）",
+    "kind": "ACTIVITY",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m6-flow-model.yaml",
+    "properties": {
+      "activityId": "P06",
+      "name": "标记审批通过（合同已纳入管理）",
+      "activityType": "BEHAVIOR_CALL",
+      "behaviorRef": "Contract_ApproveGeneralManager",
+      "nextActivities": [
+        "P07"
+      ]
+    }
+  },
+  {
+    "id": "reference-example:ACTIVITY:P07",
+    "rawId": "P07",
+    "name": "审批通过结束",
+    "kind": "ACTIVITY",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m6-flow-model.yaml",
+    "properties": {
+      "activityId": "P07",
+      "name": "审批通过结束",
+      "activityType": "END",
+      "nextActivities": []
+    }
+  },
+  {
+    "id": "reference-example:ACTIVITY:P08",
+    "rawId": "P08",
+    "name": "驳回结束",
+    "kind": "ACTIVITY",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m6-flow-model.yaml",
+    "properties": {
+      "activityId": "P08",
+      "name": "驳回结束",
+      "activityType": "END",
+      "nextActivities": []
+    }
+  },
+  {
+    "id": "reference-example:FLOW:FLOW-INVOICE-APPROVAL-002",
+    "rawId": "FLOW-INVOICE-APPROVAL-002",
+    "name": "开票审批",
+    "kind": "FLOW",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m6-flow-model.yaml",
+    "properties": {
+      "id": "FLOW-INVOICE-APPROVAL-002",
+      "name": "开票审批",
+      "flowType": "APPROVAL",
+      "description": "开票由财务经理单节点审批",
+      "businessObjectRefs": [
+        "AGG-INVOICE-001"
+      ],
+      "roleRefs": [
+        "ROLE-FINANCE-MANAGER"
+      ],
+      "trigger": {
+        "triggerType": "BEHAVIOR",
+        "behaviorRef": "Invoice_Submit"
+      },
+      "preconditions": [
+        "invoice.approvalStatus == '待财务经理审批'"
+      ],
+      "postconditions": [
+        "开票审批通过、驳回或终止"
+      ],
+      "startActivity": "Q01",
+      "endActivities": [
+        "Q04",
+        "Q05"
+      ],
+      "activities": [
+        {
+          "activityId": "Q01",
+          "name": "开始",
+          "activityType": "START",
+          "nextActivities": [
+            "Q02"
+          ]
+        },
+        {
+          "activityId": "Q02",
+          "name": "财务经理审批",
+          "activityType": "APPROVAL_TASK",
+          "roleRef": "ROLE-FINANCE-MANAGER",
+          "behaviorRef": "Invoice_ApproveFinance",
+          "approvalOutcomes": [
+            "APPROVE",
+            "REJECT"
+          ],
+          "nextActivities": [
+            "Q03"
+          ]
+        },
+        {
+          "activityId": "Q03",
+          "name": "审批结果判断",
+          "activityType": "GATEWAY",
+          "branches": [
+            {
+              "branchName": "通过",
+              "conditionExpression": "approval.outcome == 'APPROVE'",
+              "targetActivity": "Q04",
+              "isDefault": true
+            },
+            {
+              "branchName": "驳回",
+              "conditionExpression": "approval.outcome == 'REJECT'",
+              "targetActivity": "Q05",
+              "isDefault": false
+            }
+          ]
+        },
+        {
+          "activityId": "Q04",
+          "name": "审批通过结束（开票已批准）",
+          "activityType": "END",
+          "nextActivities": []
+        },
+        {
+          "activityId": "Q05",
+          "name": "驳回结束",
+          "activityType": "END",
+          "nextActivities": []
+        }
+      ]
+    }
+  },
+  {
+    "id": "reference-example:ACTIVITY:Q01",
+    "rawId": "Q01",
+    "name": "开始",
+    "kind": "ACTIVITY",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m6-flow-model.yaml",
+    "properties": {
+      "activityId": "Q01",
+      "name": "开始",
+      "activityType": "START",
+      "nextActivities": [
+        "Q02"
+      ]
+    }
+  },
+  {
+    "id": "reference-example:ACTIVITY:Q02",
+    "rawId": "Q02",
+    "name": "财务经理审批",
+    "kind": "ACTIVITY",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m6-flow-model.yaml",
+    "properties": {
+      "activityId": "Q02",
+      "name": "财务经理审批",
+      "activityType": "APPROVAL_TASK",
+      "roleRef": "ROLE-FINANCE-MANAGER",
+      "behaviorRef": "Invoice_ApproveFinance",
+      "approvalOutcomes": [
+        "APPROVE",
+        "REJECT"
+      ],
+      "nextActivities": [
+        "Q03"
+      ]
+    }
+  },
+  {
+    "id": "reference-example:ACTIVITY:Q03",
+    "rawId": "Q03",
+    "name": "审批结果判断",
+    "kind": "ACTIVITY",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m6-flow-model.yaml",
+    "properties": {
+      "activityId": "Q03",
+      "name": "审批结果判断",
+      "activityType": "GATEWAY",
+      "branches": [
+        {
+          "branchName": "通过",
+          "conditionExpression": "approval.outcome == 'APPROVE'",
+          "targetActivity": "Q04",
+          "isDefault": true
+        },
+        {
+          "branchName": "驳回",
+          "conditionExpression": "approval.outcome == 'REJECT'",
+          "targetActivity": "Q05",
+          "isDefault": false
+        }
+      ]
+    }
+  },
+  {
+    "id": "reference-example:ACTIVITY:Q04",
+    "rawId": "Q04",
+    "name": "审批通过结束（开票已批准）",
+    "kind": "ACTIVITY",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m6-flow-model.yaml",
+    "properties": {
+      "activityId": "Q04",
+      "name": "审批通过结束（开票已批准）",
+      "activityType": "END",
+      "nextActivities": []
+    }
+  },
+  {
+    "id": "reference-example:ACTIVITY:Q05",
+    "rawId": "Q05",
+    "name": "驳回结束",
+    "kind": "ACTIVITY",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m6-flow-model.yaml",
+    "properties": {
+      "activityId": "Q05",
+      "name": "驳回结束",
+      "activityType": "END",
+      "nextActivities": []
+    }
+  },
+  {
+    "id": "reference-example:REPORT:REP-CONTRACT-LIST",
+    "rawId": "REP-CONTRACT-LIST",
+    "name": "合同综合查询",
+    "kind": "REPORT",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m7-report-model.yaml",
+    "alias": "contractList",
+    "properties": {
+      "id": "REP-CONTRACT-LIST",
+      "name": "合同综合查询",
+      "alias": "contractList",
+      "objectType": "LIST_QUERY",
+      "description": "按多种业务条件模糊查找合同并进入合同详情",
+      "behaviorRef": "Contract_QueryList",
+      "sourceObjects": [
+        {
+          "objectRef": "AGG-CONTRACT-001",
+          "alias": "contract",
+          "primary": true
+        },
+        {
+          "objectRef": "AGG-PRODUCT-001",
+          "alias": "product",
+          "primary": false
+        },
+        {
+          "objectRef": "AGG-CUSTOMER-001",
+          "alias": "customer",
+          "primary": false
+        },
+        {
+          "objectRef": "AGG-DEPARTMENT-001",
+          "alias": "department",
+          "primary": false
+        },
+        {
+          "objectRef": "AGG-EMPLOYEE-001",
+          "alias": "employee",
+          "primary": false
+        }
+      ],
+      "joins": [
+        {
+          "joinId": "J01",
+          "joinType": "LEFT",
+          "leftSource": "contract",
+          "rightSource": "product",
+          "conditionExpression": "contract.productId == product.productId"
+        },
+        {
+          "joinId": "J02",
+          "joinType": "LEFT",
+          "leftSource": "contract",
+          "rightSource": "customer",
+          "conditionExpression": "contract.customerId == customer.customerId"
+        },
+        {
+          "joinId": "J03",
+          "joinType": "LEFT",
+          "leftSource": "contract",
+          "rightSource": "department",
+          "conditionExpression": "contract.departmentId == department.departmentId"
+        },
+        {
+          "joinId": "J04",
+          "joinType": "LEFT",
+          "leftSource": "contract",
+          "rightSource": "employee",
+          "conditionExpression": "contract.ownerId == employee.employeeId"
+        }
+      ],
+      "parameters": [
+        {
+          "name": "contractNo",
+          "label": "合同编号",
+          "dataType": "String",
+          "required": false,
+          "allowedOperators": [
+            "LIKE"
+          ],
+          "sourceField": "contract.contractNo"
+        },
+        {
+          "name": "contractName",
+          "label": "合同名称",
+          "dataType": "String",
+          "required": false,
+          "allowedOperators": [
+            "LIKE"
+          ],
+          "sourceField": "contract.contractName"
+        },
+        {
+          "name": "productType",
+          "label": "产品类型",
+          "dataType": "String",
+          "required": false,
+          "allowedOperators": [
+            "EQ"
+          ],
+          "sourceField": "product.productType"
+        },
+        {
+          "name": "customerId",
+          "label": "客户",
+          "dataType": "String",
+          "required": false,
+          "allowedOperators": [
+            "EQ"
+          ],
+          "sourceField": "contract.customerId"
+        },
+        {
+          "name": "departmentId",
+          "label": "部门",
+          "dataType": "String",
+          "required": false,
+          "allowedOperators": [
+            "EQ"
+          ],
+          "sourceField": "contract.departmentId"
+        },
+        {
+          "name": "ownerId",
+          "label": "责任人",
+          "dataType": "String",
+          "required": false,
+          "allowedOperators": [
+            "EQ"
+          ],
+          "sourceField": "contract.ownerId"
+        },
+        {
+          "name": "status",
+          "label": "管理状态",
+          "dataType": "Enum",
+          "required": false,
+          "allowedOperators": [
+            "EQ"
+          ],
+          "sourceField": "contract.status"
+        },
+        {
+          "name": "signDateFrom",
+          "label": "签订日期起",
+          "dataType": "Date",
+          "required": false,
+          "allowedOperators": [
+            "GE"
+          ],
+          "sourceField": "contract.signDate"
+        },
+        {
+          "name": "signDateTo",
+          "label": "签订日期止",
+          "dataType": "Date",
+          "required": false,
+          "allowedOperators": [
+            "LE"
+          ],
+          "sourceField": "contract.signDate"
+        }
+      ],
+      "conditions": [
+        {
+          "conditionId": "C01",
+          "leftExpression": "contract.contractNo",
+          "operator": "LIKE",
+          "parameterRef": "contractNo",
+          "logicalConnector": "AND",
+          "group": "BASE",
+          "skipWhenParameterEmpty": true
+        },
+        {
+          "conditionId": "C02",
+          "leftExpression": "contract.contractName",
+          "operator": "LIKE",
+          "parameterRef": "contractName",
+          "logicalConnector": "AND",
+          "group": "BASE",
+          "skipWhenParameterEmpty": true
+        },
+        {
+          "conditionId": "C03",
+          "leftExpression": "product.productType",
+          "operator": "EQ",
+          "parameterRef": "productType",
+          "logicalConnector": "AND",
+          "group": "BASE",
+          "skipWhenParameterEmpty": true
+        },
+        {
+          "conditionId": "C04",
+          "leftExpression": "contract.customerId",
+          "operator": "EQ",
+          "parameterRef": "customerId",
+          "logicalConnector": "AND",
+          "group": "BASE",
+          "skipWhenParameterEmpty": true
+        },
+        {
+          "conditionId": "C05",
+          "leftExpression": "contract.departmentId",
+          "operator": "EQ",
+          "parameterRef": "departmentId",
+          "logicalConnector": "AND",
+          "group": "BASE",
+          "skipWhenParameterEmpty": true
+        },
+        {
+          "conditionId": "C06",
+          "leftExpression": "contract.ownerId",
+          "operator": "EQ",
+          "parameterRef": "ownerId",
+          "logicalConnector": "AND",
+          "group": "BASE",
+          "skipWhenParameterEmpty": true
+        },
+        {
+          "conditionId": "C07",
+          "leftExpression": "contract.status",
+          "operator": "EQ",
+          "parameterRef": "status",
+          "logicalConnector": "AND",
+          "group": "BASE",
+          "skipWhenParameterEmpty": true
+        },
+        {
+          "conditionId": "C08",
+          "leftExpression": "contract.signDate",
+          "operator": "GE",
+          "parameterRef": "signDateFrom",
+          "logicalConnector": "AND",
+          "group": "BASE",
+          "skipWhenParameterEmpty": true
+        },
+        {
+          "conditionId": "C09",
+          "leftExpression": "contract.signDate",
+          "operator": "LE",
+          "parameterRef": "signDateTo",
+          "logicalConnector": "AND",
+          "group": "BASE",
+          "skipWhenParameterEmpty": true
+        }
+      ],
+      "resultColumns": [
+        {
+          "name": "contractNo",
+          "label": "合同编号",
+          "dataType": "String",
+          "sourceExpression": "contract.contractNo",
+          "aggregateFunction": "NONE",
+          "sortable": true
+        },
+        {
+          "name": "contractName",
+          "label": "合同名称",
+          "dataType": "String",
+          "sourceExpression": "contract.contractName",
+          "aggregateFunction": "NONE",
+          "sortable": true
+        },
+        {
+          "name": "productType",
+          "label": "产品类型",
+          "dataType": "String",
+          "sourceExpression": "product.productType",
+          "aggregateFunction": "NONE"
+        },
+        {
+          "name": "productName",
+          "label": "产品名称",
+          "dataType": "String",
+          "sourceExpression": "product.productName",
+          "aggregateFunction": "NONE"
+        },
+        {
+          "name": "customerName",
+          "label": "客户名称",
+          "dataType": "String",
+          "sourceExpression": "customer.customerName",
+          "aggregateFunction": "NONE"
+        },
+        {
+          "name": "departmentName",
+          "label": "所属部门",
+          "dataType": "String",
+          "sourceExpression": "department.departmentName",
+          "aggregateFunction": "NONE"
+        },
+        {
+          "name": "ownerName",
+          "label": "责任人",
+          "dataType": "String",
+          "sourceExpression": "employee.employeeName",
+          "aggregateFunction": "NONE"
+        },
+        {
+          "name": "signDate",
+          "label": "签订日期",
+          "dataType": "Date",
+          "sourceExpression": "contract.signDate",
+          "aggregateFunction": "NONE",
+          "sortable": true
+        },
+        {
+          "name": "totalAmount",
+          "label": "合同总金额",
+          "dataType": "Decimal",
+          "sourceExpression": "contract.totalAmount",
+          "aggregateFunction": "NONE",
+          "format": "#,##0.00",
+          "sortable": true
+        },
+        {
+          "name": "purchaseAmount",
+          "label": "对外采购金额",
+          "dataType": "Decimal",
+          "sourceExpression": "contract.purchaseAmount",
+          "aggregateFunction": "NONE",
+          "format": "#,##0.00"
+        },
+        {
+          "name": "taxRate",
+          "label": "税率",
+          "dataType": "Decimal",
+          "sourceExpression": "contract.taxRate",
+          "aggregateFunction": "NONE",
+          "format": "0.00%"
+        },
+        {
+          "name": "status",
+          "label": "管理状态",
+          "dataType": "Enum",
+          "sourceExpression": "contract.status",
+          "aggregateFunction": "NONE"
+        },
+        {
+          "name": "taxInclusiveSpread",
+          "label": "合同含税价差",
+          "dataType": "Decimal",
+          "sourceExpression": "contract.totalAmount - contract.purchaseAmount",
+          "aggregateFunction": "NONE",
+          "format": "#,##0.00"
+        }
+      ],
+      "groupBy": [],
+      "having": [],
+      "orderBy": [
+        {
+          "expression": "contract.signDate",
+          "direction": "DESC"
+        },
+        {
+          "expression": "contract.contractNo",
+          "direction": "ASC"
+        }
+      ],
+      "pagination": {
+        "enabled": true,
+        "defaultPageSize": 20,
+        "maxPageSize": 100
+      },
+      "reportOptions": null,
+      "version": "1.0"
+    }
+  },
+  {
+    "id": "reference-example:REPORT:REP-CONTRACT-DETAIL",
+    "rawId": "REP-CONTRACT-DETAIL",
+    "name": "合同详情查询",
+    "kind": "REPORT",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m7-report-model.yaml",
+    "alias": "contractDetail",
+    "properties": {
+      "id": "REP-CONTRACT-DETAIL",
+      "name": "合同详情查询",
+      "alias": "contractDetail",
+      "objectType": "DETAIL_QUERY",
+      "description": "查看单个合同的完整执行信息和可追溯历史",
+      "behaviorRef": "Contract_QueryDetail",
+      "sourceObjects": [
+        {
+          "objectRef": "AGG-CONTRACT-001",
+          "alias": "contract",
+          "primary": true
+        }
+      ],
+      "joins": [],
+      "parameters": [
+        {
+          "name": "contractNo",
+          "label": "合同编号",
+          "dataType": "String",
+          "required": true,
+          "allowedOperators": [
+            "EQ"
+          ],
+          "sourceField": "contract.contractNo"
+        }
+      ],
+      "conditions": [
+        {
+          "conditionId": "C01",
+          "leftExpression": "contract.contractNo",
+          "operator": "EQ",
+          "parameterRef": "contractNo",
+          "logicalConnector": "AND",
+          "group": "BASE",
+          "skipWhenParameterEmpty": false
+        }
+      ],
+      "resultColumns": [
+        {
+          "name": "contractInfo",
+          "label": "合同基本信息",
+          "dataType": "String",
+          "sourceExpression": "contract.*",
+          "aggregateFunction": "NONE"
+        },
+        {
+          "name": "paymentStages",
+          "label": "付款阶段及开票状态",
+          "dataType": "String",
+          "sourceExpression": "contract.stages",
+          "aggregateFunction": "NONE"
+        },
+        {
+          "name": "invoices",
+          "label": "开票及分摊",
+          "dataType": "String",
+          "sourceExpression": "invoice.*",
+          "aggregateFunction": "NONE"
+        },
+        {
+          "name": "receipts",
+          "label": "收款记录",
+          "dataType": "String",
+          "sourceExpression": "receipt.*",
+          "aggregateFunction": "NONE"
+        },
+        {
+          "name": "approvalHistory",
+          "label": "审批历史",
+          "dataType": "String",
+          "sourceExpression": "approvalRecord.*",
+          "aggregateFunction": "NONE"
+        }
+      ],
+      "groupBy": [],
+      "having": [],
+      "orderBy": [],
+      "pagination": {
+        "enabled": false,
+        "defaultPageSize": 0,
+        "maxPageSize": 0
+      },
+      "reportOptions": null,
+      "version": "1.0"
+    }
+  },
+  {
+    "id": "reference-example:REPORT:REP-CONTRACT-EXECUTION",
+    "rawId": "REP-CONTRACT-EXECUTION",
+    "name": "合同执行情况分析",
+    "kind": "REPORT",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m7-report-model.yaml",
+    "alias": "contractExecutionAnalysis",
+    "properties": {
+      "id": "REP-CONTRACT-EXECUTION",
+      "name": "合同执行情况分析",
+      "alias": "contractExecutionAnalysis",
+      "objectType": "STATISTICAL_QUERY",
+      "description": "按合同汇总收款进度，识别合同执行与回款情况",
+      "behaviorRef": "Contract_QueryExecutionAnalysis",
+      "sourceObjects": [
+        {
+          "objectRef": "AGG-CONTRACT-001",
+          "alias": "contract",
+          "primary": true
+        },
+        {
+          "objectRef": "AGG-INVOICE-001",
+          "alias": "invoiceAgg",
+          "primary": false,
+          "preAggregation": {
+            "groupBy": [
+              "contractId"
+            ],
+            "columns": [
+              {
+                "name": "invoicedAmount",
+                "sourceExpression": "invoiceAmount",
+                "aggregateFunction": "SUM"
+              }
+            ]
+          }
+        },
+        {
+          "objectRef": "AGG-RECEIPT-001",
+          "alias": "receiptAgg",
+          "primary": false,
+          "preAggregation": {
+            "groupBy": [
+              "contractId"
+            ],
+            "columns": [
+              {
+                "name": "receivedAmount",
+                "sourceExpression": "receiptAmount",
+                "aggregateFunction": "SUM"
+              }
+            ]
+          }
+        }
+      ],
+      "joins": [
+        {
+          "joinId": "J01",
+          "joinType": "LEFT",
+          "leftSource": "contract",
+          "rightSource": "invoiceAgg",
+          "conditionExpression": "invoiceAgg.contractId == contract.contractNo"
+        },
+        {
+          "joinId": "J02",
+          "joinType": "LEFT",
+          "leftSource": "contract",
+          "rightSource": "receiptAgg",
+          "conditionExpression": "receiptAgg.contractId == contract.contractNo"
+        }
+      ],
+      "parameters": [
+        {
+          "name": "departmentId",
+          "label": "所属部门",
+          "dataType": "String",
+          "required": false,
+          "allowedOperators": [
+            "EQ"
+          ],
+          "sourceField": "contract.departmentId"
+        },
+        {
+          "name": "ownerId",
+          "label": "责任人",
+          "dataType": "String",
+          "required": false,
+          "allowedOperators": [
+            "EQ"
+          ],
+          "sourceField": "contract.ownerId"
+        },
+        {
+          "name": "signDateFrom",
+          "label": "签订日期起",
+          "dataType": "Date",
+          "required": false,
+          "allowedOperators": [
+            "GE"
+          ],
+          "sourceField": "contract.signDate"
+        },
+        {
+          "name": "signDateTo",
+          "label": "签订日期止",
+          "dataType": "Date",
+          "required": false,
+          "allowedOperators": [
+            "LE"
+          ],
+          "sourceField": "contract.signDate"
+        }
+      ],
+      "conditions": [
+        {
+          "conditionId": "C01",
+          "leftExpression": "contract.departmentId",
+          "operator": "EQ",
+          "parameterRef": "departmentId",
+          "logicalConnector": "AND",
+          "group": "BASE",
+          "skipWhenParameterEmpty": true
+        },
+        {
+          "conditionId": "C02",
+          "leftExpression": "contract.ownerId",
+          "operator": "EQ",
+          "parameterRef": "ownerId",
+          "logicalConnector": "AND",
+          "group": "BASE",
+          "skipWhenParameterEmpty": true
+        },
+        {
+          "conditionId": "C03",
+          "leftExpression": "contract.signDate",
+          "operator": "GE",
+          "parameterRef": "signDateFrom",
+          "logicalConnector": "AND",
+          "group": "BASE",
+          "skipWhenParameterEmpty": true
+        },
+        {
+          "conditionId": "C04",
+          "leftExpression": "contract.signDate",
+          "operator": "LE",
+          "parameterRef": "signDateTo",
+          "logicalConnector": "AND",
+          "group": "BASE",
+          "skipWhenParameterEmpty": true
+        }
+      ],
+      "resultColumns": [
+        {
+          "name": "contractNo",
+          "label": "合同编号",
+          "dataType": "String",
+          "sourceExpression": "contract.contractNo",
+          "aggregateFunction": "NONE"
+        },
+        {
+          "name": "contractName",
+          "label": "合同名称",
+          "dataType": "String",
+          "sourceExpression": "contract.contractName",
+          "aggregateFunction": "NONE"
+        },
+        {
+          "name": "totalAmount",
+          "label": "合同金额",
+          "dataType": "Decimal",
+          "sourceExpression": "contract.totalAmount",
+          "aggregateFunction": "MAX",
+          "format": "#,##0.00"
+        },
+        {
+          "name": "invoicedAmount",
+          "label": "累计开票金额",
+          "dataType": "Decimal",
+          "sourceExpression": "invoiceAgg.invoicedAmount",
+          "aggregateFunction": "MAX",
+          "format": "#,##0.00"
+        },
+        {
+          "name": "receivedAmount",
+          "label": "累计收款金额",
+          "dataType": "Decimal",
+          "sourceExpression": "receiptAgg.receivedAmount",
+          "aggregateFunction": "MAX",
+          "format": "#,##0.00"
+        },
+        {
+          "name": "unreceivedAmount",
+          "label": "未收款金额",
+          "dataType": "Decimal",
+          "sourceExpression": "MAX(contract.totalAmount) - COALESCE(MAX(receiptAgg.receivedAmount), 0)",
+          "aggregateFunction": "NONE",
+          "format": "#,##0.00"
+        },
+        {
+          "name": "receiptRate",
+          "label": "收款完成率",
+          "dataType": "Decimal",
+          "sourceExpression": "COALESCE(MAX(receiptAgg.receivedAmount), 0) / NULLIF(MAX(contract.totalAmount), 0)",
+          "aggregateFunction": "NONE",
+          "format": "0.00%"
+        }
+      ],
+      "groupBy": [
+        "contract.contractNo",
+        "contract.contractName"
+      ],
+      "having": [],
+      "orderBy": [
+        {
+          "expression": "receiptRate",
+          "direction": "ASC"
+        }
+      ],
+      "pagination": {
+        "enabled": true,
+        "defaultPageSize": 20,
+        "maxPageSize": 100
+      },
+      "reportOptions": null,
+      "version": "1.0"
+    }
+  },
+  {
+    "id": "reference-example:REPORT:REP-DEPT-CONTRACT-SUMMARY",
+    "rawId": "REP-DEPT-CONTRACT-SUMMARY",
+    "name": "部门合同统计分析报表",
+    "kind": "REPORT",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m7-report-model.yaml",
+    "alias": "departmentContractSummary",
+    "properties": {
+      "id": "REP-DEPT-CONTRACT-SUMMARY",
+      "name": "部门合同统计分析报表",
+      "alias": "departmentContractSummary",
+      "objectType": "REPORT",
+      "description": "按部门汇总合同规模、开票和回款执行情况",
+      "behaviorRef": "Contract_QueryDepartmentSummary",
+      "sourceObjects": [
+        {
+          "objectRef": "AGG-CONTRACT-001",
+          "alias": "contract",
+          "primary": true
+        },
+        {
+          "objectRef": "AGG-DEPARTMENT-001",
+          "alias": "department",
+          "primary": false
+        },
+        {
+          "objectRef": "AGG-INVOICE-001",
+          "alias": "invoiceAgg",
+          "primary": false,
+          "preAggregation": {
+            "groupBy": [
+              "contractId"
+            ],
+            "columns": [
+              {
+                "name": "invoicedAmount",
+                "sourceExpression": "invoiceAmount",
+                "aggregateFunction": "SUM"
+              }
+            ]
+          }
+        },
+        {
+          "objectRef": "AGG-RECEIPT-001",
+          "alias": "receiptAgg",
+          "primary": false,
+          "preAggregation": {
+            "groupBy": [
+              "contractId"
+            ],
+            "columns": [
+              {
+                "name": "receivedAmount",
+                "sourceExpression": "receiptAmount",
+                "aggregateFunction": "SUM"
+              }
+            ]
+          }
+        }
+      ],
+      "joins": [
+        {
+          "joinId": "J01",
+          "joinType": "INNER",
+          "leftSource": "contract",
+          "rightSource": "department",
+          "conditionExpression": "contract.departmentId == department.departmentId"
+        },
+        {
+          "joinId": "J02",
+          "joinType": "LEFT",
+          "leftSource": "contract",
+          "rightSource": "invoiceAgg",
+          "conditionExpression": "invoiceAgg.contractId == contract.contractNo"
+        },
+        {
+          "joinId": "J03",
+          "joinType": "LEFT",
+          "leftSource": "contract",
+          "rightSource": "receiptAgg",
+          "conditionExpression": "receiptAgg.contractId == contract.contractNo"
+        }
+      ],
+      "parameters": [
+        {
+          "name": "signDateFrom",
+          "label": "签订日期起",
+          "dataType": "Date",
+          "required": true,
+          "allowedOperators": [
+            "GE"
+          ],
+          "sourceField": "contract.signDate"
+        },
+        {
+          "name": "signDateTo",
+          "label": "签订日期止",
+          "dataType": "Date",
+          "required": true,
+          "allowedOperators": [
+            "LE"
+          ],
+          "sourceField": "contract.signDate"
+        },
+        {
+          "name": "departmentId",
+          "label": "部门",
+          "dataType": "String",
+          "required": false,
+          "allowedOperators": [
+            "EQ"
+          ],
+          "sourceField": "contract.departmentId"
+        }
+      ],
+      "conditions": [
+        {
+          "conditionId": "C01",
+          "leftExpression": "contract.signDate",
+          "operator": "GE",
+          "parameterRef": "signDateFrom",
+          "logicalConnector": "AND",
+          "group": "BASE",
+          "skipWhenParameterEmpty": false
+        },
+        {
+          "conditionId": "C02",
+          "leftExpression": "contract.signDate",
+          "operator": "LE",
+          "parameterRef": "signDateTo",
+          "logicalConnector": "AND",
+          "group": "BASE",
+          "skipWhenParameterEmpty": false
+        },
+        {
+          "conditionId": "C03",
+          "leftExpression": "contract.departmentId",
+          "operator": "EQ",
+          "parameterRef": "departmentId",
+          "logicalConnector": "AND",
+          "group": "BASE",
+          "skipWhenParameterEmpty": true
+        }
+      ],
+      "resultColumns": [
+        {
+          "name": "departmentName",
+          "label": "部门",
+          "dataType": "String",
+          "sourceExpression": "department.departmentName",
+          "aggregateFunction": "NONE"
+        },
+        {
+          "name": "contractCount",
+          "label": "合同数量",
+          "dataType": "Integer",
+          "sourceExpression": "contract.contractNo",
+          "aggregateFunction": "COUNT_DISTINCT",
+          "format": "#,##0"
+        },
+        {
+          "name": "contractAmount",
+          "label": "合同总金额",
+          "dataType": "Decimal",
+          "sourceExpression": "contract.totalAmount",
+          "aggregateFunction": "SUM",
+          "format": "#,##0.00"
+        },
+        {
+          "name": "purchaseAmount",
+          "label": "对外采购金额",
+          "dataType": "Decimal",
+          "sourceExpression": "contract.purchaseAmount",
+          "aggregateFunction": "SUM",
+          "format": "#,##0.00"
+        },
+        {
+          "name": "taxInclusiveSpread",
+          "label": "含税价差",
+          "dataType": "Decimal",
+          "sourceExpression": "SUM(contract.totalAmount) - SUM(contract.purchaseAmount)",
+          "aggregateFunction": "NONE",
+          "format": "#,##0.00"
+        },
+        {
+          "name": "invoicedAmount",
+          "label": "有效开票金额",
+          "dataType": "Decimal",
+          "sourceExpression": "invoiceAgg.invoicedAmount",
+          "aggregateFunction": "SUM",
+          "format": "#,##0.00"
+        },
+        {
+          "name": "receivedAmount",
+          "label": "有效收款金额",
+          "dataType": "Decimal",
+          "sourceExpression": "receiptAgg.receivedAmount",
+          "aggregateFunction": "SUM",
+          "format": "#,##0.00"
+        },
+        {
+          "name": "unreceivedAmount",
+          "label": "未收款金额",
+          "dataType": "Decimal",
+          "sourceExpression": "SUM(invoiceAgg.invoicedAmount) - COALESCE(SUM(receiptAgg.receivedAmount), 0)",
+          "aggregateFunction": "NONE",
+          "format": "#,##0.00"
+        },
+        {
+          "name": "settledContractCount",
+          "label": "已结清合同数量",
+          "dataType": "Integer",
+          "sourceExpression": "contract.status",
+          "aggregateFunction": "NONE",
+          "format": "#,##0"
+        }
+      ],
+      "groupBy": [
+        "department.departmentId",
+        "department.departmentName"
+      ],
+      "having": [],
+      "orderBy": [
+        {
+          "expression": "contractAmount",
+          "direction": "DESC"
+        }
+      ],
+      "pagination": {
+        "enabled": false,
+        "defaultPageSize": 0,
+        "maxPageSize": 0
+      },
+      "reportOptions": {
+        "title": "部门合同统计分析报表",
+        "layout": "TABLE",
+        "groupFields": [
+          "departmentName"
+        ],
+        "subtotalFields": [],
+        "totalFields": [
+          "contractCount",
+          "contractAmount",
+          "purchaseAmount",
+          "taxInclusiveSpread",
+          "invoicedAmount",
+          "receivedAmount",
+          "unreceivedAmount",
+          "settledContractCount"
+        ],
+        "exportFormats": [
+          "XLSX",
+          "CSV",
+          "PDF"
+        ],
+        "emptyValueDisplay": "-"
+      },
+      "version": "1.0"
+    }
+  },
+  {
+    "id": "reference-example:REPORT:REP-INVOICED-UNRECEIVED",
+    "rawId": "REP-INVOICED-UNRECEIVED",
+    "name": "已开票未收款合同分析",
+    "kind": "REPORT",
+    "domain": "销售合同执行管理",
+    "sourceFile": "m7-report-model.yaml",
+    "alias": "invoicedUnreceivedContracts",
+    "properties": {
+      "id": "REP-INVOICED-UNRECEIVED",
+      "name": "已开票未收款合同分析",
+      "alias": "invoicedUnreceivedContracts",
+      "objectType": "STATISTICAL_QUERY",
+      "description": "识别已批准开票但尚未全部收款的合同和开票记录（欠款清单）",
+      "behaviorRef": "Contract_QueryInvoicedUnreceived",
+      "sourceObjects": [
+        {
+          "objectRef": "AGG-INVOICE-001",
+          "alias": "invoice",
+          "primary": true
+        },
+        {
+          "objectRef": "AGG-CONTRACT-001",
+          "alias": "contract",
+          "primary": false
+        },
+        {
+          "objectRef": "AGG-RECEIPT-001",
+          "alias": "receiptAgg",
+          "primary": false,
+          "preAggregation": {
+            "groupBy": [
+              "invoiceId"
+            ],
+            "columns": [
+              {
+                "name": "receivedAmount",
+                "sourceExpression": "receiptAmount",
+                "aggregateFunction": "SUM"
+              },
+              {
+                "name": "latestReceiptTime",
+                "sourceExpression": "receiptTime",
+                "aggregateFunction": "MAX"
+              }
+            ]
+          }
+        }
+      ],
+      "joins": [
+        {
+          "joinId": "J01",
+          "joinType": "INNER",
+          "leftSource": "invoice",
+          "rightSource": "contract",
+          "conditionExpression": "invoice.contractId == contract.contractNo"
+        },
+        {
+          "joinId": "J02",
+          "joinType": "LEFT",
+          "leftSource": "invoice",
+          "rightSource": "receiptAgg",
+          "conditionExpression": "receiptAgg.invoiceId == invoice.invoiceNo"
+        }
+      ],
+      "parameters": [
+        {
+          "name": "departmentId",
+          "label": "部门",
+          "dataType": "String",
+          "required": false,
+          "allowedOperators": [
+            "EQ"
+          ],
+          "sourceField": "contract.departmentId"
+        },
+        {
+          "name": "invoiceDateFrom",
+          "label": "开票日期起",
+          "dataType": "Date",
+          "required": false,
+          "allowedOperators": [
+            "GE"
+          ],
+          "sourceField": "invoice.invoiceDate"
+        },
+        {
+          "name": "invoiceDateTo",
+          "label": "开票日期止",
+          "dataType": "Date",
+          "required": false,
+          "allowedOperators": [
+            "LE"
+          ],
+          "sourceField": "invoice.invoiceDate"
+        }
+      ],
+      "conditions": [
+        {
+          "conditionId": "C01",
+          "leftExpression": "invoice.approvalStatus",
+          "operator": "EQ",
+          "parameterRef": null,
+          "fixedValue": "已批准",
+          "logicalConnector": "AND",
+          "group": "BASE",
+          "skipWhenParameterEmpty": false
+        },
+        {
+          "conditionId": "C02",
+          "leftExpression": "contract.departmentId",
+          "operator": "EQ",
+          "parameterRef": "departmentId",
+          "logicalConnector": "AND",
+          "group": "BASE",
+          "skipWhenParameterEmpty": true
+        },
+        {
+          "conditionId": "C03",
+          "leftExpression": "invoice.invoiceDate",
+          "operator": "GE",
+          "parameterRef": "invoiceDateFrom",
+          "logicalConnector": "AND",
+          "group": "BASE",
+          "skipWhenParameterEmpty": true
+        },
+        {
+          "conditionId": "C04",
+          "leftExpression": "invoice.invoiceDate",
+          "operator": "LE",
+          "parameterRef": "invoiceDateTo",
+          "logicalConnector": "AND",
+          "group": "BASE",
+          "skipWhenParameterEmpty": true
+        }
+      ],
+      "resultColumns": [
+        {
+          "name": "contractNo",
+          "label": "合同编号",
+          "dataType": "String",
+          "sourceExpression": "contract.contractNo",
+          "aggregateFunction": "NONE"
+        },
+        {
+          "name": "contractName",
+          "label": "合同名称",
+          "dataType": "String",
+          "sourceExpression": "contract.contractName",
+          "aggregateFunction": "NONE"
+        },
+        {
+          "name": "invoiceNo",
+          "label": "开票编号",
+          "dataType": "String",
+          "sourceExpression": "invoice.invoiceNo",
+          "aggregateFunction": "NONE"
+        },
+        {
+          "name": "invoiceDate",
+          "label": "开票日期",
+          "dataType": "Date",
+          "sourceExpression": "invoice.invoiceDate",
+          "aggregateFunction": "NONE"
+        },
+        {
+          "name": "invoiceAmount",
+          "label": "开票金额",
+          "dataType": "Decimal",
+          "sourceExpression": "invoice.invoiceAmount",
+          "aggregateFunction": "NONE",
+          "format": "#,##0.00"
+        },
+        {
+          "name": "receivedAmount",
+          "label": "已收款金额",
+          "dataType": "Decimal",
+          "sourceExpression": "receiptAgg.receivedAmount",
+          "aggregateFunction": "NONE",
+          "format": "#,##0.00"
+        },
+        {
+          "name": "outstandingAmount",
+          "label": "未收款金额",
+          "dataType": "Decimal",
+          "sourceExpression": "invoice.invoiceAmount - COALESCE(receiptAgg.receivedAmount, 0)",
+          "aggregateFunction": "NONE",
+          "format": "#,##0.00"
+        },
+        {
+          "name": "latestReceiptTime",
+          "label": "最近收款时间",
+          "dataType": "DateTime",
+          "sourceExpression": "receiptAgg.latestReceiptTime",
+          "aggregateFunction": "NONE"
+        }
+      ],
+      "groupBy": [
+        "invoice.invoiceNo"
+      ],
+      "having": [
+        {
+          "conditionId": "H01",
+          "leftExpression": "invoice.invoiceAmount",
+          "operator": "GT",
+          "parameterRef": null,
+          "fixedValue": "COALESCE(receiptAgg.receivedAmount, 0)",
+          "logicalConnector": "AND",
+          "group": "HAVING",
+          "skipWhenParameterEmpty": false
+        }
+      ],
+      "orderBy": [
+        {
+          "expression": "outstandingAmount",
+          "direction": "DESC"
+        }
+      ],
+      "pagination": {
+        "enabled": true,
+        "defaultPageSize": 20,
+        "maxPageSize": 100
+      },
+      "reportOptions": null,
+      "version": "1.0"
+    }
+  },
+  {
+    "id": "reference-example:UI_MENU:menu-contract",
+    "rawId": "menu-contract",
+    "name": "合同管理",
+    "kind": "UI_MENU",
+    "domain": "销售合同执行管理",
+    "sourceFile": "mu-ui-model.yaml",
+    "properties": {
+      "menuId": "menu-contract",
+      "name": "合同管理",
+      "children": [
+        {
+          "menuId": "menu-contract-maintain",
+          "name": "合同维护",
+          "screenRef": "frmContractMaintain"
+        },
+        {
+          "menuId": "menu-contract-query",
+          "name": "合同查询",
+          "screenRef": "frmContractQuery"
+        }
+      ]
+    }
+  },
+  {
+    "id": "reference-example:UI_MENU:menu-contract-maintain",
+    "rawId": "menu-contract-maintain",
+    "name": "合同维护",
+    "kind": "UI_MENU",
+    "domain": "销售合同执行管理",
+    "sourceFile": "mu-ui-model.yaml",
+    "properties": {
+      "menuId": "menu-contract-maintain",
+      "name": "合同维护",
+      "screenRef": "frmContractMaintain"
+    }
+  },
+  {
+    "id": "reference-example:UI_MENU:menu-contract-query",
+    "rawId": "menu-contract-query",
+    "name": "合同查询",
+    "kind": "UI_MENU",
+    "domain": "销售合同执行管理",
+    "sourceFile": "mu-ui-model.yaml",
+    "properties": {
+      "menuId": "menu-contract-query",
+      "name": "合同查询",
+      "screenRef": "frmContractQuery"
+    }
+  },
+  {
+    "id": "reference-example:UI_MENU:menu-invoice",
+    "rawId": "menu-invoice",
+    "name": "开票管理",
+    "kind": "UI_MENU",
+    "domain": "销售合同执行管理",
+    "sourceFile": "mu-ui-model.yaml",
+    "properties": {
+      "menuId": "menu-invoice",
+      "name": "开票管理",
+      "children": [
+        {
+          "menuId": "menu-invoice-maintain",
+          "name": "开票录入",
+          "screenRef": "frmInvoiceMaintain"
+        },
+        {
+          "menuId": "menu-invoice-query",
+          "name": "开票查询",
+          "screenRef": "frmInvoiceQuery"
+        }
+      ]
+    }
+  },
+  {
+    "id": "reference-example:UI_MENU:menu-invoice-maintain",
+    "rawId": "menu-invoice-maintain",
+    "name": "开票录入",
+    "kind": "UI_MENU",
+    "domain": "销售合同执行管理",
+    "sourceFile": "mu-ui-model.yaml",
+    "properties": {
+      "menuId": "menu-invoice-maintain",
+      "name": "开票录入",
+      "screenRef": "frmInvoiceMaintain"
+    }
+  },
+  {
+    "id": "reference-example:UI_MENU:menu-invoice-query",
+    "rawId": "menu-invoice-query",
+    "name": "开票查询",
+    "kind": "UI_MENU",
+    "domain": "销售合同执行管理",
+    "sourceFile": "mu-ui-model.yaml",
+    "properties": {
+      "menuId": "menu-invoice-query",
+      "name": "开票查询",
+      "screenRef": "frmInvoiceQuery"
+    }
+  },
+  {
+    "id": "reference-example:UI_MENU:menu-receipt",
+    "rawId": "menu-receipt",
+    "name": "收款管理",
+    "kind": "UI_MENU",
+    "domain": "销售合同执行管理",
+    "sourceFile": "mu-ui-model.yaml",
+    "properties": {
+      "menuId": "menu-receipt",
+      "name": "收款管理",
+      "children": [
+        {
+          "menuId": "menu-receipt-maintain",
+          "name": "收款录入",
+          "screenRef": "frmReceiptMaintain"
+        },
+        {
+          "menuId": "menu-receipt-query",
+          "name": "收款查询",
+          "screenRef": "frmReceiptQuery"
+        }
+      ]
+    }
+  },
+  {
+    "id": "reference-example:UI_MENU:menu-receipt-maintain",
+    "rawId": "menu-receipt-maintain",
+    "name": "收款录入",
+    "kind": "UI_MENU",
+    "domain": "销售合同执行管理",
+    "sourceFile": "mu-ui-model.yaml",
+    "properties": {
+      "menuId": "menu-receipt-maintain",
+      "name": "收款录入",
+      "screenRef": "frmReceiptMaintain"
+    }
+  },
+  {
+    "id": "reference-example:UI_MENU:menu-receipt-query",
+    "rawId": "menu-receipt-query",
+    "name": "收款查询",
+    "kind": "UI_MENU",
+    "domain": "销售合同执行管理",
+    "sourceFile": "mu-ui-model.yaml",
+    "properties": {
+      "menuId": "menu-receipt-query",
+      "name": "收款查询",
+      "screenRef": "frmReceiptQuery"
+    }
+  },
+  {
+    "id": "reference-example:UI_MENU:menu-approval",
+    "rawId": "menu-approval",
+    "name": "审批中心",
+    "kind": "UI_MENU",
+    "domain": "销售合同执行管理",
+    "sourceFile": "mu-ui-model.yaml",
+    "properties": {
+      "menuId": "menu-approval",
+      "name": "审批中心",
+      "children": [
+        {
+          "menuId": "menu-approval-contract",
+          "name": "合同审批",
+          "screenRef": "frmContractApproval"
+        },
+        {
+          "menuId": "menu-approval-invoice",
+          "name": "开票审批",
+          "screenRef": "frmInvoiceApproval"
+        }
+      ]
+    }
+  },
+  {
+    "id": "reference-example:UI_MENU:menu-approval-contract",
+    "rawId": "menu-approval-contract",
+    "name": "合同审批",
+    "kind": "UI_MENU",
+    "domain": "销售合同执行管理",
+    "sourceFile": "mu-ui-model.yaml",
+    "properties": {
+      "menuId": "menu-approval-contract",
+      "name": "合同审批",
+      "screenRef": "frmContractApproval"
+    }
+  },
+  {
+    "id": "reference-example:UI_MENU:menu-approval-invoice",
+    "rawId": "menu-approval-invoice",
+    "name": "开票审批",
+    "kind": "UI_MENU",
+    "domain": "销售合同执行管理",
+    "sourceFile": "mu-ui-model.yaml",
+    "properties": {
+      "menuId": "menu-approval-invoice",
+      "name": "开票审批",
+      "screenRef": "frmInvoiceApproval"
+    }
+  },
+  {
+    "id": "reference-example:UI_MENU:menu-report",
+    "rawId": "menu-report",
+    "name": "报表中心",
+    "kind": "UI_MENU",
+    "domain": "销售合同执行管理",
+    "sourceFile": "mu-ui-model.yaml",
+    "properties": {
+      "menuId": "menu-report",
+      "name": "报表中心",
+      "children": [
+        {
+          "menuId": "menu-report-execution",
+          "name": "合同执行情况分析",
+          "screenRef": "frmContractExecutionReport"
+        },
+        {
+          "menuId": "menu-report-dept",
+          "name": "部门合同统计分析",
+          "screenRef": "frmDeptReport"
+        },
+        {
+          "menuId": "menu-report-unreceived",
+          "name": "已开票未收款分析",
+          "screenRef": "frmUnreceivedReport"
+        }
+      ]
+    }
+  },
+  {
+    "id": "reference-example:UI_MENU:menu-report-execution",
+    "rawId": "menu-report-execution",
+    "name": "合同执行情况分析",
+    "kind": "UI_MENU",
+    "domain": "销售合同执行管理",
+    "sourceFile": "mu-ui-model.yaml",
+    "properties": {
+      "menuId": "menu-report-execution",
+      "name": "合同执行情况分析",
+      "screenRef": "frmContractExecutionReport"
+    }
+  },
+  {
+    "id": "reference-example:UI_MENU:menu-report-dept",
+    "rawId": "menu-report-dept",
+    "name": "部门合同统计分析",
+    "kind": "UI_MENU",
+    "domain": "销售合同执行管理",
+    "sourceFile": "mu-ui-model.yaml",
+    "properties": {
+      "menuId": "menu-report-dept",
+      "name": "部门合同统计分析",
+      "screenRef": "frmDeptReport"
+    }
+  },
+  {
+    "id": "reference-example:UI_MENU:menu-report-unreceived",
+    "rawId": "menu-report-unreceived",
+    "name": "已开票未收款分析",
+    "kind": "UI_MENU",
+    "domain": "销售合同执行管理",
+    "sourceFile": "mu-ui-model.yaml",
+    "properties": {
+      "menuId": "menu-report-unreceived",
+      "name": "已开票未收款分析",
+      "screenRef": "frmUnreceivedReport"
+    }
+  },
+  {
+    "id": "reference-example:UI_MENU:menu-masterdata",
+    "rawId": "menu-masterdata",
+    "name": "基础数据",
+    "kind": "UI_MENU",
+    "domain": "销售合同执行管理",
+    "sourceFile": "mu-ui-model.yaml",
+    "properties": {
+      "menuId": "menu-masterdata",
+      "name": "基础数据",
+      "children": [
+        {
+          "menuId": "menu-masterdata-product",
+          "name": "产品信息维护",
+          "screenRef": "frmProductMaintain"
+        },
+        {
+          "menuId": "menu-masterdata-customer",
+          "name": "客户信息维护",
+          "screenRef": "frmCustomerMaintain"
+        },
+        {
+          "menuId": "menu-masterdata-department",
+          "name": "部门信息维护",
+          "screenRef": "frmDepartmentMaintain"
+        },
+        {
+          "menuId": "menu-masterdata-employee",
+          "name": "人员信息维护",
+          "screenRef": "frmEmployeeMaintain"
+        }
+      ]
+    }
+  },
+  {
+    "id": "reference-example:UI_MENU:menu-masterdata-product",
+    "rawId": "menu-masterdata-product",
+    "name": "产品信息维护",
+    "kind": "UI_MENU",
+    "domain": "销售合同执行管理",
+    "sourceFile": "mu-ui-model.yaml",
+    "properties": {
+      "menuId": "menu-masterdata-product",
+      "name": "产品信息维护",
+      "screenRef": "frmProductMaintain"
+    }
+  },
+  {
+    "id": "reference-example:UI_MENU:menu-masterdata-customer",
+    "rawId": "menu-masterdata-customer",
+    "name": "客户信息维护",
+    "kind": "UI_MENU",
+    "domain": "销售合同执行管理",
+    "sourceFile": "mu-ui-model.yaml",
+    "properties": {
+      "menuId": "menu-masterdata-customer",
+      "name": "客户信息维护",
+      "screenRef": "frmCustomerMaintain"
+    }
+  },
+  {
+    "id": "reference-example:UI_MENU:menu-masterdata-department",
+    "rawId": "menu-masterdata-department",
+    "name": "部门信息维护",
+    "kind": "UI_MENU",
+    "domain": "销售合同执行管理",
+    "sourceFile": "mu-ui-model.yaml",
+    "properties": {
+      "menuId": "menu-masterdata-department",
+      "name": "部门信息维护",
+      "screenRef": "frmDepartmentMaintain"
+    }
+  },
+  {
+    "id": "reference-example:UI_MENU:menu-masterdata-employee",
+    "rawId": "menu-masterdata-employee",
+    "name": "人员信息维护",
+    "kind": "UI_MENU",
+    "domain": "销售合同执行管理",
+    "sourceFile": "mu-ui-model.yaml",
+    "properties": {
+      "menuId": "menu-masterdata-employee",
+      "name": "人员信息维护",
+      "screenRef": "frmEmployeeMaintain"
+    }
+  },
+  {
+    "id": "reference-example:UI_SCREEN:frmContractMaintain",
+    "rawId": "frmContractMaintain",
+    "name": "合同维护",
+    "kind": "UI_SCREEN",
+    "domain": "销售合同执行管理",
+    "sourceFile": "mu-ui-model.yaml",
+    "properties": {
+      "screenId": "frmContractMaintain",
+      "name": "合同维护",
+      "screenType": "MASTER_DETAIL_FORM",
+      "layout": "┌──────────────────────────────────────────────────────────────┐\n│ 销售合同执行管理系统                               [btnLogout] │\n├──────────────────────────────────────────────────────────────┤\n│ 合同录入（主从表）                                            │\n│ 合同编号:[txtContractNo]  合同名称:[txtContractName]  合同类型:(cboContractType) │\n│ 所属产品:[pslProduct]     所属客户:[pslCustomer]      签订时间:{dtpSignDate}     │\n│ 所属部门:[pslDepartment]  责任人:[pslOwner]           合同税率:[txtTaxRate]      │\n│ 合同总金额:[txtTotalAmount] 采购金额:[txtPurchaseAmount] 备注:[txtaRemark]       │\n├──────────────────────────────────────────────────────────────┤\n│ 付款阶段（从表，表格内动态维护）                              │\n│ @grdPaymentStage                                              │\n│  阶段编号 | 阶段名称 | 付款比例 | 阶段应付金额 | 开票状态       │\n│  [btnAddRow]                                                  │\n├──────────────────────────────────────────────────────────────┤\n│ [btnSaveDraft 保存草稿] [btnSubmit 提交] [btnCancel 取消]      │\n└──────────────────────────────────────────────────────────────┘\n",
+      "elements": [
+        {
+          "id": "txtContractNo",
+          "type": "TEXTBOX",
+          "label": "合同编号",
+          "io": "I",
+          "required": true,
+          "dataBinding": "Contract.contractNo"
+        },
+        {
+          "id": "txtContractName",
+          "type": "TEXTBOX",
+          "label": "合同名称",
+          "io": "I",
+          "required": true,
+          "dataBinding": "Contract.contractName"
+        },
+        {
+          "id": "cboContractType",
+          "type": "COMBO",
+          "label": "合同类型",
+          "io": "I",
+          "required": true,
+          "dataBinding": "Contract.contractType"
+        },
+        {
+          "id": "pslProduct",
+          "type": "POPUP_SELECT",
+          "label": "所属产品",
+          "io": "I",
+          "required": true,
+          "dataBinding": "Contract.productId"
+        },
+        {
+          "id": "pslCustomer",
+          "type": "POPUP_SELECT",
+          "label": "所属客户",
+          "io": "I",
+          "required": true,
+          "dataBinding": "Contract.customerId"
+        },
+        {
+          "id": "pslDepartment",
+          "type": "POPUP_SELECT",
+          "label": "所属部门",
+          "io": "I",
+          "required": true,
+          "dataBinding": "Contract.departmentId"
+        },
+        {
+          "id": "pslOwner",
+          "type": "POPUP_SELECT",
+          "label": "责任人",
+          "io": "I",
+          "required": true,
+          "dataBinding": "Contract.ownerId"
+        },
+        {
+          "id": "dtpSignDate",
+          "type": "DATEPICKER",
+          "label": "签订时间",
+          "io": "I",
+          "required": true,
+          "dataBinding": "Contract.signDate"
+        },
+        {
+          "id": "txtTaxRate",
+          "type": "TEXTBOX",
+          "label": "合同税率",
+          "io": "I",
+          "required": true,
+          "dataBinding": "Contract.taxRate"
+        },
+        {
+          "id": "txtTotalAmount",
+          "type": "NUMBER",
+          "label": "合同总金额",
+          "io": "I",
+          "required": true,
+          "dataBinding": "Contract.totalAmount"
+        },
+        {
+          "id": "txtPurchaseAmount",
+          "type": "NUMBER",
+          "label": "采购金额",
+          "io": "I",
+          "required": true,
+          "dataBinding": "Contract.purchaseAmount"
+        },
+        {
+          "id": "txtaRemark",
+          "type": "TEXTAREA",
+          "label": "备注",
+          "io": "I"
+        },
+        {
+          "id": "grdPaymentStage",
+          "type": "GRID",
+          "label": "付款阶段",
+          "io": "I_O",
+          "dataBinding": "Contract.stages"
+        },
+        {
+          "id": "btnAddRow",
+          "type": "BUTTON",
+          "label": "新增行"
+        },
+        {
+          "id": "btnLogout",
+          "type": "BUTTON",
+          "label": "退出"
+        }
+      ],
+      "actions": [
+        {
+          "actionId": "actSaveDraft",
+          "name": "保存草稿",
+          "actionType": "DRAFT",
+          "behaviorRef": "Contract_SaveAsDraft",
+          "permissionRef": [
+            "PERM-CONTRACT-SAVE-DRAFT"
+          ]
+        },
+        {
+          "actionId": "actSubmit",
+          "name": "提交",
+          "actionType": "SUBMIT",
+          "behaviorRef": "Contract_Submit",
+          "permissionRef": [
+            "PERM-CONTRACT-SUBMIT"
+          ]
+        },
+        {
+          "actionId": "actCancel",
+          "name": "取消",
+          "actionType": "BUTTON",
+          "behaviorRef": "Contract_SaveAsDraft"
+        }
+      ]
+    }
+  },
+  {
+    "id": "reference-example:UI_SCREEN:frmContractQuery",
+    "rawId": "frmContractQuery",
+    "name": "合同查询",
+    "kind": "UI_SCREEN",
+    "domain": "销售合同执行管理",
+    "sourceFile": "mu-ui-model.yaml",
+    "properties": {
+      "screenId": "frmContractQuery",
+      "name": "合同查询",
+      "screenType": "QUERY_LIST",
+      "layout": "┌──────────────────────────────────────────────────────────────┐\n│ 销售合同执行管理系统                               [btnLogout] │\n├──────────────────────────────────────────────────────────────┤\n│ 合同信息查询                                                  │\n│ 合同编号:[txtContractNo]  合同名称:[txtContractName]  合同类型:(cboContractType) │\n│ 所属部门:[pslDepartment]  签订日期从:{dtpFrom}  到:{dtpTo}     │\n│ [btnQuery 查询] [btnReset 重置] [btnExport 导出]               │\n├──────────────────────────────────────────────────────────────┤\n│ @grdResult                                                    │\n│  合同编号 | 合同名称 | 产品 | 客户 | 部门 | 责任人 | 金额 | 状态 │\n│ 分页: [lblPaging 共N条] [cboPageSize 每页20条] [btnPrev] [btnNext] │\n└──────────────────────────────────────────────────────────────┘\n",
+      "elements": [
+        {
+          "id": "txtContractNo",
+          "type": "TEXTBOX",
+          "label": "合同编号",
+          "io": "I",
+          "dataBinding": "Contract.contractNo"
+        },
+        {
+          "id": "txtContractName",
+          "type": "TEXTBOX",
+          "label": "合同名称",
+          "io": "I",
+          "dataBinding": "Contract.contractName"
+        },
+        {
+          "id": "cboContractType",
+          "type": "COMBO",
+          "label": "合同类型",
+          "io": "I",
+          "dataBinding": "Contract.contractType"
+        },
+        {
+          "id": "pslDepartment",
+          "type": "POPUP_SELECT",
+          "label": "所属部门",
+          "io": "I",
+          "dataBinding": "Contract.departmentId"
+        },
+        {
+          "id": "dtpFrom",
+          "type": "DATEPICKER",
+          "label": "签订日期从",
+          "io": "I"
+        },
+        {
+          "id": "dtpTo",
+          "type": "DATEPICKER",
+          "label": "到",
+          "io": "I"
+        },
+        {
+          "id": "grdResult",
+          "type": "GRID",
+          "label": "查询结果",
+          "io": "O",
+          "dataSource": "REP-CONTRACT-LIST"
+        },
+        {
+          "id": "btnQuery",
+          "type": "BUTTON",
+          "label": "查询"
+        },
+        {
+          "id": "btnReset",
+          "type": "BUTTON",
+          "label": "重置"
+        },
+        {
+          "id": "btnExport",
+          "type": "BUTTON",
+          "label": "导出"
+        }
+      ],
+      "actions": [
+        {
+          "actionId": "actQuery",
+          "name": "查询",
+          "actionType": "BUTTON",
+          "behaviorRef": "Contract_QueryList",
+          "permissionRef": [
+            "PERM-CONTRACT-QUERY-LIST",
+            "PERM-CONTRACT-QUERY-LIST-OWN-DEPT"
+          ]
+        },
+        {
+          "actionId": "actDetail",
+          "name": "查看详情",
+          "actionType": "BUTTON",
+          "behaviorRef": "Contract_QueryDetail",
+          "permissionRef": [
+            "PERM-CONTRACT-QUERY-DETAIL",
+            "PERM-CONTRACT-QUERY-DETAIL-OWN-DEPT"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "reference-example:UI_SCREEN:frmInvoiceMaintain",
+    "rawId": "frmInvoiceMaintain",
+    "name": "开票录入",
+    "kind": "UI_SCREEN",
+    "domain": "销售合同执行管理",
+    "sourceFile": "mu-ui-model.yaml",
+    "properties": {
+      "screenId": "frmInvoiceMaintain",
+      "name": "开票录入",
+      "screenType": "MASTER_DETAIL_FORM",
+      "layout": "┌──────────────────────────────────────────────────────────────┐\n│ 销售合同执行管理系统                               [btnLogout] │\n├──────────────────────────────────────────────────────────────┤\n│ 开票录入（主从表）                                            │\n│ 开票编号:[txtInvoiceNo]  对应合同:[pslContract]    开票时间:{dtpInvoiceDate} │\n│ 开票金额:[txtInvoiceAmount] 开票税率:[txtTaxRate]  是否收款:[chkIsPaid]      │\n├──────────────────────────────────────────────────────────────┤\n│ 付款阶段分摊（从表，表格内动态维护）                          │\n│ @grdAllocation                                                │\n│  付款阶段 | 阶段应付金额 | 已分摊金额 | 本次分摊金额            │\n│  [btnAddRow]                                                  │\n├──────────────────────────────────────────────────────────────┤\n│ [btnSaveDraft 保存草稿] [btnSubmit 提交] [btnCancel 取消]      │\n└──────────────────────────────────────────────────────────────┘\n",
+      "elements": [
+        {
+          "id": "txtInvoiceNo",
+          "type": "TEXTBOX",
+          "label": "开票编号",
+          "io": "I",
+          "required": true,
+          "dataBinding": "Invoice.invoiceNo"
+        },
+        {
+          "id": "pslContract",
+          "type": "POPUP_SELECT",
+          "label": "对应合同",
+          "io": "I",
+          "required": true,
+          "dataBinding": "Invoice.contractId"
+        },
+        {
+          "id": "dtpInvoiceDate",
+          "type": "DATEPICKER",
+          "label": "开票时间",
+          "io": "I",
+          "required": true,
+          "dataBinding": "Invoice.invoiceDate"
+        },
+        {
+          "id": "txtInvoiceAmount",
+          "type": "NUMBER",
+          "label": "开票金额",
+          "io": "I",
+          "required": true,
+          "dataBinding": "Invoice.invoiceAmount"
+        },
+        {
+          "id": "txtTaxRate",
+          "type": "TEXTBOX",
+          "label": "开票税率",
+          "io": "I",
+          "required": true,
+          "dataBinding": "Invoice.invoiceTaxRate"
+        },
+        {
+          "id": "chkIsPaid",
+          "type": "CHECKBOX",
+          "label": "是否收款",
+          "io": "I",
+          "dataBinding": "Invoice.receivedFlag"
+        },
+        {
+          "id": "grdAllocation",
+          "type": "GRID",
+          "label": "付款阶段分摊",
+          "io": "I_O",
+          "dataBinding": "Invoice.allocations"
+        },
+        {
+          "id": "btnAddRow",
+          "type": "BUTTON",
+          "label": "新增行"
+        }
+      ],
+      "actions": [
+        {
+          "actionId": "actSaveDraft",
+          "name": "保存草稿",
+          "actionType": "DRAFT",
+          "behaviorRef": "Invoice_SaveAsDraft",
+          "permissionRef": [
+            "PERM-INVOICE-SAVE-DRAFT"
+          ]
+        },
+        {
+          "actionId": "actSubmit",
+          "name": "提交",
+          "actionType": "SUBMIT",
+          "behaviorRef": "Invoice_Submit",
+          "permissionRef": [
+            "PERM-INVOICE-SUBMIT"
+          ]
+        },
+        {
+          "actionId": "actCancel",
+          "name": "取消",
+          "actionType": "BUTTON",
+          "behaviorRef": "Invoice_SaveAsDraft"
+        }
+      ]
+    }
+  },
+  {
+    "id": "reference-example:UI_SCREEN:frmInvoiceQuery",
+    "rawId": "frmInvoiceQuery",
+    "name": "开票查询",
+    "kind": "UI_SCREEN",
+    "domain": "销售合同执行管理",
+    "sourceFile": "mu-ui-model.yaml",
+    "properties": {
+      "screenId": "frmInvoiceQuery",
+      "name": "开票查询",
+      "screenType": "QUERY_LIST",
+      "layout": "┌──────────────────────────────────────────────────────────────┐\n│ 销售合同执行管理系统                               [btnLogout] │\n├──────────────────────────────────────────────────────────────┤\n│ 开票信息查询                                                  │\n│ 开票编号:[txtInvoiceNo]  对应合同:[pslContract]    开票状态:(cboApprovalStatus) │\n│ 开票日期从:{dtpFrom}  到:{dtpTo}                               │\n│ [btnQuery 查询] [btnReset 重置]                               │\n├──────────────────────────────────────────────────────────────┤\n│ @grdResult                                                    │\n│  开票编号 | 合同 | 开票金额 | 税率 | 开票日期 | 是否收款 | 状态 │\n│ 分页: [lblPaging 共N条] [btnPrev] [btnNext]                    │\n└──────────────────────────────────────────────────────────────┘\n",
+      "elements": [
+        {
+          "id": "txtInvoiceNo",
+          "type": "TEXTBOX",
+          "label": "开票编号",
+          "io": "I",
+          "dataBinding": "Invoice.invoiceNo"
+        },
+        {
+          "id": "pslContract",
+          "type": "POPUP_SELECT",
+          "label": "对应合同",
+          "io": "I",
+          "dataBinding": "Invoice.contractId"
+        },
+        {
+          "id": "cboApprovalStatus",
+          "type": "COMBO",
+          "label": "开票状态",
+          "io": "I",
+          "dataBinding": "Invoice.approvalStatus"
+        },
+        {
+          "id": "dtpFrom",
+          "type": "DATEPICKER",
+          "label": "开票日期从",
+          "io": "I"
+        },
+        {
+          "id": "dtpTo",
+          "type": "DATEPICKER",
+          "label": "到",
+          "io": "I"
+        },
+        {
+          "id": "grdResult",
+          "type": "GRID",
+          "label": "查询结果",
+          "io": "O",
+          "dataSource": "REP-INVOICED-UNRECEIVED"
+        }
+      ],
+      "actions": [
+        {
+          "actionId": "actQuery",
+          "name": "查询",
+          "actionType": "BUTTON",
+          "behaviorRef": "Contract_QueryInvoicedUnreceived",
+          "permissionRef": [
+            "PERM-CONTRACT-QUERY-UNRECEIVED",
+            "PERM-CONTRACT-QUERY-UNRECEIVED-OWN-DEPT"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "reference-example:UI_SCREEN:frmReceiptMaintain",
+    "rawId": "frmReceiptMaintain",
+    "name": "收款录入",
+    "kind": "UI_SCREEN",
+    "domain": "销售合同执行管理",
+    "sourceFile": "mu-ui-model.yaml",
+    "properties": {
+      "screenId": "frmReceiptMaintain",
+      "name": "收款录入",
+      "screenType": "SINGLE_FORM",
+      "layout": "┌──────────────────────────────────────────────────────────────┐\n│ 销售合同执行管理系统                               [btnLogout] │\n├──────────────────────────────────────────────────────────────┤\n│ 收款录入                                                      │\n│ 收款编号:[txtReceiptNo]   对应合同:[pslContract]              │\n│ 对应开票:[pslInvoice]     收款金额:[txtAmount]                │\n│ 收款时间:{dtpReceiptTime} 收款方式:(cboMethod)                │\n│ 备注:[txtaRemark]                                             │\n├──────────────────────────────────────────────────────────────┤\n│ [btnSave 保存] [btnCancel 取消]                               │\n└──────────────────────────────────────────────────────────────┘\n",
+      "elements": [
+        {
+          "id": "txtReceiptNo",
+          "type": "TEXTBOX",
+          "label": "收款编号",
+          "io": "I",
+          "required": true,
+          "dataBinding": "Receipt.receiptNo"
+        },
+        {
+          "id": "pslContract",
+          "type": "POPUP_SELECT",
+          "label": "对应合同",
+          "io": "I",
+          "required": true,
+          "dataBinding": "Receipt.contractId"
+        },
+        {
+          "id": "pslInvoice",
+          "type": "POPUP_SELECT",
+          "label": "对应开票",
+          "io": "I",
+          "required": true,
+          "dataBinding": "Receipt.invoiceId"
+        },
+        {
+          "id": "txtAmount",
+          "type": "NUMBER",
+          "label": "收款金额",
+          "io": "I",
+          "required": true,
+          "dataBinding": "Receipt.receiptAmount"
+        },
+        {
+          "id": "dtpReceiptTime",
+          "type": "DATEPICKER",
+          "label": "收款时间",
+          "io": "I",
+          "required": true,
+          "dataBinding": "Receipt.receiptTime"
+        },
+        {
+          "id": "cboMethod",
+          "type": "COMBO",
+          "label": "收款方式",
+          "io": "I",
+          "dataBinding": "Receipt.receiptMethod"
+        },
+        {
+          "id": "txtaRemark",
+          "type": "TEXTAREA",
+          "label": "备注",
+          "io": "I"
+        }
+      ],
+      "actions": [
+        {
+          "actionId": "actSave",
+          "name": "保存",
+          "actionType": "BUTTON",
+          "behaviorRef": "Receipt_Record",
+          "permissionRef": [
+            "PERM-RECEIPT-RECORD"
+          ]
+        },
+        {
+          "actionId": "actCancel",
+          "name": "取消",
+          "actionType": "BUTTON",
+          "behaviorRef": "Receipt_Record"
+        }
+      ]
+    }
+  },
+  {
+    "id": "reference-example:UI_SCREEN:frmReceiptQuery",
+    "rawId": "frmReceiptQuery",
+    "name": "收款查询",
+    "kind": "UI_SCREEN",
+    "domain": "销售合同执行管理",
+    "sourceFile": "mu-ui-model.yaml",
+    "properties": {
+      "screenId": "frmReceiptQuery",
+      "name": "收款查询",
+      "screenType": "QUERY_LIST",
+      "layout": "┌──────────────────────────────────────────────────────────────┐\n│ 销售合同执行管理系统                               [btnLogout] │\n├──────────────────────────────────────────────────────────────┤\n│ 收款信息查询                                                  │\n│ 收款编号:[txtReceiptNo]  对应合同:[pslContract]    对应开票:[pslInvoice] │\n│ 收款时间从:{dtpFrom}  到:{dtpTo}                               │\n│ [btnQuery 查询] [btnReset 重置]                               │\n├──────────────────────────────────────────────────────────────┤\n│ @grdResult                                                    │\n│  收款编号 | 合同 | 开票 | 收款金额 | 收款时间 | 方式 | 状态     │\n│ 分页: [lblPaging 共N条] [btnPrev] [btnNext]                    │\n└──────────────────────────────────────────────────────────────┘\n",
+      "elements": [
+        {
+          "id": "txtReceiptNo",
+          "type": "TEXTBOX",
+          "label": "收款编号",
+          "io": "I",
+          "dataBinding": "Receipt.receiptNo"
+        },
+        {
+          "id": "pslContract",
+          "type": "POPUP_SELECT",
+          "label": "对应合同",
+          "io": "I",
+          "dataBinding": "Receipt.contractId"
+        },
+        {
+          "id": "pslInvoice",
+          "type": "POPUP_SELECT",
+          "label": "对应开票",
+          "io": "I",
+          "dataBinding": "Receipt.invoiceId"
+        },
+        {
+          "id": "dtpFrom",
+          "type": "DATEPICKER",
+          "label": "收款时间从",
+          "io": "I"
+        },
+        {
+          "id": "dtpTo",
+          "type": "DATEPICKER",
+          "label": "到",
+          "io": "I"
+        },
+        {
+          "id": "grdResult",
+          "type": "GRID",
+          "label": "查询结果",
+          "io": "O"
+        }
+      ],
+      "actions": [
+        {
+          "actionId": "actQuery",
+          "name": "查询",
+          "actionType": "BUTTON",
+          "behaviorRef": "Receipt_Record",
+          "permissionRef": [
+            "PERM-RECEIPT-RECORD"
+          ]
+        },
+        {
+          "actionId": "actReverse",
+          "name": "冲销",
+          "actionType": "BUTTON",
+          "behaviorRef": "Receipt_Reverse",
+          "permissionRef": [
+            "PERM-RECEIPT-REVERSE"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "reference-example:UI_SCREEN:frmContractApproval",
+    "rawId": "frmContractApproval",
+    "name": "合同审批",
+    "kind": "UI_SCREEN",
+    "domain": "销售合同执行管理",
+    "sourceFile": "mu-ui-model.yaml",
+    "properties": {
+      "screenId": "frmContractApproval",
+      "name": "合同审批",
+      "screenType": "QUERY_LIST",
+      "layout": "┌──────────────────────────────────────────────────────────────┐\n│ 销售合同执行管理系统                               [btnLogout] │\n├──────────────────────────────────────────────────────────────┤\n│ 待审批合同列表                                                │\n│ @grdApprovalList                                              │\n│  合同编号 | 名称 | 金额 | 提交人 | 提交时间 | 状态             │\n│ 分页: [lblPaging 共N条] [btnPrev] [btnNext]                    │\n├──────────────────────────────────────────────────────────────┤\n│ 审批意见: [txtaComment]                                       │\n│ [btnApprove 通过] [btnReject 驳回] [btnCancel 取消]            │\n└──────────────────────────────────────────────────────────────┘\n",
+      "elements": [
+        {
+          "id": "grdApprovalList",
+          "type": "GRID",
+          "label": "待审批合同列表",
+          "io": "O"
+        },
+        {
+          "id": "txtaComment",
+          "type": "TEXTAREA",
+          "label": "审批意见",
+          "io": "I"
+        }
+      ],
+      "actions": [
+        {
+          "actionId": "actApprove",
+          "name": "通过",
+          "actionType": "APPROVE",
+          "behaviorRef": "Contract_ApproveFinance",
+          "permissionRef": [
+            "PERM-CONTRACT-APPROVE-FINANCE"
+          ]
+        },
+        {
+          "actionId": "actReject",
+          "name": "驳回",
+          "actionType": "REJECT",
+          "behaviorRef": "Contract_ApproveFinance",
+          "permissionRef": [
+            "PERM-CONTRACT-APPROVE-FINANCE"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "reference-example:UI_SCREEN:frmInvoiceApproval",
+    "rawId": "frmInvoiceApproval",
+    "name": "开票审批",
+    "kind": "UI_SCREEN",
+    "domain": "销售合同执行管理",
+    "sourceFile": "mu-ui-model.yaml",
+    "properties": {
+      "screenId": "frmInvoiceApproval",
+      "name": "开票审批",
+      "screenType": "QUERY_LIST",
+      "layout": "┌──────────────────────────────────────────────────────────────┐\n│ 销售合同执行管理系统                               [btnLogout] │\n├──────────────────────────────────────────────────────────────┤\n│ 待审批开票列表                                                │\n│ @grdApprovalList                                              │\n│  开票编号 | 合同 | 金额 | 提交人 | 提交时间 | 状态             │\n│ 分页: [lblPaging 共N条] [btnPrev] [btnNext]                    │\n├──────────────────────────────────────────────────────────────┤\n│ 审批意见: [txtaComment]                                       │\n│ [btnApprove 通过] [btnReject 驳回] [btnCancel 取消]            │\n└──────────────────────────────────────────────────────────────┘\n",
+      "elements": [
+        {
+          "id": "grdApprovalList",
+          "type": "GRID",
+          "label": "待审批开票列表",
+          "io": "O"
+        },
+        {
+          "id": "txtaComment",
+          "type": "TEXTAREA",
+          "label": "审批意见",
+          "io": "I"
+        }
+      ],
+      "actions": [
+        {
+          "actionId": "actApprove",
+          "name": "通过",
+          "actionType": "APPROVE",
+          "behaviorRef": "Invoice_ApproveFinance",
+          "permissionRef": [
+            "PERM-INVOICE-APPROVE"
+          ]
+        },
+        {
+          "actionId": "actReject",
+          "name": "驳回",
+          "actionType": "REJECT",
+          "behaviorRef": "Invoice_ApproveFinance",
+          "permissionRef": [
+            "PERM-INVOICE-APPROVE"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "reference-example:UI_SCREEN:frmContractExecutionReport",
+    "rawId": "frmContractExecutionReport",
+    "name": "合同执行情况分析",
+    "kind": "UI_SCREEN",
+    "domain": "销售合同执行管理",
+    "sourceFile": "mu-ui-model.yaml",
+    "properties": {
+      "screenId": "frmContractExecutionReport",
+      "name": "合同执行情况分析",
+      "screenType": "QUERY_LIST",
+      "layout": "┌──────────────────────────────────────────────────────────────┐\n│ 销售合同执行管理系统                               [btnLogout] │\n├──────────────────────────────────────────────────────────────┤\n│ 合同执行情况分析                                              │\n│ 所属部门:[pslDepartment]  签订日期从:{dtpFrom}  到:{dtpTo}     │\n│ 责任人:[pslOwner]                                            │\n│ [btnQuery 查询] [btnExport 导出]                               │\n├──────────────────────────────────────────────────────────────┤\n│ @grdResult                                                    │\n│  合同编号 | 名称 | 合同金额 | 累计开票 | 累计收款 | 未收款 | 收款完成率 │\n│ 分页: [lblPaging 共N条] [btnPrev] [btnNext]                    │\n└──────────────────────────────────────────────────────────────┘\n",
+      "elements": [
+        {
+          "id": "pslDepartment",
+          "type": "POPUP_SELECT",
+          "label": "所属部门",
+          "io": "I"
+        },
+        {
+          "id": "dtpFrom",
+          "type": "DATEPICKER",
+          "label": "签订日期从",
+          "io": "I"
+        },
+        {
+          "id": "dtpTo",
+          "type": "DATEPICKER",
+          "label": "到",
+          "io": "I"
+        },
+        {
+          "id": "pslOwner",
+          "type": "POPUP_SELECT",
+          "label": "责任人",
+          "io": "I"
+        },
+        {
+          "id": "grdResult",
+          "type": "GRID",
+          "label": "分析结果",
+          "io": "O",
+          "dataSource": "REP-CONTRACT-EXECUTION"
+        }
+      ],
+      "actions": [
+        {
+          "actionId": "actQuery",
+          "name": "查询",
+          "actionType": "BUTTON",
+          "behaviorRef": "Contract_QueryExecutionAnalysis",
+          "permissionRef": [
+            "PERM-CONTRACT-QUERY-EXECUTION",
+            "PERM-CONTRACT-QUERY-EXECUTION-OWN-DEPT"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "reference-example:UI_SCREEN:frmDeptReport",
+    "rawId": "frmDeptReport",
+    "name": "部门合同统计分析",
+    "kind": "UI_SCREEN",
+    "domain": "销售合同执行管理",
+    "sourceFile": "mu-ui-model.yaml",
+    "properties": {
+      "screenId": "frmDeptReport",
+      "name": "部门合同统计分析",
+      "screenType": "QUERY_LIST",
+      "layout": "┌──────────────────────────────────────────────────────────────┐\n│ 销售合同执行管理系统                               [btnLogout] │\n├──────────────────────────────────────────────────────────────┤\n│ 部门合同统计分析                                              │\n│ 签订日期从:{dtpFrom}  到:{dtpTo}    部门:[pslDepartment]      │\n│ [btnQuery 查询] [btnExport 导出]                               │\n├──────────────────────────────────────────────────────────────┤\n│ @grdResult                                                    │\n│  部门 | 合同数量 | 合同金额 | 开票金额 | 收款金额 | 未收款 | 结清数 │\n│ 分页: [lblPaging 共N条]                                        │\n└──────────────────────────────────────────────────────────────┘\n",
+      "elements": [
+        {
+          "id": "dtpFrom",
+          "type": "DATEPICKER",
+          "label": "签订日期从",
+          "io": "I"
+        },
+        {
+          "id": "dtpTo",
+          "type": "DATEPICKER",
+          "label": "到",
+          "io": "I"
+        },
+        {
+          "id": "pslDepartment",
+          "type": "POPUP_SELECT",
+          "label": "部门",
+          "io": "I"
+        },
+        {
+          "id": "grdResult",
+          "type": "GRID",
+          "label": "统计结果",
+          "io": "O",
+          "dataSource": "REP-DEPT-CONTRACT-SUMMARY"
+        }
+      ],
+      "actions": [
+        {
+          "actionId": "actQuery",
+          "name": "查询",
+          "actionType": "BUTTON",
+          "behaviorRef": "Contract_QueryDepartmentSummary",
+          "permissionRef": [
+            "PERM-CONTRACT-QUERY-DEPT-SUMMARY",
+            "PERM-CONTRACT-QUERY-DEPT-SUMMARY-OWN-DEPT"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "reference-example:UI_SCREEN:frmUnreceivedReport",
+    "rawId": "frmUnreceivedReport",
+    "name": "已开票未收款分析",
+    "kind": "UI_SCREEN",
+    "domain": "销售合同执行管理",
+    "sourceFile": "mu-ui-model.yaml",
+    "properties": {
+      "screenId": "frmUnreceivedReport",
+      "name": "已开票未收款分析",
+      "screenType": "QUERY_LIST",
+      "layout": "┌──────────────────────────────────────────────────────────────┐\n│ 销售合同执行管理系统                               [btnLogout] │\n├──────────────────────────────────────────────────────────────┤\n│ 已开票未收款分析                                              │\n│ 所属部门:[pslDepartment]  开票日期从:{dtpFrom}  到:{dtpTo}     │\n│ [btnQuery 查询] [btnExport 导出]                               │\n├──────────────────────────────────────────────────────────────┤\n│ @grdResult                                                    │\n│  合同编号 | 开票编号 | 开票金额 | 已收款 | 未收款 | 最近收款时间 │\n│ 分页: [lblPaging 共N条] [btnPrev] [btnNext]                    │\n└──────────────────────────────────────────────────────────────┘\n",
+      "elements": [
+        {
+          "id": "pslDepartment",
+          "type": "POPUP_SELECT",
+          "label": "所属部门",
+          "io": "I"
+        },
+        {
+          "id": "dtpFrom",
+          "type": "DATEPICKER",
+          "label": "开票日期从",
+          "io": "I"
+        },
+        {
+          "id": "dtpTo",
+          "type": "DATEPICKER",
+          "label": "到",
+          "io": "I"
+        },
+        {
+          "id": "grdResult",
+          "type": "GRID",
+          "label": "分析结果",
+          "io": "O",
+          "dataSource": "REP-INVOICED-UNRECEIVED"
+        }
+      ],
+      "actions": [
+        {
+          "actionId": "actQuery",
+          "name": "查询",
+          "actionType": "BUTTON",
+          "behaviorRef": "Contract_QueryInvoicedUnreceived",
+          "permissionRef": [
+            "PERM-CONTRACT-QUERY-UNRECEIVED",
+            "PERM-CONTRACT-QUERY-UNRECEIVED-OWN-DEPT"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "reference-example:UI_SCREEN:frmProductMaintain",
+    "rawId": "frmProductMaintain",
+    "name": "产品信息维护",
+    "kind": "UI_SCREEN",
+    "domain": "销售合同执行管理",
+    "sourceFile": "mu-ui-model.yaml",
+    "properties": {
+      "screenId": "frmProductMaintain",
+      "name": "产品信息维护",
+      "screenType": "SINGLE_FORM",
+      "layout": "┌──────────────────────────────────────────────────────────────┐\n│ 销售合同执行管理系统                               [btnLogout] │\n├──────────────────────────────────────────────────────────────┤\n│ 产品信息维护                                                  │\n│ 产品编号:[txtNo]    产品名称:[txtName]                        │\n│ 产品类型:(cboType)                                            │\n├──────────────────────────────────────────────────────────────┤\n│ @grdList                                                      │\n│  编号 | 名称 | 类型 | 状态                                     │\n│ 分页: [lblPaging 共N条] [btnPrev] [btnNext]                    │\n├──────────────────────────────────────────────────────────────┤\n│ [btnAdd 新增] [btnSave 保存] [btnDisable 停用] [btnCancel 取消] │\n└──────────────────────────────────────────────────────────────┘\n",
+      "elements": [
+        {
+          "id": "txtNo",
+          "type": "TEXTBOX",
+          "label": "产品编号",
+          "io": "I",
+          "required": true,
+          "dataBinding": "Product.productId"
+        },
+        {
+          "id": "txtName",
+          "type": "TEXTBOX",
+          "label": "产品名称",
+          "io": "I",
+          "required": true,
+          "dataBinding": "Product.productName"
+        },
+        {
+          "id": "cboType",
+          "type": "COMBO",
+          "label": "产品类型",
+          "io": "I",
+          "required": true,
+          "dataBinding": "Product.productType"
+        },
+        {
+          "id": "grdList",
+          "type": "GRID",
+          "label": "产品列表",
+          "io": "O"
+        }
+      ],
+      "actions": [
+        {
+          "actionId": "actSave",
+          "name": "保存",
+          "actionType": "BUTTON",
+          "behaviorRef": "Product_Maintain",
+          "permissionRef": [
+            "PERM-PRODUCT-MAINTAIN"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "reference-example:UI_SCREEN:frmCustomerMaintain",
+    "rawId": "frmCustomerMaintain",
+    "name": "客户信息维护",
+    "kind": "UI_SCREEN",
+    "domain": "销售合同执行管理",
+    "sourceFile": "mu-ui-model.yaml",
+    "properties": {
+      "screenId": "frmCustomerMaintain",
+      "name": "客户信息维护",
+      "screenType": "SINGLE_FORM",
+      "layout": "┌──────────────────────────────────────────────────────────────┐\n│ 销售合同执行管理系统                               [btnLogout] │\n├──────────────────────────────────────────────────────────────┤\n│ 客户信息维护                                                  │\n│ 客户编号:[txtNo]    客户名称:[txtName]                        │\n│ 客户类型:(cboType)                                            │\n├──────────────────────────────────────────────────────────────┤\n│ @grdList                                                      │\n│  编号 | 名称 | 类型 | 状态                                     │\n│ 分页: [lblPaging 共N条] [btnPrev] [btnNext]                    │\n├──────────────────────────────────────────────────────────────┤\n│ [btnAdd 新增] [btnSave 保存] [btnDisable 停用] [btnCancel 取消] │\n└──────────────────────────────────────────────────────────────┘\n",
+      "elements": [
+        {
+          "id": "txtNo",
+          "type": "TEXTBOX",
+          "label": "客户编号",
+          "io": "I",
+          "required": true,
+          "dataBinding": "Customer.customerId"
+        },
+        {
+          "id": "txtName",
+          "type": "TEXTBOX",
+          "label": "客户名称",
+          "io": "I",
+          "required": true,
+          "dataBinding": "Customer.customerName"
+        },
+        {
+          "id": "cboType",
+          "type": "COMBO",
+          "label": "客户类型",
+          "io": "I",
+          "required": true,
+          "dataBinding": "Customer.customerType"
+        },
+        {
+          "id": "grdList",
+          "type": "GRID",
+          "label": "客户列表",
+          "io": "O"
+        }
+      ],
+      "actions": [
+        {
+          "actionId": "actSave",
+          "name": "保存",
+          "actionType": "BUTTON",
+          "behaviorRef": "Customer_Maintain",
+          "permissionRef": [
+            "PERM-CUSTOMER-MAINTAIN"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "reference-example:UI_SCREEN:frmDepartmentMaintain",
+    "rawId": "frmDepartmentMaintain",
+    "name": "部门信息维护",
+    "kind": "UI_SCREEN",
+    "domain": "销售合同执行管理",
+    "sourceFile": "mu-ui-model.yaml",
+    "properties": {
+      "screenId": "frmDepartmentMaintain",
+      "name": "部门信息维护",
+      "screenType": "SINGLE_FORM",
+      "layout": "┌──────────────────────────────────────────────────────────────┐\n│ 销售合同执行管理系统                               [btnLogout] │\n├──────────────────────────────────────────────────────────────┤\n│ 部门信息维护                                                  │\n│ 部门编号:[txtNo]    部门名称:[txtName]                        │\n├──────────────────────────────────────────────────────────────┤\n│ @grdList                                                      │\n│  编号 | 名称 | 状态                                           │\n│ 分页: [lblPaging 共N条] [btnPrev] [btnNext]                    │\n├──────────────────────────────────────────────────────────────┤\n│ [btnAdd 新增] [btnSave 保存] [btnDisable 停用] [btnCancel 取消] │\n└──────────────────────────────────────────────────────────────┘\n",
+      "elements": [
+        {
+          "id": "txtNo",
+          "type": "TEXTBOX",
+          "label": "部门编号",
+          "io": "I",
+          "required": true,
+          "dataBinding": "Department.departmentId"
+        },
+        {
+          "id": "txtName",
+          "type": "TEXTBOX",
+          "label": "部门名称",
+          "io": "I",
+          "required": true,
+          "dataBinding": "Department.departmentName"
+        },
+        {
+          "id": "grdList",
+          "type": "GRID",
+          "label": "部门列表",
+          "io": "O"
+        }
+      ],
+      "actions": [
+        {
+          "actionId": "actSave",
+          "name": "保存",
+          "actionType": "BUTTON",
+          "behaviorRef": "Department_Maintain",
+          "permissionRef": [
+            "PERM-DEPARTMENT-MAINTAIN"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "reference-example:UI_SCREEN:frmEmployeeMaintain",
+    "rawId": "frmEmployeeMaintain",
+    "name": "人员信息维护",
+    "kind": "UI_SCREEN",
+    "domain": "销售合同执行管理",
+    "sourceFile": "mu-ui-model.yaml",
+    "properties": {
+      "screenId": "frmEmployeeMaintain",
+      "name": "人员信息维护",
+      "screenType": "SINGLE_FORM",
+      "layout": "┌──────────────────────────────────────────────────────────────┐\n│ 销售合同执行管理系统                               [btnLogout] │\n├──────────────────────────────────────────────────────────────┤\n│ 人员信息维护                                                  │\n│ 人员编号:[txtNo]    人员名称:[txtName]                        │\n│ 所属部门:[pslDepartment]                                      │\n├──────────────────────────────────────────────────────────────┤\n│ @grdList                                                      │\n│  编号 | 名称 | 部门 | 状态                                     │\n│ 分页: [lblPaging 共N条] [btnPrev] [btnNext]                    │\n├──────────────────────────────────────────────────────────────┤\n│ [btnAdd 新增] [btnSave 保存] [btnDisable 停用] [btnCancel 取消] │\n└──────────────────────────────────────────────────────────────┘\n",
+      "elements": [
+        {
+          "id": "txtNo",
+          "type": "TEXTBOX",
+          "label": "人员编号",
+          "io": "I",
+          "required": true,
+          "dataBinding": "Employee.employeeId"
+        },
+        {
+          "id": "txtName",
+          "type": "TEXTBOX",
+          "label": "人员名称",
+          "io": "I",
+          "required": true,
+          "dataBinding": "Employee.employeeName"
+        },
+        {
+          "id": "pslDepartment",
+          "type": "POPUP_SELECT",
+          "label": "所属部门",
+          "io": "I",
+          "required": true,
+          "dataBinding": "Employee.departmentId"
+        },
+        {
+          "id": "grdList",
+          "type": "GRID",
+          "label": "人员列表",
+          "io": "O"
+        }
+      ],
+      "actions": [
+        {
+          "actionId": "actSave",
+          "name": "保存",
+          "actionType": "BUTTON",
+          "behaviorRef": "Employee_Maintain",
+          "permissionRef": [
+            "PERM-EMPLOYEE-MAINTAIN"
+          ]
+        }
+      ]
+    }
+  }
+]
