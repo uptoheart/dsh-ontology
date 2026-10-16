@@ -3,9 +3,10 @@
   <div class="split-left">
     <div class="fw-search">
       <input type="text" id="treeSearch" placeholder="🔍 搜索编号或名称，如 9.3 / Manage Financial">
-      <div class="hint">支持模糊匹配；父节点命中时其子树同样可见</div>
+      <div class="hint">支持模糊匹配；悬停节点可 ＋ 加子节点 / ✎ 编辑 / 🗑 删除，拖拽可排序（自动递归重编号）</div>
     </div>
     <div class="tree-wrap" id="treeWrap"></div>
   </div>
   <div class="split-right" id="fwDetail"><div class="empty-hint"><div><div class="big">🗂️</div>点击左侧节点查看详情</div></div></div>
+  <div class="fw-saving" id="fwSaving"><div class="fw-saving-box"><span class="fw-spin"></span><span>正在保存流程框架，重编号与覆盖度重算中…</span></div></div>
 </section>

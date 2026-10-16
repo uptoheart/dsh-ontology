@@ -4,9 +4,10 @@
   "project": "contract-management",
   "sourceRequirements": "合同管理需求规格说明书-V9.md",
   "sourceDir": "Ontology\\reference-example",
-  "importTime": 1792033084652,
+  "importTime": 1792119945017,
   "sourceMtime": 1788788493000,
   "sourceFileCount": 8,
   "entityCount": 170,
-  "relationCount": 331
+  "relationCount": 331,
+  "frameworkId": "hw-style-pcf"
 }

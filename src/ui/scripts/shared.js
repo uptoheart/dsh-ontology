@@ -6,7 +6,15 @@ const fmtTime = (ts) => { try { return new Date(ts).toLocaleString('zh-CN', { ho
 
 const STATUS_LABEL = { covered: '已覆盖', partial: '部分', gap: '缺口', unset: '未标注' };
 const PAGE_SIZE = 300;
-const DEFAULT_FW = 'apqc-process';
+/* 旧套件（meta 无 frameworkId）兼容缺省；实际框架跟随套件 meta（项目级锁定） */
+const LEGACY_DEFAULT_FW = 'apqc-process';
+function suiteFw(suite) { return (suite && suite.meta && suite.meta.frameworkId) || LEGACY_DEFAULT_FW; }
+/* 框架轻量清单（id → 名称），init 时加载 */
+let FW_LIST = [];
+function fwNameOf(id) {
+  const f = FW_LIST.find(x => x.frameworkId === (id || LEGACY_DEFAULT_FW));
+  return f ? f.name : (id || LEGACY_DEFAULT_FW);
+}
 
 let toastTimer = null;
 function toast(msg, type) {
@@ -25,6 +33,30 @@ async function api(path, opts) {
     throw new Error((json && (json.message || json.error)) || (res.status + ' ' + res.statusText));
   }
   return json ? json.data : null;
+}
+
+/* 现场交付物导出：kind = minutes|crud|gap|domain（文件名由服务端 Content-Disposition 决定后缀） */
+const EXPORT_EXT = { minutes: 'md', crud: 'csv', gap: 'csv', domain: 'csv' };
+async function downloadExport(kind) {
+  if (!state.currentSuiteId) { toast('请先选择套件', 'err'); return; }
+  try {
+    const res = await fetch('/api/suites/' + encodeURIComponent(state.currentSuiteId) + '/export?kind=' + kind);
+    if (!res.ok) {
+      let msg = 'HTTP ' + res.status;
+      try { msg = (await res.json()).message || msg; } catch { /* ignore */ }
+      throw new Error(msg);
+    }
+    const blob = await res.blob();
+    const name = state.currentSuiteId.replace(/[^\w.-]/g, '_') + '-' + kind + '.' + (EXPORT_EXT[kind] || 'txt');
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = name;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 3000);
+    toast('已导出：' + name, 'ok');
+  } catch (err) {
+    toast('导出失败：' + err.message, 'err');
+  }
 }
 
 /* 与后端 deriveOntologyCode 一致：ONT-{L1}-{L2}-{L3}，不足 3 段补 0 */
@@ -53,7 +85,7 @@ function levelNumOfCode(code) {
 /* 校验 kind 是否允许映射到该 APQC 编号 */
 function checkMappingAllowed(kind, code) {
   const axis = kindAxis(kind);
-  if (!axis) return { ok: false, msg: `${kind} 类型暂不参与 APQC 映射` };
+  if (!axis) return { ok: false, msg: `${kind} 类型暂不参与框架映射` };
   const lvl = levelNumOfCode(code);
   if (axis === 'domain' && lvl > 2) return { ok: false, msg: '该实体类型仅允许映射到 L1/L2（L3+ 属流程轴，由流程与参与关系推导）' };
   if (axis === 'process' && lvl < 3) return { ok: false, msg: '该流程类型仅允许映射到 L3-L5（L1/L2 属域轴）' };
@@ -71,6 +103,7 @@ const state = {
   suites: [],
   currentSuiteId: null,
   suite: null,          // SuiteData {entities, relations, meta, annotations}
+  frameworkId: LEGACY_DEFAULT_FW, // 当前套件锁定的框架（从 meta 读取）
   framework: null,      // FrameworkDefinition
   coverage: null,       // CoverageMatrix
   dictionary: null,     // DomainDictionary（受控词表，只读）
@@ -156,7 +189,7 @@ function openDrawer(entityId) {
   inp.value = state.drawer.apqc;
   inp.placeholder = axis === 'domain' ? '如 4.3，仅可选 L1/L2…'
     : axis === 'process' ? '如 4.3.1，仅可选 L3-L5…'
-    : `${ent.kind} 类型不参与 APQC 映射`;
+    : `${ent.kind} 类型不参与框架映射`;
   $('#dwNote').value = state.drawer.note;
   renderStatusBtns();
   renderDerive();
@@ -227,7 +260,7 @@ function renderDerive() {
     warnEl.innerHTML = '';
   }
 
-  if (!code) { el.innerHTML = '<span style="opacity:.6">输入 APQC 编号后将自动推导 Ontology 编号</span>'; return; }
+  if (!code) { el.innerHTML = '<span style="opacity:.6">输入框架节点编号后将自动推导 Ontology 编号</span>'; return; }
   const onto = deriveOntologyCodeLocal(code);
   el.innerHTML = onto
     ? `→ 推导 Ontology 编号：<b>${esc(onto)}</b>`
@@ -294,7 +327,7 @@ async function saveDrawer() {
   if (!state.drawer) return;
   const { entityId, status, note } = state.drawer;
   const apqc = $('#dwApqc').value.trim();
-  if (apqc && !deriveOntologyCodeLocal(apqc)) { toast('APQC 编号格式无效', 'err'); return; }
+  if (apqc && !deriveOntologyCodeLocal(apqc)) { toast('框架编号格式无效（应为 1.2.3 形式的数字分层）', 'err'); return; }
   if (apqc) {
     const ent = state.suite.entities.find(x => x.id === entityId);
     const chk = ent ? checkMappingAllowed(ent.kind, apqc) : { ok: false, msg: '实体不存在' };
@@ -306,7 +339,7 @@ async function saveDrawer() {
     const ann = state.suite.annotations;
     const now = Date.now();
     if (apqc) {
-      ann.entityFrameMapping[entityId] = { frameworkId: DEFAULT_FW, apqcCode: apqc, note: note || undefined, mappedAt: now };
+      ann.entityFrameMapping[entityId] = { frameworkId: state.frameworkId, apqcCode: apqc, note: note || undefined, mappedAt: now };
     } else {
       delete ann.entityFrameMapping[entityId];
     }
@@ -318,7 +351,7 @@ async function saveDrawer() {
     closeDrawer();
     toast('标注已保存', 'ok');
     // 刷新覆盖度（本地实体标注状态同步更新，无需重新拉取套件）
-    state.coverage = await api('/api/coverage?suite=' + encodeURIComponent(state.currentSuiteId) + '&framework=' + DEFAULT_FW);
+    state.coverage = await api('/api/coverage?suite=' + encodeURIComponent(state.currentSuiteId) + '&framework=' + state.frameworkId);
     renderCoverage();
     renderTree();
     renderNodeDetail();

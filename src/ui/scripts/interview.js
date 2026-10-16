@@ -287,6 +287,29 @@ $('#ivGoFlow') && $('#ivGoFlow').addEventListener('click', () => {
   else toast(`画板尚无挂载 ${code} 的流程图，可「新建」后在挂载下拉框选择`, '');
 });
 
+$('#ivExport') && $('#ivExport').addEventListener('click', () => downloadExport('minutes'));
+
+$('#ivDraft') && $('#ivDraft').addEventListener('click', async () => {
+  if (!state.currentSuiteId) return;
+  if (!state.interviews.length) { toast('本套件暂无访谈记录，先从左侧开始四问', 'err'); return; }
+  if (!confirm(`将本套件 ${state.interviews.length} 条访谈记录生成为一个独立画板草稿？\n（已有挂载流程的 L3 编号会跳过；生成后可在画板中调整并保存）`)) return;
+  try {
+    const res = await api('/api/suites/' + encodeURIComponent(state.currentSuiteId) + '/flow-draft', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({}),
+    });
+    const skipTxt = res.skipped?.length ? `；跳过 ${res.skipped.length} 条（${res.skipped.map(s => s.code + ' ' + s.reason).join('；')}）` : '';
+    toast(`已生成画板草稿「${res.draft.name}」，参与关系与角色/规则已预填${skipTxt}`, 'ok');
+    // 参与关系变化 → 流程覆盖度刷新
+    state.coverage = await api('/api/coverage?suite=' + encodeURIComponent(state.currentSuiteId) + '&framework=' + state.frameworkId);
+    renderCoverage();
+    switchTab('flowchart');
+    openFlowchart(res.draft.id);
+  } catch (err) {
+    toast('生成草稿失败：' + err.message, 'err');
+  }
+});
+
 /* ─────────── 右栏：记录列表 ─────────── */
 function ivNodeLabelOf(code) {
   const n = ivFindNode(code);

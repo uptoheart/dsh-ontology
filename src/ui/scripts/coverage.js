@@ -61,7 +61,7 @@ function renderCoverage() {
   ).map(d => {
     const ls = leafStatsOf(d);
     const seg = (n, cls) => ls.total > 0 ? `<span class="seg-${cls}" style="width:${(n / ls.total * 100).toFixed(2)}%"></span>` : '';
-    return `<div class="domain-row" data-code="${esc(d.code)}" title="点击在 APQC 框架中查看">
+    return `<div class="domain-row" data-code="${esc(d.code)}" title="点击在流程地图中查看">
       <div class="d-label"><span class="code">${esc(d.code)}</span>${esc(d.label)}</div>
       <div class="bar">${seg(ls.covered, 'covered')}${seg(ls.partial, 'partial')}${seg(ls.gap, 'gap')}${seg(ls.unset, 'unset')}</div>
       <div class="d-val">${ls.covered} / ${ls.total} · ${STATUS_LABEL[d.status]}</div>
@@ -70,6 +70,12 @@ function renderCoverage() {
 
   panel.innerHTML = `
     ${renderViolatedBanner()}
+    <div class="section-block export-bar">
+      <b>现场交付物导出</b><span class="dim">（内容与页面同口径，浏览器直接下载）</span>
+      <button class="btn" data-exp="domain">⬇ 域覆盖度 CSV</button>
+      <button class="btn" data-exp="crud">⬇ CRUD 矩阵 CSV</button>
+      <button class="btn" data-exp="gap">⬇ 缺口清单 CSV</button>
+    </div>
     <div class="section-block metric-block">
       <div class="metric-head">
         <h2>域覆盖度</h2>
@@ -175,6 +181,8 @@ function renderDictPanel() {
 }
 
 $('#tab-coverage').addEventListener('click', (e) => {
+  const expBtn = e.target.closest('[data-exp]');
+  if (expBtn) { downloadExport(expBtn.dataset.exp); return; }
   const vRow = e.target.closest('.violated-item');
   if (vRow) { goEntity(vRow.dataset.veid); return; }
   const openBtn = e.target.closest('.mf-open');

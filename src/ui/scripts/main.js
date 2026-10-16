@@ -12,6 +12,8 @@ function renderAll() {
 
 (async function init() {
   try {
+    // 框架轻量清单（用于套件列表框架标签；失败不阻塞初始化）
+    try { FW_LIST = await api('/api/frameworks?light=1') || []; } catch { FW_LIST = []; }
     await loadSuites();
     if (state.suites.length === 1) {
       await selectSuite(state.suites[0].suiteId);

@@ -100,6 +100,8 @@ export interface OntologySuiteMeta {
   sourceFileCount: number
   entityCount: number
   relationCount: number
+  /** 项目级锁定的流程框架（缺省 'apqc-process'，旧套件零迁移）；切换 = 重新锚定实体 */
+  frameworkId?: string
 }
 
 export interface FrameMapping {

@@ -1,0 +1,1098 @@
+{
+  "frameworkId": "hw-style-pcf",
+  "name": "HW-Style PCF (Manufacturing)",
+  "source": "依据公开资料（华为企业架构与流程白皮书、IPD/ISC/LTC/ITR 公开方法论）重构的华为风格参考框架，非官方授权体系；按制造业场景整理（L1–L3 粗版）",
+  "version": "0.1.0",
+  "description": "华为风格流程参考框架：10 个 L1 流程类别（战略、营销与服务、产品研发、集成供应链、制造交付、质量、财经、人力资源、流程与IT、行政支持），面向制造业现场访谈与实体锚定。",
+  "levels": [
+    {
+      "id": "L1",
+      "name": "Process Category",
+      "label": "流程类别",
+      "order": 1
+    },
+    {
+      "id": "L2",
+      "name": "Process Domain",
+      "label": "流程域",
+      "order": 2
+    },
+    {
+      "id": "L3",
+      "name": "Process Group",
+      "label": "流程组",
+      "order": 3
+    },
+    {
+      "id": "L4",
+      "name": "Level 4",
+      "label": "第4级",
+      "order": 4
+    },
+    {
+      "id": "L5",
+      "name": "Level 5",
+      "label": "第5级",
+      "order": 5
+    }
+  ],
+  "domains": [
+    {
+      "id": "HW-STRAT",
+      "code": "1.0",
+      "name": "Strategy & Development",
+      "label": "战略与发展",
+      "definition": "确立企业方向与年度经营主线：从市场洞察到战略解码（DSTE），再到年度经营计划（BP）、预算与投资管理。",
+      "children": [
+        {
+          "code": "1.1",
+          "name": "Strategic Planning (SP)",
+          "label": "战略规划",
+          "levelId": "L2",
+          "definition": "DSTE 流程的前端：市场洞察、战略意图、创新焦点与业务设计，输出战略专题与解码。",
+          "children": [
+            {
+              "code": "1.1.1",
+              "name": "Market Insight",
+              "label": "市场洞察",
+              "levelId": "L3"
+            },
+            {
+              "code": "1.1.2",
+              "name": "Strategic Intent & Innovation Focus",
+              "label": "战略意图与创新焦点",
+              "levelId": "L3"
+            },
+            {
+              "code": "1.1.3",
+              "name": "Business Design",
+              "label": "业务设计",
+              "levelId": "L3"
+            },
+            {
+              "code": "1.1.4",
+              "name": "Strategy Decoding & Execution",
+              "label": "战略解码与执行",
+              "levelId": "L3"
+            }
+          ]
+        },
+        {
+          "code": "1.2",
+          "name": "Annual Business Plan (BP)",
+          "label": "年度经营计划",
+          "levelId": "L2",
+          "children": [
+            {
+              "code": "1.2.1",
+              "name": "Business Objectives & KPI",
+              "label": "经营目标与KPI制定",
+              "levelId": "L3"
+            },
+            {
+              "code": "1.2.2",
+              "name": "Budgeting & Decomposition",
+              "label": "预算编制与分解",
+              "levelId": "L3"
+            },
+            {
+              "code": "1.2.3",
+              "name": "Business Monitoring & Rolling Forecast",
+              "label": "经营监控与滚动预测",
+              "levelId": "L3"
+            }
+          ]
+        },
+        {
+          "code": "1.3",
+          "name": "Investment & Industry Development",
+          "label": "投资与产业发展",
+          "levelId": "L2",
+          "children": [
+            {
+              "code": "1.3.1",
+              "name": "Investment Initiation",
+              "label": "投资立项管理",
+              "levelId": "L3"
+            },
+            {
+              "code": "1.3.2",
+              "name": "M&A and Partnership",
+              "label": "并购与合作管理",
+              "levelId": "L3"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "HW-MKT",
+      "code": "2.0",
+      "name": "Marketing & Service (LTC)",
+      "label": "营销与服务",
+      "definition": "从线索到回款（LTC）与从问题到解决（ITR）：市场、线索、机会点、合同、交付回款与客户服务全流程。",
+      "children": [
+        {
+          "code": "2.1",
+          "name": "Market & Lead Management",
+          "label": "市场与线索管理 (ML)",
+          "levelId": "L2",
+          "children": [
+            {
+              "code": "2.1.1",
+              "name": "Marketing Campaign",
+              "label": "市场推广",
+              "levelId": "L3"
+            },
+            {
+              "code": "2.1.2",
+              "name": "Lead Collection & Nurturing",
+              "label": "线索收集与培育",
+              "levelId": "L3"
+            },
+            {
+              "code": "2.1.3",
+              "name": "Lead Qualification & Distribution",
+              "label": "线索验证与分发",
+              "levelId": "L3"
+            }
+          ]
+        },
+        {
+          "code": "2.2",
+          "name": "Opportunity & Bidding",
+          "label": "机会点与投标管理",
+          "levelId": "L2",
+          "children": [
+            {
+              "code": "2.2.1",
+              "name": "Opportunity Validation",
+              "label": "机会点验证",
+              "levelId": "L3"
+            },
+            {
+              "code": "2.2.2",
+              "name": "Solution & Proposal",
+              "label": "解决方案与报价编制",
+              "levelId": "L3"
+            },
+            {
+              "code": "2.2.3",
+              "name": "Bidding & Negotiation",
+              "label": "投标与商务谈判",
+              "levelId": "L3"
+            }
+          ]
+        },
+        {
+          "code": "2.3",
+          "name": "Contract Management",
+          "label": "合同管理",
+          "levelId": "L2",
+          "children": [
+            {
+              "code": "2.3.1",
+              "name": "Contract Review",
+              "label": "合同评审",
+              "levelId": "L3"
+            },
+            {
+              "code": "2.3.2",
+              "name": "Contract Signing & Handover",
+              "label": "合同签订与交接",
+              "levelId": "L3"
+            },
+            {
+              "code": "2.3.3",
+              "name": "Contract Change & Closure",
+              "label": "合同变更与关闭",
+              "levelId": "L3"
+            }
+          ]
+        },
+        {
+          "code": "2.4",
+          "name": "Customer Service (ITR)",
+          "label": "客户服务管理 (ITR)",
+          "levelId": "L2",
+          "definition": "从问题到解决（ITR）：受理、分派、处理、升级与关闭。",
+          "children": [
+            {
+              "code": "2.4.1",
+              "name": "Complaint Intake",
+              "label": "客户投诉受理",
+              "levelId": "L3"
+            },
+            {
+              "code": "2.4.2",
+              "name": "Issue Resolution & Escalation",
+              "label": "服务问题处理与升级",
+              "levelId": "L3"
+            },
+            {
+              "code": "2.4.3",
+              "name": "Customer Satisfaction",
+              "label": "客户满意度管理",
+              "levelId": "L3"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "HW-IPD",
+      "code": "3.0",
+      "name": "Product Development (IPD)",
+      "label": "产品研发",
+      "definition": "集成产品开发（IPD）：市场管理、Charter 立项、结构化开发流程、技术评审与产品数据管理。",
+      "children": [
+        {
+          "code": "3.1",
+          "name": "Product Planning & Charter",
+          "label": "产品规划与立项",
+          "levelId": "L2",
+          "children": [
+            {
+              "code": "3.1.1",
+              "name": "Market Management (MM)",
+              "label": "市场管理(MM)",
+              "levelId": "L3"
+            },
+            {
+              "code": "3.1.2",
+              "name": "Charter Development",
+              "label": "项目任务书(Charter)开发",
+              "levelId": "L3"
+            },
+            {
+              "code": "3.1.3",
+              "name": "Product Roadmap",
+              "label": "产品路标规划",
+              "levelId": "L3"
+            }
+          ]
+        },
+        {
+          "code": "3.2",
+          "name": "Product Development Execution",
+          "label": "产品开发管理",
+          "levelId": "L2",
+          "definition": "结构化开发流程：概念—计划—开发—验证—发布各阶段与决策评审/技术评审。",
+          "children": [
+            {
+              "code": "3.2.1",
+              "name": "Concept & Plan Phase",
+              "label": "概念与计划阶段",
+              "levelId": "L3"
+            },
+            {
+              "code": "3.2.2",
+              "name": "Develop & Verify Phase",
+              "label": "开发与验证阶段",
+              "levelId": "L3"
+            },
+            {
+              "code": "3.2.3",
+              "name": "Launch & Lifecycle Management",
+              "label": "发布与生命周期管理",
+              "levelId": "L3"
+            },
+            {
+              "code": "3.2.4",
+              "name": "Technical Review (TR)",
+              "label": "技术评审(TR)",
+              "levelId": "L3"
+            }
+          ]
+        },
+        {
+          "code": "3.3",
+          "name": "Technology & Platform",
+          "label": "技术与平台管理",
+          "levelId": "L2",
+          "children": [
+            {
+              "code": "3.3.1",
+              "name": "Technology Planning & Research",
+              "label": "技术规划与预研",
+              "levelId": "L3"
+            },
+            {
+              "code": "3.3.2",
+              "name": "Common Building Block (CBB)",
+              "label": "共用基础模块(CBB)管理",
+              "levelId": "L3"
+            }
+          ]
+        },
+        {
+          "code": "3.4",
+          "name": "Product Data Management",
+          "label": "产品数据管理",
+          "levelId": "L2",
+          "children": [
+            {
+              "code": "3.4.1",
+              "name": "Document & BOM Management",
+              "label": "图文档与BOM管理",
+              "levelId": "L3"
+            },
+            {
+              "code": "3.4.2",
+              "name": "Engineering Change (ECN)",
+              "label": "工程变更管理(ECN)",
+              "levelId": "L3"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "HW-ISC",
+      "code": "4.0",
+      "name": "Integrated Supply Chain (ISC)",
+      "label": "集成供应链",
+      "definition": "集成供应链（ISC）：需求预测、产销协同（S&OP）、采购、仓储物流与订单履行，衔接制造交付。",
+      "children": [
+        {
+          "code": "4.1",
+          "name": "Demand & Planning",
+          "label": "需求与计划管理",
+          "levelId": "L2",
+          "children": [
+            {
+              "code": "4.1.1",
+              "name": "Demand Forecasting",
+              "label": "需求预测管理",
+              "levelId": "L3"
+            },
+            {
+              "code": "4.1.2",
+              "name": "Sales & Operations Planning (S&OP)",
+              "label": "产销协同(S&OP)",
+              "levelId": "L3"
+            },
+            {
+              "code": "4.1.3",
+              "name": "Master Production Schedule (MPS)",
+              "label": "主生产计划(MPS)",
+              "levelId": "L3"
+            },
+            {
+              "code": "4.1.4",
+              "name": "Material Requirement Planning (MRP)",
+              "label": "物料需求计划(MRP)",
+              "levelId": "L3"
+            }
+          ]
+        },
+        {
+          "code": "4.2",
+          "name": "Procurement",
+          "label": "采购管理",
+          "levelId": "L2",
+          "children": [
+            {
+              "code": "4.2.1",
+              "name": "Supplier Qualification",
+              "label": "供应商认证与引入",
+              "levelId": "L3"
+            },
+            {
+              "code": "4.2.2",
+              "name": "Pricing & Cost Management",
+              "label": "采购价格与成本管理",
+              "levelId": "L3",
+              "children": []
+            },
+            {
+              "code": "4.2.3",
+              "name": "Purchase Execution",
+              "label": "采购执行",
+              "levelId": "L3",
+              "children": [
+                {
+                  "code": "4.2.3.1",
+                  "name": "MRP",
+                  "label": "计算采购需求",
+                  "levelId": "L4",
+                  "children": []
+                }
+              ]
+            },
+            {
+              "code": "4.2.4",
+              "name": "Supplier Performance",
+              "label": "供应商绩效管理",
+              "levelId": "L3"
+            }
+          ]
+        },
+        {
+          "code": "4.3",
+          "name": "Warehousing & Logistics",
+          "label": "仓储与物流管理",
+          "levelId": "L2",
+          "children": [
+            {
+              "code": "4.3.1",
+              "name": "Inbound Management",
+              "label": "入库管理",
+              "levelId": "L3"
+            },
+            {
+              "code": "4.3.2",
+              "name": "Outbound & Distribution",
+              "label": "出库与配送管理",
+              "levelId": "L3"
+            },
+            {
+              "code": "4.3.3",
+              "name": "Stocktaking",
+              "label": "库存盘点",
+              "levelId": "L3"
+            },
+            {
+              "code": "4.3.4",
+              "name": "Inventory Policy & Obsolete",
+              "label": "库存策略与呆滞管理",
+              "levelId": "L3"
+            }
+          ]
+        },
+        {
+          "code": "4.4",
+          "name": "Order Fulfillment",
+          "label": "订单履行与交付",
+          "levelId": "L2",
+          "children": [
+            {
+              "code": "4.4.1",
+              "name": "Shipment Management",
+              "label": "发货管理",
+              "levelId": "L3"
+            },
+            {
+              "code": "4.4.2",
+              "name": "Delivery Confirmation",
+              "label": "交付确认与回单",
+              "levelId": "L3"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "HW-MFG",
+      "code": "5.0",
+      "name": "Manufacturing & Delivery",
+      "label": "制造交付",
+      "definition": "制造核心环节：车间计划与执行（MES）、工艺管理、设备与工装管理、委外与齐套交付。",
+      "children": [
+        {
+          "code": "5.1",
+          "name": "Production Planning & Execution",
+          "label": "生产计划与车间执行",
+          "levelId": "L2",
+          "children": [
+            {
+              "code": "5.1.1",
+              "name": "Shop Floor Scheduling",
+              "label": "车间作业计划",
+              "levelId": "L3"
+            },
+            {
+              "code": "5.1.2",
+              "name": "Production Execution & Reporting",
+              "label": "生产执行与报工",
+              "levelId": "L3"
+            },
+            {
+              "code": "5.1.3",
+              "name": "Production Exception Handling",
+              "label": "生产异常处理",
+              "levelId": "L3"
+            }
+          ]
+        },
+        {
+          "code": "5.2",
+          "name": "Process Engineering",
+          "label": "工艺管理",
+          "levelId": "L2",
+          "children": [
+            {
+              "code": "5.2.1",
+              "name": "Process Design & Validation",
+              "label": "工艺设计与验证",
+              "levelId": "L3"
+            },
+            {
+              "code": "5.2.2",
+              "name": "SOP Management",
+              "label": "作业指导书(SOP)管理",
+              "levelId": "L3"
+            }
+          ]
+        },
+        {
+          "code": "5.3",
+          "name": "Equipment & Tooling",
+          "label": "设备与工装管理",
+          "levelId": "L2",
+          "children": [
+            {
+              "code": "5.3.1",
+              "name": "Equipment Ledger & Inspection",
+              "label": "设备台账与点检",
+              "levelId": "L3"
+            },
+            {
+              "code": "5.3.2",
+              "name": "Equipment Maintenance",
+              "label": "设备维护保养",
+              "levelId": "L3"
+            },
+            {
+              "code": "5.3.3",
+              "name": "Tooling & Mould Management",
+              "label": "工装模具管理",
+              "levelId": "L3"
+            }
+          ]
+        },
+        {
+          "code": "5.4",
+          "name": "Outsourcing & Delivery Sync",
+          "label": "委外与交付协同",
+          "levelId": "L2",
+          "children": [
+            {
+              "code": "5.4.1",
+              "name": "Subcontract Management",
+              "label": "委外加工管理",
+              "levelId": "L3"
+            },
+            {
+              "code": "5.4.2",
+              "name": "Kitting & Shipment Coordination",
+              "label": "交付齐套与发运协调",
+              "levelId": "L3"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "HW-QUAL",
+      "code": "6.0",
+      "name": "Quality Management",
+      "label": "质量管理",
+      "definition": "质量体系、质量控制（IQC/IPQC/OQC）与质量改进（客诉处理、CAPA、精益改善）。",
+      "children": [
+        {
+          "code": "6.1",
+          "name": "Quality System",
+          "label": "质量体系管理",
+          "levelId": "L2",
+          "children": [
+            {
+              "code": "6.1.1",
+              "name": "QMS Planning & Documentation",
+              "label": "质量体系策划与文件管理",
+              "levelId": "L3"
+            },
+            {
+              "code": "6.1.2",
+              "name": "Internal Audit & Management Review",
+              "label": "内审与管理评审",
+              "levelId": "L3"
+            },
+            {
+              "code": "6.1.3",
+              "name": "Certification & External Audit",
+              "label": "认证与外部审核应对",
+              "levelId": "L3"
+            }
+          ]
+        },
+        {
+          "code": "6.2",
+          "name": "Quality Control",
+          "label": "质量控制",
+          "levelId": "L2",
+          "children": [
+            {
+              "code": "6.2.1",
+              "name": "Incoming Inspection (IQC)",
+              "label": "来料检验(IQC)",
+              "levelId": "L3"
+            },
+            {
+              "code": "6.2.2",
+              "name": "In-Process Inspection (IPQC)",
+              "label": "过程检验(IPQC)",
+              "levelId": "L3"
+            },
+            {
+              "code": "6.2.3",
+              "name": "Outgoing Inspection (OQC)",
+              "label": "成品检验(OQC)",
+              "levelId": "L3"
+            },
+            {
+              "code": "6.2.4",
+              "name": "Nonconforming Product Control",
+              "label": "不合格品管理",
+              "levelId": "L3"
+            }
+          ]
+        },
+        {
+          "code": "6.3",
+          "name": "Quality Improvement",
+          "label": "质量改进",
+          "levelId": "L2",
+          "children": [
+            {
+              "code": "6.3.1",
+              "name": "Complaint & Quality Incident",
+              "label": "客诉与质量事故处理",
+              "levelId": "L3"
+            },
+            {
+              "code": "6.3.2",
+              "name": "Corrective & Preventive Action (CAPA)",
+              "label": "纠正与预防措施(CAPA)",
+              "levelId": "L3"
+            },
+            {
+              "code": "6.3.3",
+              "name": "Lean & Continuous Improvement",
+              "label": "精益与持续改善",
+              "levelId": "L3"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "HW-FIN",
+      "code": "7.0",
+      "name": "Finance",
+      "label": "财经管理",
+      "definition": "核算与报告、资金收支、预算监控与经营分析、税务合规，支撑业务与财经一体化。",
+      "children": [
+        {
+          "code": "7.1",
+          "name": "Accounting & Reporting",
+          "label": "核算与报告",
+          "levelId": "L2",
+          "children": [
+            {
+              "code": "7.1.1",
+              "name": "General Ledger",
+              "label": "总账核算",
+              "levelId": "L3"
+            },
+            {
+              "code": "7.1.2",
+              "name": "AR & AP Management",
+              "label": "应收应付管理",
+              "levelId": "L3"
+            },
+            {
+              "code": "7.1.3",
+              "name": "Cost Accounting",
+              "label": "成本核算",
+              "levelId": "L3"
+            },
+            {
+              "code": "7.1.4",
+              "name": "Financial Reporting",
+              "label": "财务报告与披露",
+              "levelId": "L3"
+            }
+          ]
+        },
+        {
+          "code": "7.2",
+          "name": "Treasury Management",
+          "label": "资金管理",
+          "levelId": "L2",
+          "children": [
+            {
+              "code": "7.2.1",
+              "name": "Collection & Receipt",
+              "label": "回款与收款管理",
+              "levelId": "L3"
+            },
+            {
+              "code": "7.2.2",
+              "name": "Payment Management",
+              "label": "付款管理",
+              "levelId": "L3"
+            },
+            {
+              "code": "7.2.3",
+              "name": "Cash Planning & Financing",
+              "label": "资金计划与融资",
+              "levelId": "L3"
+            }
+          ]
+        },
+        {
+          "code": "7.3",
+          "name": "Budget & Business Analysis",
+          "label": "预算与经营分析",
+          "levelId": "L2",
+          "children": [
+            {
+              "code": "7.3.1",
+              "name": "Budget Execution Monitoring",
+              "label": "预算执行监控",
+              "levelId": "L3"
+            },
+            {
+              "code": "7.3.2",
+              "name": "Business Analysis & Alerting",
+              "label": "经营分析与预警",
+              "levelId": "L3"
+            }
+          ]
+        },
+        {
+          "code": "7.4",
+          "name": "Tax Management",
+          "label": "税务管理",
+          "levelId": "L2",
+          "children": [
+            {
+              "code": "7.4.1",
+              "name": "Tax Filing",
+              "label": "纳税申报",
+              "levelId": "L3"
+            },
+            {
+              "code": "7.4.2",
+              "name": "Tax Planning & Risk",
+              "label": "税务筹划与风险管理",
+              "levelId": "L3"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "HW-HR",
+      "code": "8.0",
+      "name": "Human Resources",
+      "label": "人力资源管理",
+      "definition": "组织岗位、招聘配置、培训发展、绩效激励与员工关系全生命周期管理。",
+      "children": [
+        {
+          "code": "8.1",
+          "name": "Organization & Position",
+          "label": "组织与岗位管理",
+          "levelId": "L2",
+          "children": [
+            {
+              "code": "8.1.1",
+              "name": "Organization Structure",
+              "label": "组织架构管理",
+              "levelId": "L3"
+            },
+            {
+              "code": "8.1.2",
+              "name": "Position & Headcount",
+              "label": "岗位与编制管理",
+              "levelId": "L3"
+            }
+          ]
+        },
+        {
+          "code": "8.2",
+          "name": "Recruitment & Staffing",
+          "label": "招聘与配置",
+          "levelId": "L2",
+          "children": [
+            {
+              "code": "8.2.1",
+              "name": "Recruitment",
+              "label": "招聘管理",
+              "levelId": "L3"
+            },
+            {
+              "code": "8.2.2",
+              "name": "Onboarding / Transfer / Exit",
+              "label": "入转调离管理",
+              "levelId": "L3"
+            }
+          ]
+        },
+        {
+          "code": "8.3",
+          "name": "Training & Talent",
+          "label": "培训与人才发展",
+          "levelId": "L2",
+          "children": [
+            {
+              "code": "8.3.1",
+              "name": "Training Plan & Delivery",
+              "label": "培训计划与实施",
+              "levelId": "L3"
+            },
+            {
+              "code": "8.3.2",
+              "name": "Talent Pipeline & Succession",
+              "label": "人才梯队与继任管理",
+              "levelId": "L3"
+            }
+          ]
+        },
+        {
+          "code": "8.4",
+          "name": "Performance & Incentive",
+          "label": "绩效与激励",
+          "levelId": "L2",
+          "children": [
+            {
+              "code": "8.4.1",
+              "name": "Performance Goal & Review",
+              "label": "绩效目标与考核",
+              "levelId": "L3"
+            },
+            {
+              "code": "8.4.2",
+              "name": "Compensation & Incentive",
+              "label": "薪酬与激励管理",
+              "levelId": "L3"
+            }
+          ]
+        },
+        {
+          "code": "8.5",
+          "name": "Employee Relations",
+          "label": "员工关系",
+          "levelId": "L2",
+          "children": [
+            {
+              "code": "8.5.1",
+              "name": "Labor Contract & Discipline",
+              "label": "劳动合同与纪律管理",
+              "levelId": "L3"
+            },
+            {
+              "code": "8.5.2",
+              "name": "Employee Communication & Care",
+              "label": "员工沟通与关怀",
+              "levelId": "L3"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "HW-IT",
+      "code": "9.0",
+      "name": "Process & IT Services",
+      "label": "流程与信息服务",
+      "definition": "质量与流程 IT：流程架构与遵从性管理、IT 规划、应用建设运维、数据治理与信息安全。",
+      "children": [
+        {
+          "code": "9.1",
+          "name": "Process Management",
+          "label": "流程管理",
+          "levelId": "L2",
+          "children": [
+            {
+              "code": "9.1.1",
+              "name": "Process Architecture",
+              "label": "流程架构管理",
+              "levelId": "L3"
+            },
+            {
+              "code": "9.1.2",
+              "name": "Process Design & Release",
+              "label": "流程设计与发布",
+              "levelId": "L3"
+            },
+            {
+              "code": "9.1.3",
+              "name": "Process Compliance",
+              "label": "流程遵从性管理",
+              "levelId": "L3"
+            }
+          ]
+        },
+        {
+          "code": "9.2",
+          "name": "IT Planning & Architecture",
+          "label": "IT规划与架构",
+          "levelId": "L2",
+          "children": [
+            {
+              "code": "9.2.1",
+              "name": "IT Strategy & Architecture",
+              "label": "IT战略与架构规划",
+              "levelId": "L3"
+            },
+            {
+              "code": "9.2.2",
+              "name": "IT Investment & Initiation",
+              "label": "IT投资与立项",
+              "levelId": "L3"
+            }
+          ]
+        },
+        {
+          "code": "9.3",
+          "name": "Application & Operations",
+          "label": "应用建设与运维",
+          "levelId": "L2",
+          "children": [
+            {
+              "code": "9.3.1",
+              "name": "Business Requirement Management",
+              "label": "业务需求管理",
+              "levelId": "L3"
+            },
+            {
+              "code": "9.3.2",
+              "name": "System Development & Implementation",
+              "label": "系统开发与实施",
+              "levelId": "L3"
+            },
+            {
+              "code": "9.3.3",
+              "name": "System Operations & Support",
+              "label": "系统运维与支持",
+              "levelId": "L3"
+            }
+          ]
+        },
+        {
+          "code": "9.4",
+          "name": "Data & Security",
+          "label": "数据与信息安全",
+          "levelId": "L2",
+          "children": [
+            {
+              "code": "9.4.1",
+              "name": "Data Governance",
+              "label": "数据治理",
+              "levelId": "L3"
+            },
+            {
+              "code": "9.4.2",
+              "name": "Information Security",
+              "label": "信息安全管理",
+              "levelId": "L3"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "HW-ADMIN",
+      "code": "10.0",
+      "name": "Administration & Support",
+      "label": "行政与支持服务",
+      "definition": "行政后勤、固定资产、法务合规与 EHS，保障业务运行的基础支撑。",
+      "children": [
+        {
+          "code": "10.1",
+          "name": "Administration",
+          "label": "行政事务管理",
+          "levelId": "L2",
+          "children": [
+            {
+              "code": "10.1.1",
+              "name": "Office & Logistics Service",
+              "label": "办公与后勤服务",
+              "levelId": "L3"
+            },
+            {
+              "code": "10.1.2",
+              "name": "Meeting & Travel",
+              "label": "会议与差旅管理",
+              "levelId": "L3"
+            }
+          ]
+        },
+        {
+          "code": "10.2",
+          "name": "Fixed Asset Management",
+          "label": "固定资产管理",
+          "levelId": "L2",
+          "children": [
+            {
+              "code": "10.2.1",
+              "name": "Asset Purchase & Acceptance",
+              "label": "资产采购与验收",
+              "levelId": "L3"
+            },
+            {
+              "code": "10.2.2",
+              "name": "Asset Assignment & Transfer",
+              "label": "资产领用与调拨",
+              "levelId": "L3"
+            },
+            {
+              "code": "10.2.3",
+              "name": "Asset Count & Disposal",
+              "label": "资产盘点与处置",
+              "levelId": "L3"
+            }
+          ]
+        },
+        {
+          "code": "10.3",
+          "name": "Legal & Compliance",
+          "label": "法务与合规",
+          "levelId": "L2",
+          "children": [
+            {
+              "code": "10.3.1",
+              "name": "Contract Legal Review",
+              "label": "合同法务审核",
+              "levelId": "L3"
+            },
+            {
+              "code": "10.3.2",
+              "name": "Intellectual Property",
+              "label": "知识产权管理",
+              "levelId": "L3"
+            },
+            {
+              "code": "10.3.3",
+              "name": "Compliance & Risk",
+              "label": "合规与风险管理",
+              "levelId": "L3"
+            }
+          ]
+        },
+        {
+          "code": "10.4",
+          "name": "EHS",
+          "label": "环境与安全(EHS)",
+          "levelId": "L2",
+          "children": [
+            {
+              "code": "10.4.1",
+              "name": "Production Safety",
+              "label": "安全生产管理",
+              "levelId": "L3"
+            },
+            {
+              "code": "10.4.2",
+              "name": "Environment & Occupational Health",
+              "label": "环保与职业健康管理",
+              "levelId": "L3"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

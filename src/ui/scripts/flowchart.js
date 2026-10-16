@@ -360,7 +360,7 @@ function flowResetSemantics() {
 function renderMountSelect() {
   const sel = $('#flowMount');
   const cur = flow.apqcCode || '';
-  const opts = ['<option value="">挂载 APQC L3…</option>'];
+  const opts = ['<option value="">挂载框架 L3…</option>'];
   for (const d of state.framework?.domains || []) {
     for (const l2 of d.children || []) {
       for (const l3 of l2.children || []) {
@@ -383,7 +383,7 @@ function renderFlowProps() {
   const node = flowNodeById(flow.selected.id);
   if (!node) { empty.style.display = ''; body.style.display = 'none'; return; }
   empty.style.display = 'none'; body.style.display = '';
-  $('#fpCode').textContent = node.code ? node.code : '（无 APQC 编号）';
+  $('#fpCode').textContent = node.code ? node.code : '（无框架编号）';
 
   // 角色候选：ROLE / ACTOR 实体
   $('#fpRoleList').innerHTML = (state.suite?.entities || [])
@@ -489,7 +489,7 @@ async function newFlow() {
   renderFlowProps();
   renderFlowList();
   flowWrap.scrollTop = 0; flowWrap.scrollLeft = 0;
-  toast('已新建空白流程图，可从左侧拖入 APQC 节点', 'ok');
+  toast('已新建空白流程图，可从左侧拖入框架节点', 'ok');
 }
 $('#flowNew').addEventListener('click', newFlow);
 
@@ -577,9 +577,10 @@ function exportFlowPng() {
   const clone = svg.cloneNode(true);
   clone.setAttribute('width', w); clone.setAttribute('height', h);
   clone.setAttribute('viewBox', `${x} ${y} ${w} ${h}`);
+  // 必须先内联再删临时连线：内联依赖 clone 与 source 元素一一对应，先删会整体错位一格（节点取到默认黑色填充）
+  flowInlineStyles(clone, svg);
   const temp = clone.querySelector('#flowTempEdge');
   if (temp) temp.remove();
-  flowInlineStyles(clone, svg);
 
   const xml = new XMLSerializer().serializeToString(clone);
   const url = URL.createObjectURL(new Blob([xml], { type: 'image/svg+xml;charset=utf-8' }));
@@ -590,8 +591,7 @@ function exportFlowPng() {
       const canvas = document.createElement('canvas');
       canvas.width = Math.round(w * scale); canvas.height = Math.round(h * scale);
       const ctx = canvas.getContext('2d');
-      const bg = getComputedStyle(document.documentElement).getPropertyValue('--bg').trim() || '#ffffff';
-      ctx.fillStyle = bg; ctx.fillRect(0, 0, canvas.width, canvas.height);
+      // 透明背景：不填充底色（网格是容器 CSS 背景，不在 SVG 内，导出天然不含）
       ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
       canvas.toBlob((blob) => {
         URL.revokeObjectURL(url);

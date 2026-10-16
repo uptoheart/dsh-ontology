@@ -491,7 +491,7 @@ function renderOntologyDetail() {
         <span class="badge st-${st}" style="margin-left:auto">${STATUS_LABEL[st]}</span>
         <button class="btn" id="odAnnotate" title="打开标注抽屉">🏷️ 标注</button>
       </h2>
-      <div class="od-sub">${esc(ent.rawId)}${apqc ? ' · APQC ' + esc(apqc) : ''}</div>
+      <div class="od-sub">${esc(ent.rawId)}${apqc ? ' · 框架 ' + esc(apqc) : ''}</div>
       ${desc ? `<div class="ent-desc">${esc(desc)}</div>` : ''}
       <div class="detail-sec">
         <h4>实体信息</h4>
@@ -499,7 +499,7 @@ function renderOntologyDetail() {
           <dt>领域</dt><dd>${esc(ent.domain || '—')}</dd>
           <dt>来源</dt><dd class="mono" style="font-size:11px">${esc(ent.sourceFile || '—')}</dd>
           <dt>实体 ID</dt><dd class="mono" style="font-size:11px">${esc(ent.id)}</dd>
-          <dt>APQC 编号</dt><dd class="mono" style="font-size:11px">${apqc ? esc(apqc) : '未标注'}</dd>
+          <dt>框架编号</dt><dd class="mono" style="font-size:11px">${apqc ? esc(apqc) : '未标注'}</dd>
           <dt>覆盖状态</dt><dd>${STATUS_LABEL[st]}</dd>
         </dl>
       </div>

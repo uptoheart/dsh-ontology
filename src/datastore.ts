@@ -12,7 +12,10 @@ import type {
 } from './shared-types.js'
 import { mappingAxisOfKind, levelNumOfCode } from './shared-types.js'
 import { discoverSuites, parseSuite, resolveDatasourceRoot as resolveDatasourceRootAsync } from './ontology-parser.js'
-import { getBuiltinFramework, parseApqcCode, listBuiltinFrameworks } from './builtin-frameworks.js'
+import {
+  getBuiltinFramework, parseApqcCode, listBuiltinFrameworks, DEFAULT_NEW_SUITE_FW,
+  registerFramework, validateFrameworkDefinition,
+} from './builtin-frameworks.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
@@ -145,9 +148,24 @@ export async function saveAnnotations(suiteId: string, annotations: OntologyAnno
   await writeJson(join(suiteDir(storageRoot, suiteId), 'annotations.json'), annotations)
 }
 
+/** 设置套件锁定的框架（写入 meta.json；切换框架 = 实体需重新锚定，调用方负责提示） */
+export async function setSuiteFramework(suiteId: string, frameworkId: string): Promise<OntologySuiteMeta | null> {
+  const cfg = await getConfig()
+  const storageRoot = resolveDatastorageRoot(cfg)
+  const metaPath = join(suiteDir(storageRoot, suiteId), 'meta.json')
+  const meta = await readJsonSafe<OntologySuiteMeta | null>(metaPath, null)
+  if (!meta) return null
+  meta.frameworkId = frameworkId
+  await writeJson(metaPath, meta)
+  return meta
+}
+
 // ─────────────── Import (datasource → datastorage) ───────────────
 
-export async function importFromDatasource(force = false): Promise<{ updated: string[]; skipped: string[] }> {
+export async function importFromDatasource(
+  force = false,
+  defaultFw?: string,
+): Promise<{ updated: string[]; skipped: string[] }> {
   const cfg = await getConfig()
   const storageRoot = resolveDatastorageRoot(cfg)
   const sourceRoot = join(projRoot(), cfg.datasourcePath)
@@ -166,6 +184,14 @@ export async function importFromDatasource(force = false): Promise<{ updated: st
     if (!needsImport) { skipped.push(disc.suiteId); continue }
 
     const parsed = await parseSuite(disc)
+    if (existing) {
+      // 重新导入保留现场标注（实体 ID 确定性生成：suiteId:kind:rawId，映射在重导入后依然有效）
+      const prev = await loadSuite(disc.suiteId)
+      if (prev) parsed.annotations = prev.annotations
+    }
+    // 框架项目级锁定：已有套件保留原 frameworkId（可为 undefined = 旧套件按 apqc-process 兼容）；
+    // 新套件使用 defaultFw（调用方选择），未指定时缺省 DEFAULT_NEW_SUITE_FW（hw-style-pcf）
+    parsed.meta.frameworkId = existing ? existing.frameworkId : (defaultFw ?? DEFAULT_NEW_SUITE_FW)
     await saveSuite(disc.suiteId, parsed)
     updated.push(disc.suiteId)
   }
@@ -1035,8 +1061,442 @@ export function computeCrudMatrix(suite: SuiteData, flows: FlowchartData[], inte
   }
 }
 
+// ─────────────── 实体批量导入（P5-1 表证单书清单） ───────────────
+
+export interface BatchEntityInput {
+  name: string
+  kind?: string
+  /** 命中域词典的 L1/L2 编号（客户端建议、人工确认后传入） */
+  domain?: string
+  /** 是否同时写入 L1/L2 锚定映射 */
+  anchor?: boolean
+}
+
+/**
+ * 批量创建实体（现场单据清单粘贴入库）：
+ * - 按名称去重（与现有实体及本批内重复均跳过）
+ * - kind 非法时回退 ENTITY；id/rawId 与 datasource 解析格式同构（suiteId:kind:rawId）
+ * - anchor=true 且 domain 为该框架 L1/L2 有效编号时，写入 entityFrameMapping（不设置覆盖状态）
+ */
+export async function createEntitiesBatch(
+  suiteId: string,
+  items: BatchEntityInput[],
+  frameworkId: string,
+): Promise<{ created: OntologyEntity[]; anchored: number; skipped: { name: string; reason: string }[] } | null> {
+  const suite = await loadSuite(suiteId)
+  if (!suite) return null
+
+  const fw = getBuiltinFramework(frameworkId)
+  const validKinds = new Set<string>([
+    'AGGREGATE_ROOT', 'ENTITY', 'DATA_DICTIONARY', 'BEHAVIOR', 'RULE', 'ACTOR', 'ROLE', 'PERMISSION',
+    'FLOW', 'ACTIVITY', 'REPORT', 'UI_MENU', 'UI_SCREEN',
+  ])
+  const nameSet = new Set(suite.entities.map(e => e.name))
+  const idSet = new Set(suite.entities.map(e => e.id))
+  const created: OntologyEntity[] = []
+  const skipped: { name: string; reason: string }[] = []
+  let anchored = 0
+  const now = Date.now()
+
+  for (const item of items) {
+    const name = String(item?.name ?? '').trim()
+    if (!name) { skipped.push({ name: String(item?.name ?? ''), reason: '空名称' }); continue }
+    if (nameSet.has(name)) { skipped.push({ name, reason: '已存在同名实体' }); continue }
+    const kind = (item.kind && validKinds.has(item.kind) ? item.kind : 'ENTITY') as EntityKind
+    const id = `${suiteId}:${kind}:${name}`
+    if (idSet.has(id)) { skipped.push({ name, reason: '已存在（同类型同名）' }); continue }
+
+    const domain = String(item.domain ?? '').trim()
+    const ent: OntologyEntity = {
+      id, rawId: name, name, kind,
+      domain: domain || '未知',
+      sourceFile: 'manual:batch',
+      properties: { batchImportedAt: now },
+    }
+    created.push(ent)
+    nameSet.add(name)
+    idSet.add(id)
+
+    if (item.anchor && domain && fw) {
+      const hit = findNodeByCode(fw, domain)
+      const lvl = hit ? levelNumOfCode(domain) : 0
+      if (hit && lvl >= 1 && lvl <= 2) {
+        suite.annotations.entityFrameMapping[id] = {
+          frameworkId, apqcCode: domain, note: '批量导入自动锚定',
+        }
+        anchored++
+      }
+    }
+  }
+
+  if (created.length) {
+    suite.entities.push(...created)
+    suite.meta.entityCount = suite.entities.length
+    await saveSuite(suiteId, suite)
+  }
+  return { created, anchored, skipped }
+}
+
+// ─────────────── 访谈 → 画板草稿（P5-2） ───────────────
+
+/**
+ * 将套件访谈记录一键生成为画板草稿（独立成图，不并入已有流程）：
+ * - 每条有效访谈 → 一个 task 节点（code = apqcCode，label = 框架节点名），纵列自动排布
+ * - 语义预填：activities.roleRef ← 四问①；guardRules ← 四问③；participations ← 四问②
+ * - 冲突跳过：L3 编号已被挂载流程占用、清单内重复编号
+ */
+export async function buildFlowDraftFromInterviews(
+  suiteId: string,
+  frameworkId: string,
+  interviewIds?: string[],
+): Promise<{ draft: FlowchartData; skipped: { code: string; reason: string }[] } | null> {
+  const suite = await loadSuite(suiteId)
+  if (!suite) return null
+  const fw = getBuiltinFramework(frameworkId)
+  const all = await listInterviews(suiteId)
+  const wanted = interviewIds && interviewIds.length ? new Set(interviewIds) : null
+  const interviews = all.filter(r => !wanted || wanted.has(r.id))
+  const flows = await listFlowchartsForSuite(suiteId)
+  const mountedL3 = new Set(flows.filter(f => f.apqcCode && levelNumOfCode(f.apqcCode) === 3).map(f => f.apqcCode!))
+
+  const skipped: { code: string; reason: string }[] = []
+  const usedCodes = new Set<string>()
+  const nodes: FlowchartData['nodes'] = []
+  const edges: FlowchartData['edges'] = []
+  const activities: NonNullable<FlowchartData['semantics']>['activities'] = {}
+  const participations: NonNullable<FlowchartData['semantics']>['participations'] = []
+
+  for (const itv of interviews) {
+    const code = itv.apqcCode
+    if (usedCodes.has(code)) { skipped.push({ code, reason: '草稿内编号重复' }); continue }
+    if (levelNumOfCode(code) === 3 && mountedL3.has(code)) { skipped.push({ code, reason: '该 L3 已有挂载流程' }); continue }
+    usedCodes.add(code)
+
+    const hit = fw ? findNodeByCode(fw, code) : null
+    const nodeId = `n-${code.replace(/\./g, '-')}`
+    nodes.push({
+      id: nodeId, type: 'task', code,
+      label: hit?.node.label ?? code,
+      x: 220, y: 80 + nodes.length * 96,
+    })
+    const a = itv.answers ?? {}
+    const act: typeof activities[string] = {}
+    if (a.hasRole?.value && a.hasRole.roleRef) act.roleRef = a.hasRole.roleRef
+    if (a.hasRule?.value && a.hasRule.ruleRef) act.guardRules = [a.hasRule.ruleRef]
+    if (a.hasBehavior?.value && a.hasBehavior.behaviorRef) act.behaviorRefs = [a.hasBehavior.behaviorRef]
+    if (Object.keys(act).length) activities[nodeId] = act
+    if (a.hasObject?.value && a.hasObject.entityId && a.hasObject.op) {
+      participations.push({ nodeId, entityId: a.hasObject.entityId, op: a.hasObject.op })
+    }
+  }
+
+  if (!nodes.length) {
+    // 无有效访谈也可返回（前端提示）；仍生成仅含开始/结束的空草稿没有意义
+    return { draft: null as unknown as FlowchartData, skipped }
+  }
+
+  // 纵列链：start → tasks → end
+  nodes.unshift({ id: 'n-start', type: 'start', label: '开始', x: 220, y: 16 })
+  nodes.push({ id: 'n-end', type: 'end', label: '结束', x: 220, y: 80 + nodes.length * 96 })
+  for (let i = 0; i < nodes.length - 1; i++) {
+    edges.push({ id: `e-${i}`, source: nodes[i].id, target: nodes[i + 1].id })
+  }
+
+  const now = Date.now()
+  const draft = await saveFlowchart({
+    name: `访谈草稿 · ${new Date(now).toLocaleDateString('zh-CN')} · ${nodes.length - 2} 活动`,
+    suiteId,
+    nodes, edges,
+    semantics: { activities, participations },
+  })
+  return { draft, skipped }
+}
+
 // ─────────────── 框架查询 ───────────────
 
 export async function listFrameworks(): Promise<ReturnType<typeof listBuiltinFrameworks>> {
   return listBuiltinFrameworks()
+}
+
+// ─────────────── 用户自定义框架（P4-3） ───────────────
+
+const BUILTIN_FW_IDS = new Set(['apqc-process', 'hw-style-pcf'])
+
+function userFrameworksDir(root: string): string {
+  return join(root, 'frameworks')
+}
+
+/**
+ * 启动扫描：datastorage/frameworks/*.json → 校验通过则注册进运行时注册表。
+ * 与内置框架同 ID 的文件视为「内置框架项目级定制」（流程地图编辑落盘），注册后遮蔽内置定义；
+ * 校验失败的文件跳过（console.warn），不阻塞启动。
+ */
+export async function loadUserFrameworksIntoRegistry(): Promise<string[]> {
+  const cfg = await getConfig()
+  const dir = userFrameworksDir(resolveDatastorageRoot(cfg))
+  let entries: string[]
+  try { entries = await readdir(dir) } catch { return [] }
+  const loaded: string[] = []
+  for (const f of entries.filter(e => e.endsWith('.json'))) {
+    try {
+      const fw = await readJsonSafe<unknown>(join(dir, f), null)
+      const fwId = (fw as { frameworkId?: string })?.frameworkId
+      if (typeof fwId === 'string' && BUILTIN_FW_IDS.has(fwId)) {
+        console.warn(`[dsh-ontology] builtin framework override loaded: ${f} → ${fwId}（遮蔽内置定义）`)
+      }
+      const { errors, stats } = validateFrameworkDefinition(fw)
+      if (errors.length) {
+        console.warn(`[dsh-ontology] user framework ${f} invalid, skipped: ${errors.slice(0, 5).join('；')}`)
+        continue
+      }
+      registerFramework(fw as FrameworkDefinition)
+      loaded.push(fwId!)
+      console.log(`[dsh-ontology] user framework registered: ${fwId}（${stats.domains} L1 / ${stats.nodes} 节点）`)
+    } catch (err) {
+      console.warn(`[dsh-ontology] user framework ${f} load failed:`, err)
+    }
+  }
+  return loaded
+}
+
+/** 用户框架落盘：datastorage/frameworks/<frameworkId>.json（重启后由启动扫描重新注册） */
+export async function saveUserFramework(fw: FrameworkDefinition): Promise<void> {
+  const cfg = await getConfig()
+  const dir = userFrameworksDir(resolveDatastorageRoot(cfg))
+  await ensureDir(dir)
+  await writeFile(join(dir, `${fw.frameworkId}.json`), JSON.stringify(fw, null, 2), 'utf-8')
+}
+
+// ─────────────── 现场交付物导出（P5-3） ───────────────
+
+export type ExportKind = 'minutes' | 'crud' | 'gap' | 'domain'
+
+export interface ExportPayload { filename: string; mime: string; content: string }
+
+function csvCell(v: unknown): string {
+  const s = String(v ?? '')
+  return /[",\n\r]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s
+}
+
+function csv(rows: unknown[][]): string {
+  // BOM：保证 Excel 直接打开中文不乱码
+  return '\uFEFF' + rows.map(r => r.map(csvCell).join(',')).join('\r\n')
+}
+
+function fmtTs(ts: number): string {
+  try { return new Date(ts).toLocaleString('zh-CN', { hour12: false }) } catch { return String(ts) }
+}
+
+function safeFileId(suiteId: string): string {
+  return suiteId.replace(/[^\w.-]/g, '_')
+}
+
+/** 访谈答案 → 纪要文案（「客户未提」明确标注为 gap，与「未问」区分） */
+function answerLine(a: InterviewRecord['answers']['hasRole'] | undefined, refKey: 'roleRef' | 'entityId' | 'ruleRef' | 'behaviorRef', entityName?: string): string {
+  if (!a) return '— 未回答'
+  if (!a.value) return '⚠️ 客户未提（gap）'
+  const ref = refKey === 'entityId'
+    ? `${entityName ?? a.entityId ?? ''}${a.op ? ` × ${a.op}` : ''}`
+    : (a as { [k in typeof refKey]?: string })[refKey]
+  return ref ? `✅ ${ref}` : '✅ 是（未细化）'
+}
+
+export async function buildExport(suiteId: string, kind: ExportKind, frameworkId: string): Promise<ExportPayload | null> {
+  const suite = await loadSuite(suiteId)
+  if (!suite) return null
+  const fw = getBuiltinFramework(frameworkId)
+  const now = fmtTs(Date.now())
+
+  if (kind === 'minutes') {
+    const interviews = (await listInterviews(suiteId)).slice().sort((a, b) => a.apqcCode.localeCompare(b.apqcCode, undefined, { numeric: true }))
+    const entName = (id?: string) => suite.entities.find(e => e.id === id)?.name ?? id
+    const sections = interviews.map(itv => {
+      const hit = fw ? findNodeByCode(fw, itv.apqcCode) : null
+      const pathStr = (hit?.path ?? []).map(p => p.label).join(' › ')
+      const a = itv.answers ?? {}
+      const lines = [
+        `## ${itv.apqcCode} ${hit?.node.label ?? ''}`,
+        pathStr ? `> 路径：${pathStr} · 记录时间：${fmtTs(itv.updatedAt)}` : `> 记录时间：${fmtTs(itv.updatedAt)}`,
+        '',
+        `- ① 谁做：${answerLine(a.hasRole, 'roleRef')}`,
+        `- ② 动哪些单据：${answerLine(a.hasObject, 'entityId', entName(a.hasObject?.entityId))}`,
+        `- ③ 什么规矩：${answerLine(a.hasRule, 'ruleRef')}`,
+        `- ④ 怎么处理：${answerLine(a.hasBehavior, 'behaviorRef')}`,
+      ]
+      if (itv.note) lines.push(`- 备注：${itv.note}`)
+      return lines.join('\n')
+    })
+
+    // 未访谈 L3 清单（现场跟进入口）
+    const interviewed = new Set(interviews.map(i => i.apqcCode))
+    const allL3: string[] = []
+    if (fw) {
+      const walk = (n: FrameworkNode): void => {
+        if (levelNumOfCode(n.code) === 3) { allL3.push(n.code); return }
+        for (const c of n.children ?? []) walk(c)
+      }
+      for (const d of fw.domains) for (const l2 of d.children) for (const l3 of (l2.children ?? [])) walk(l3)
+    }
+    const unvisited = allL3.filter(c => !interviewed.has(c))
+    const tail = unvisited.length
+      ? `\n\n---\n\n## 未访谈 L3 节点（${unvisited.length}/${allL3.length}）\n\n${unvisited.slice(0, 100).join('、')}${unvisited.length > 100 ? ' …' : ''}`
+      : ''
+
+    const md = [
+      `# 访谈纪要 · ${suiteId}`,
+      '',
+      `- 框架：${fw?.name ?? frameworkId}（${frameworkId}）`,
+      `- 生成时间：${now}`,
+      `- 访谈记录：${interviews.length} 条`,
+      '',
+      ...sections,
+    ].join('\n') + tail
+    return { filename: `${safeFileId(suiteId)}-minutes.md`, mime: 'text/markdown; charset=utf-8', content: md }
+  }
+
+  if (kind === 'crud') {
+    const flows = await listFlowchartsForSuite(suiteId)
+    const interviews = await listInterviews(suiteId)
+    const m = computeCrudMatrix(suite, flows, interviews)
+    const header = ['实体名称', '类型', ...m.columns.map(c => `${c.name}${c.apqcCode ? ` [${c.apqcCode}]` : ''}`)]
+    const rows = m.rows.map(r => [
+      r.entityName, r.kind,
+      ...m.columns.map(c => (r.cells[c.flowId] ?? []).join('/')),
+    ])
+    return {
+      filename: `${safeFileId(suiteId)}-crud.csv`,
+      mime: 'text/csv; charset=utf-8',
+      content: csv([header, ...rows]),
+    }
+  }
+
+  if (kind === 'gap') {
+    const flows = await listFlowchartsForSuite(suiteId)
+    const interviews = await listInterviews(suiteId)
+    const cov = computeCoverage(suite, frameworkId)
+    const proc = computeProcessCoverage(suite, flows, frameworkId, interviews)
+    const rows: unknown[][] = [['类别', '编号', '名称/实体', '说明']]
+    for (const g of proc.gapList) rows.push(['流程缺口', g.code, g.label, (g.path ?? []).join(' > ')])
+    for (const v of cov.violatedMappings ?? []) rows.push(['违规映射', v.apqcCode, v.entityName, `${v.kind}: ${v.reason}`])
+    return {
+      filename: `${safeFileId(suiteId)}-gap.csv`,
+      mime: 'text/csv; charset=utf-8',
+      content: csv(rows),
+    }
+  }
+
+  // domain：L1/L2 × 实体状态（名词轴）
+  const domainKinds = new Set(['AGGREGATE_ROOT', 'ENTITY', 'DATA_DICTIONARY', 'RULE', 'ACTOR', 'ROLE', 'REPORT'])
+  const rows: unknown[][] = [['实体名称', '类型', '锚定编号', '锚定节点', '覆盖状态', '备注']]
+  const ents = suite.entities.filter(e => domainKinds.has(e.kind)).sort((a, b) => a.name.localeCompare(b.name, 'zh'))
+  for (const e of ents) {
+    const fm = suite.annotations.entityFrameMapping[e.id]
+    const code = fm && fm.frameworkId === frameworkId ? fm.apqcCode : undefined
+    const mark = suite.annotations.coverageMarks[e.id]
+    const hit = code && fw ? findNodeByCode(fw, code) : null
+    rows.push([
+      e.name, e.kind, code ?? '', hit?.node.label ?? (code ? '（编号不在框架中）' : ''),
+      mark?.status ?? 'unset',
+      fm?.note ?? mark?.note ?? '',
+    ])
+  }
+  return {
+    filename: `${safeFileId(suiteId)}-domain.csv`,
+    mime: 'text/csv; charset=utf-8',
+    content: csv(rows),
+  }
+}
+
+// ─────────────── 套件现场数据包（P5-4） ───────────────
+
+const PACKAGE_SCHEMA = 'dsh-ontology-suite-package'
+const PACKAGE_VERSION = 1
+
+/**
+ * 导出套件现场数据包：单文件 JSON（meta + 实体 + 关系 + 标注 + 访谈 + 流程图）。
+ * 用途：现场电脑 A → 家里电脑 B 的整包迁移；配合导入可完整还原工作现场。
+ */
+export async function exportPackage(suiteId: string): Promise<{ filename: string; content: string } | null> {
+  const suite = await loadSuite(suiteId)
+  if (!suite) return null
+  const [interviews, flows] = await Promise.all([
+    listInterviews(suiteId),
+    listFlowchartsForSuite(suiteId),
+  ])
+  const pkg = {
+    schema: PACKAGE_SCHEMA,
+    version: PACKAGE_VERSION,
+    exportedAt: Date.now(),
+    suite: {
+      meta: suite.meta,
+      entities: suite.entities,
+      relations: suite.relations,
+      annotations: suite.annotations,
+    },
+    interviews,
+    flowcharts: flows,
+  }
+  return { filename: `${safeFileId(suiteId)}.dshont.json`, content: JSON.stringify(pkg, null, 2) }
+}
+
+export interface PackageImportResult {
+  suiteId: string
+  entities: number
+  relations: number
+  interviews: number
+  flowcharts: number
+}
+
+/**
+ * 导入现场数据包：按 meta.suiteId 整体覆盖。
+ * - 套件四文件（meta/entities/relations/annotations）直接覆盖
+ * - 访谈清单整体覆盖
+ * - 流程图：写入包内全部；删除本地属于该套件但包内没有的（保证两端一致）
+ */
+export async function importPackage(input: unknown): Promise<PackageImportResult | null> {
+  const p = input as {
+    schema?: string
+    suite?: Record<string, unknown>
+    interviews?: unknown
+    flowcharts?: unknown
+  } | null
+  if (!p || typeof p !== 'object' || p.schema !== PACKAGE_SCHEMA) return null
+  const s = p.suite as {
+    meta?: { suiteId?: string }; entities?: unknown; relations?: unknown; annotations?: unknown
+  } | undefined
+  const suiteId = s?.meta?.suiteId
+  if (!s || typeof suiteId !== 'string' || !suiteId.trim() || !Array.isArray(s.entities)) return null
+
+  await saveSuite(suiteId, {
+    meta: s.meta as OntologySuiteMeta,
+    entities: s.entities as OntologyEntity[],
+    relations: (Array.isArray(s.relations) ? s.relations : []) as OntologyRelation[],
+    annotations: (s.annotations ?? { entityFrameMapping: {}, coverageMarks: {}, customRelations: [] }) as OntologyAnnotations,
+  })
+
+  const root = resolveDatastorageRoot(await getConfig())
+
+  // 访谈：整体覆盖
+  const interviews = (Array.isArray(p.interviews) ? p.interviews : [])
+    .filter((r: any): r is InterviewRecord => r && typeof r.id === 'string' && typeof r.apqcCode === 'string')
+  await writeJson(interviewsFile(root, suiteId), interviews)
+
+  // 流程图：包内全部写入（保留原 id/createdAt），本地多余的删除
+  const pkgFlows = (Array.isArray(p.flowcharts) ? p.flowcharts : [])
+    .filter(isFlowchartData)
+    .filter(f => /^[\w-]+$/.test(f.id))
+  const dir = flowchartsDir(root)
+  for (const f of pkgFlows) await writeJson(join(dir, `${f.id}.json`), f)
+  const pkgIds = new Set(pkgFlows.map(f => f.id))
+  for (const local of await listFlowchartsForSuite(suiteId)) {
+    if (!pkgIds.has(local.id)) await deleteFlowchart(local.id)
+  }
+
+  return {
+    suiteId,
+    entities: (s.entities as unknown[]).length,
+    relations: (Array.isArray(s.relations) ? s.relations : []).length,
+    interviews: interviews.length,
+    flowcharts: pkgFlows.length,
+  }
 }

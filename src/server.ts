@@ -4,15 +4,19 @@ import { resolve, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { sendJson, sendHtml, sendOptions, readJsonBody } from './server-utils.js'
 import {
-  listImportedSuites, loadSuite, loadSuiteWithDerived, saveAnnotations,
+  listImportedSuites, loadSuite, loadSuiteWithDerived, saveAnnotations, setSuiteFramework,
   importFromDatasource, assembleGraph, computeCoverage, computeProcessCoverage, computeCrudMatrix,
-  listFrameworks,
+  listFrameworks, buildExport, createEntitiesBatch, buildFlowDraftFromInterviews,
+  loadUserFrameworksIntoRegistry, saveUserFramework, exportPackage, importPackage,
   listFlowcharts, listFlowchartsForSuite, getFlowchart, saveFlowchart, deleteFlowchart,
   deriveFlowRelations, deriveInterviewRelations,
   listInterviews, saveInterview, deleteInterview,
 } from './datastore.js'
 import { resolveDatasourceRoot, discoverSuites } from './ontology-parser.js'
-import { getBuiltinFramework, buildDomainDictionary, deriveOntologyCode, deriveApqcCode, parseApqcCode } from './builtin-frameworks.js'
+import {
+  getBuiltinFramework, buildDomainDictionary, deriveOntologyCode, deriveApqcCode, parseApqcCode,
+  registerFramework, validateFrameworkDefinition,
+} from './builtin-frameworks.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
@@ -43,15 +47,23 @@ function matchRoute(method: string, path: string): { handler: Handler; params: R
     { method: 'GET', pattern: /^\/api\/suites$/,                        handler: apiListSuites },
     { method: 'GET', pattern: /^\/api\/suites\/([^/]+)$/,               handler: apiGetSuite },
     { method: 'POST', pattern: /^\/api\/suites\/import$/,               handler: apiImportSuites },
+    { method: 'POST', pattern: /^\/api\/suites\/import-package$/,       handler: apiImportPackage },
+    { method: 'GET', pattern: /^\/api\/suites\/([^/]+)\/package$/,      handler: apiExportPackage },
     { method: 'GET', pattern: /^\/api\/suites\/([^/]+)\/entities$/,     handler: apiListEntities },
+    { method: 'POST', pattern: /^\/api\/suites\/([^/]+)\/entities\/batch$/, handler: apiBatchEntities },
     { method: 'GET', pattern: /^\/api\/suites\/([^/]+)\/graph$/,        handler: apiGetGraph },
     { method: 'GET', pattern: /^\/api\/suites\/([^/]+)\/derived-relations$/, handler: apiDerivedRelations },
     { method: 'GET', pattern: /^\/api\/suites\/([^/]+)\/crud-matrix$/,  handler: apiCrudMatrix },
+    { method: 'GET', pattern: /^\/api\/suites\/([^/]+)\/export$/,       handler: apiExportSuite },
     { method: 'GET', pattern: /^\/api\/suites\/([^/]+)\/interviews$/,   handler: apiListInterviews },
     { method: 'POST', pattern: /^\/api\/suites\/([^/]+)\/interviews$/,  handler: apiSaveInterview },
     { method: 'DELETE', pattern: /^\/api\/suites\/([^/]+)\/interviews\/([^/]+)$/, handler: apiDeleteInterview },
     { method: 'POST', pattern: /^\/api\/suites\/([^/]+)\/annotations$/, handler: apiSaveAnnotations },
+    { method: 'POST', pattern: /^\/api\/suites\/([^/]+)\/framework$/,   handler: apiSetSuiteFramework },
+    { method: 'POST', pattern: /^\/api\/suites\/([^/]+)\/flow-draft$/,  handler: apiFlowDraft },
     { method: 'GET', pattern: /^\/api\/frameworks$/,                    handler: apiListFrameworks },
+    { method: 'POST', pattern: /^\/api\/frameworks\/import$/,           handler: apiImportFramework },
+    { method: 'PUT', pattern: /^\/api\/frameworks\/([^/]+)$/,           handler: apiUpdateFramework },
     { method: 'GET', pattern: /^\/api\/frameworks\/([^/]+)$/,           handler: apiGetFramework },
     { method: 'GET', pattern: /^\/api\/coverage$/,                      handler: apiCoverage },
     { method: 'GET', pattern: /^\/api\/dictionary$/,                    handler: apiDictionary },
@@ -86,13 +98,16 @@ export function getDshCtx(): DshContext | null { return dshCtx }
 export async function startServer(port = 17320): Promise<{ url: string; close: () => Promise<void> }> {
   HTML = readFileSync(resolve(__dirname, 'ui.html'), 'utf-8')
 
+  // 用户自定义框架：启动扫描 datastorage/frameworks/ 并注册（免重启可见）
+  loadUserFrameworksIntoRegistry().catch(err => console.error('[dsh-ontology] user framework scan failed:', err))
+
   importFromDatasource(false).catch(err => console.error('[dsh-ontology] initial import failed:', err))
 
   const server = createServer(async (req, res) => {
     const origin = req.headers.origin ?? '*'
     res.setHeader('Access-Control-Allow-Origin', origin)
     res.setHeader('Vary', 'Origin')
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, DELETE, OPTIONS')
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type')
     res.setHeader('Access-Control-Max-Age', '86400')
 
@@ -149,9 +164,37 @@ async function apiGetSuite(_req: IncomingMessage, res: ServerResponse, params: R
 }
 
 async function apiImportSuites(req: IncomingMessage, res: ServerResponse): Promise<void> {
-  let body: { force?: boolean } = {}
+  let body: { force?: boolean; framework?: unknown } = {}
   try { body = await readJsonBody(req) as any } catch { /* ignore */ }
-  const result = await importFromDatasource(!!body.force)
+  // 新套件框架：仅对本次导入中不存在的新套件生效（已有套件框架锁定不变）
+  const fwId = typeof body?.framework === 'string' && body.framework.trim() ? body.framework.trim() : undefined
+  if (fwId && !getBuiltinFramework(fwId)) {
+    sendJson(res, 400, { success: false, message: `unknown framework: ${fwId}` }); return
+  }
+  const result = await importFromDatasource(!!body.force, fwId)
+  sendJson(res, 200, { success: true, data: result })
+}
+
+/** 导出套件现场数据包（P5-4）：单文件 .dshont.json（meta+实体+关系+标注+访谈+流程图） */
+async function apiExportPackage(_req: IncomingMessage, res: ServerResponse, params: Record<string, string>): Promise<void> {
+  const payload = await exportPackage(params.p1)
+  if (!payload) { sendJson(res, 404, { success: false, message: `suite ${params.p1} not found` }); return }
+  res.writeHead(200, {
+    'Content-Type': 'application/json; charset=utf-8',
+    'Content-Disposition': `attachment; filename="${payload.filename}"`,
+  })
+  res.end(payload.content)
+}
+
+/** 导入套件现场数据包（P5-4）：按 meta.suiteId 整体覆盖（导入前由前端二次确认） */
+async function apiImportPackage(req: IncomingMessage, res: ServerResponse): Promise<void> {
+  const body = await readJsonBody(req) as { package?: unknown } | null
+  const pkg = body && body.package !== undefined ? body.package : body
+  const result = await importPackage(pkg)
+  if (!result) {
+    sendJson(res, 400, { success: false, message: '不是合法的现场数据包（.dshont.json，schema=dsh-ontology-suite-package）' })
+    return
+  }
   sendJson(res, 200, { success: true, data: result })
 }
 
@@ -163,6 +206,25 @@ async function apiListEntities(_req: IncomingMessage, res: ServerResponse, param
   const kw = (query.keyword ?? '').toLowerCase()
   if (kw) entities = entities.filter(e => e.name.toLowerCase().includes(kw) || e.rawId.toLowerCase().includes(kw))
   sendJson(res, 200, { success: true, data: { entities, total: suite.entities.length, filtered: entities.length } })
+}
+
+async function apiBatchEntities(req: IncomingMessage, res: ServerResponse, params: Record<string, string>): Promise<void> {
+  const body = await readJsonBody(req) as { items?: unknown }
+  const rawItems = Array.isArray(body?.items) ? body.items : null
+  if (!rawItems || rawItems.length === 0) { sendJson(res, 400, { success: false, message: 'items required' }); return }
+  if (rawItems.length > 1000) { sendJson(res, 400, { success: false, message: '单次最多 1000 条' }); return }
+  const suite = await loadSuite(params.p1)
+  if (!suite) { sendJson(res, 404, { success: false, message: `suite ${params.p1} not found` }); return }
+  const fwId = suite.meta.frameworkId ?? 'apqc-process'
+  const items = rawItems.map((it: any) => ({
+    name: typeof it?.name === 'string' ? it.name : '',
+    kind: typeof it?.kind === 'string' ? it.kind : undefined,
+    domain: typeof it?.domain === 'string' ? it.domain : undefined,
+    anchor: Boolean(it?.anchor),
+  }))
+  const result = await createEntitiesBatch(params.p1, items, fwId)
+  if (!result) { sendJson(res, 404, { success: false, message: 'batch import failed' }); return }
+  sendJson(res, 200, { success: true, data: { created: result.created.length, anchored: result.anchored, skipped: result.skipped } })
 }
 
 async function apiGetGraph(_req: IncomingMessage, res: ServerResponse, params: Record<string, string>): Promise<void> {
@@ -196,8 +258,44 @@ async function apiCrudMatrix(_req: IncomingMessage, res: ServerResponse, params:
   sendJson(res, 200, { success: true, data: computeCrudMatrix(suite, flows, interviews) })
 }
 
+async function apiExportSuite(_req: IncomingMessage, res: ServerResponse, params: Record<string, string>, query: Record<string, string>): Promise<void> {
+  const kind = query.kind ?? ''
+  if (!(['minutes', 'crud', 'gap', 'domain'] as const).includes(kind as any)) {
+    sendJson(res, 400, { success: false, message: `invalid kind: ${kind}（可选 minutes|crud|gap|domain）` }); return
+  }
+  const suite = await loadSuite(params.p1)
+  if (!suite) { sendJson(res, 404, { success: false, message: `suite ${params.p1} not found` }); return }
+  // 框架跟随套件 meta（项目级锁定），不信任客户端参数
+  const fwId = suite.meta.frameworkId ?? 'apqc-process'
+  const payload = await buildExport(params.p1, kind as any, fwId)
+  if (!payload) { sendJson(res, 404, { success: false, message: 'export failed' }); return }
+  res.writeHead(200, {
+    'Content-Type': payload.mime,
+    'Content-Disposition': `attachment; filename="${payload.filename}"`,
+  })
+  res.end(payload.content)
+}
+
 async function apiListInterviews(_req: IncomingMessage, res: ServerResponse, params: Record<string, string>): Promise<void> {
   sendJson(res, 200, { success: true, data: await listInterviews(params.p1) })
+}
+
+async function apiFlowDraft(req: IncomingMessage, res: ServerResponse, params: Record<string, string>): Promise<void> {
+  let body: { interviewIds?: unknown } = {}
+  try { body = await readJsonBody(req) as any } catch { /* ignore */ }
+  const interviewIds = Array.isArray(body?.interviewIds)
+    ? body.interviewIds.filter((x): x is string => typeof x === 'string')
+    : undefined
+  const suite = await loadSuite(params.p1)
+  if (!suite) { sendJson(res, 404, { success: false, message: `suite ${params.p1} not found` }); return }
+  const fwId = suite.meta.frameworkId ?? 'apqc-process'
+  const result = await buildFlowDraftFromInterviews(params.p1, fwId, interviewIds)
+  if (!result) { sendJson(res, 404, { success: false, message: 'flow draft failed' }); return }
+  if (!result.draft) {
+    sendJson(res, 400, { success: false, message: '没有可生成草稿的访谈记录' + (result.skipped.length ? `（${result.skipped.map(s => `${s.code} ${s.reason}`).join('；')}）` : '') })
+    return
+  }
+  sendJson(res, 200, { success: true, data: result })
 }
 
 async function apiSaveInterview(req: IncomingMessage, res: ServerResponse, params: Record<string, string>): Promise<void> {
@@ -245,14 +343,75 @@ async function apiSaveAnnotations(req: IncomingMessage, res: ServerResponse, par
   sendJson(res, 200, { success: true })
 }
 
-async function apiListFrameworks(_req: IncomingMessage, res: ServerResponse): Promise<void> {
-  sendJson(res, 200, { success: true, data: await listFrameworks() })
+async function apiSetSuiteFramework(req: IncomingMessage, res: ServerResponse, params: Record<string, string>): Promise<void> {
+  const body = await readJsonBody(req) as { frameworkId?: unknown }
+  const frameworkId = typeof body?.frameworkId === 'string' ? body.frameworkId.trim() : ''
+  if (!frameworkId) { sendJson(res, 400, { success: false, message: 'frameworkId required' }); return }
+  if (!getBuiltinFramework(frameworkId)) { sendJson(res, 400, { success: false, message: `unknown framework: ${frameworkId}` }); return }
+  const meta = await setSuiteFramework(params.p1, frameworkId)
+  if (!meta) { sendJson(res, 404, { success: false, message: `suite ${params.p1} not found` }); return }
+  sendJson(res, 200, { success: true, data: meta })
+}
+
+/** 更新框架定义（流程地图节点增删改/拖拽排序后保存）：校验 → 落盘 datastorage/frameworks/ → 注册运行时。
+ *  内置框架允许同名覆盖（项目级定制，重启后由启动扫描遮蔽内置定义）；框架 JSON 全量替换。 */
+async function apiUpdateFramework(req: IncomingMessage, res: ServerResponse, params: Record<string, string>): Promise<void> {
+  const body = await readJsonBody(req) as { framework?: unknown }
+  const fw = body?.framework as { frameworkId?: unknown; name?: unknown } | null | undefined
+  if (!fw || typeof fw !== 'object') { sendJson(res, 400, { success: false, message: 'framework required' }); return }
+  if (fw.frameworkId !== params.p1) {
+    sendJson(res, 400, { success: false, message: `frameworkId（${String(fw.frameworkId)}）与 URL（${params.p1}）不一致` }); return
+  }
+  if (!getBuiltinFramework(params.p1)) { sendJson(res, 404, { success: false, message: `framework ${params.p1} not found` }); return }
+  const { errors, stats } = validateFrameworkDefinition(fw)
+  if (errors.length) { sendJson(res, 400, { success: false, message: '框架定义校验失败', errors, stats }); return }
+  await saveUserFramework(fw as never)
+  registerFramework(fw as never)
+  sendJson(res, 200, { success: true, data: { frameworkId: fw.frameworkId, name: fw.name, ...stats } })
+}
+
+async function apiListFrameworks(_req: IncomingMessage, res: ServerResponse, _p: Record<string, string>, query: Record<string, string>): Promise<void> {
+  const all = await listFrameworks()
+  if (query.light === '1') {
+    // 轻量清单：供框架下拉/标签展示，避免传输整棵框架树
+    sendJson(res, 200, {
+      success: true,
+      data: all.map(f => ({
+        frameworkId: f.frameworkId, name: f.name, source: f.source,
+        version: f.version, description: f.description,
+      })),
+    })
+    return
+  }
+  sendJson(res, 200, { success: true, data: all })
 }
 
 async function apiGetFramework(_req: IncomingMessage, res: ServerResponse, params: Record<string, string>): Promise<void> {
   const fw = getBuiltinFramework(params.p1)
   if (!fw) { sendJson(res, 404, { success: false, message: `framework ${params.p1} not found` }); return }
   sendJson(res, 200, { success: true, data: fw })
+}
+
+/** 导入自定义框架 JSON（P4-3）：校验 → 落盘 datastorage/frameworks/ → 注册进运行时（免重启） */
+async function apiImportFramework(req: IncomingMessage, res: ServerResponse): Promise<void> {
+  const body = await readJsonBody(req) as { framework?: unknown }
+  const fw = body?.framework
+  const { errors, stats } = validateFrameworkDefinition(fw)
+  if (errors.length) {
+    sendJson(res, 400, { success: false, message: '框架定义校验失败', errors, stats })
+    return
+  }
+  const def = fw as { frameworkId: string; name: string }
+  if (def.frameworkId === 'apqc-process' || def.frameworkId === 'hw-style-pcf') {
+    sendJson(res, 400, { success: false, message: `frameworkId「${def.frameworkId}」为内置框架，不可覆盖` })
+    return
+  }
+  await saveUserFramework(fw as never)
+  registerFramework(fw as never)
+  sendJson(res, 200, {
+    success: true,
+    data: { frameworkId: def.frameworkId, name: def.name, ...stats },
+  })
 }
 
 async function apiCoverage(_req: IncomingMessage, res: ServerResponse, _p: Record<string, string>, query: Record<string, string>): Promise<void> {
