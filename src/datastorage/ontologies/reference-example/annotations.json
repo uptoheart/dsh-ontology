@@ -9,6 +9,11 @@
       "frameworkId": "apqc-process",
       "apqcCode": "6.1.1",
       "mappedAt": 1792050660145
+    },
+    "reference-example:FLOW:FLOW-CONTRACT-001": {
+      "frameworkId": "apqc-process",
+      "apqcCode": "1.1.1",
+      "note": "smoke"
     }
   },
   "coverageMarks": {

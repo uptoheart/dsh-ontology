@@ -11,6 +11,8 @@ const flow = {
   nodes: [],          // {id,type,code,label,x,y}（x,y 为左上角）
   edges: [],          // {id,source,target}
   currentId: null,    // 正在编辑的已保存流程图 id（null = 新图）
+  apqcCode: '',       // 整图挂载的 L3 编号（流程覆盖度来源）
+  semantics: { activities: {}, participations: [] },  // 语义层：四问 + 参与关系
   selected: null,     // {kind:'node'|'edge', id}
   dragNode: null,     // 拖拽中的节点
   dragOff: { x: 0, y: 0 },
@@ -21,6 +23,9 @@ const flow = {
   treeQuery: '',
   list: [],           // 已保存流程图元数据
 };
+
+const FLOW_OPS = ['create', 'read', 'update', 'delete', 'approve'];
+const FLOW_OP_LABELS = { create: '创建 create', read: '读取 read', update: '更新 update', delete: '删除 delete', approve: '审批 approve' };
 
 const flowSvg = $('#flowSvg');
 const flowWrap = $('#flowCanvasWrap');
@@ -48,7 +53,7 @@ function flowFindNode(code) {
 function renderFlowTree() {
   const wrap = $('#flowTreeWrap');
   if (!state.framework || !state.framework.domains) {
-    wrap.innerHTML = '<div class="empty-hint"><div><div class="big">🗂️</div>请先在「本体管理」中选择套件</div></div>';
+    wrap.innerHTML = '<div class="empty-hint"><div><div class="big">🗂️</div>请先在「套件管理」中选择套件</div></div>';
     return;
   }
   const q = flow.treeQuery.trim().toLowerCase();
@@ -231,6 +236,7 @@ flowSvg.addEventListener('mousedown', (e) => {
     flow.moved = false;
     flowSvg.classList.add('dragging');
     renderFlow();
+    renderFlowProps();
     e.preventDefault();
     return;
   }
@@ -238,6 +244,7 @@ flowSvg.addEventListener('mousedown', (e) => {
   if (edgeEl) {
     flow.selected = { kind: 'edge', id: edgeEl.dataset.id };
     renderFlow();
+    renderFlowProps();
     e.preventDefault();
     return;
   }
@@ -318,6 +325,7 @@ function flowUpdateEdgesFor(nodeId) {
 function setFlowSelection(sel) {
   flow.selected = sel;
   renderFlow();
+  renderFlowProps();
 }
 
 function deleteFlowSelection() {
@@ -326,6 +334,9 @@ function deleteFlowSelection() {
     const id = flow.selected.id;
     flow.nodes = flow.nodes.filter(n => n.id !== id);
     flow.edges = flow.edges.filter(e => e.source !== id && e.target !== id);
+    // 同步清理语义层
+    delete flow.semantics.activities[id];
+    flow.semantics.participations = flow.semantics.participations.filter(p => p.nodeId !== id);
   } else {
     flow.edges = flow.edges.filter(e => e.id !== flow.selected.id);
   }
@@ -338,6 +349,111 @@ document.addEventListener('keydown', (e) => {
   if (e.key === 'Delete' || e.key === 'Backspace') { deleteFlowSelection(); e.preventDefault(); }
   else if (e.key === 'Escape' && flow.linking) flowCancelLink();
 });
+
+/* ─────────── 语义层：挂载选择 + 节点属性（四问） ─────────── */
+function flowResetSemantics() {
+  flow.apqcCode = '';
+  flow.semantics = { activities: {}, participations: [] };
+}
+
+/* L3 选项：从 framework 原始树收集（L1 → L2 → L3 分组） */
+function renderMountSelect() {
+  const sel = $('#flowMount');
+  const cur = flow.apqcCode || '';
+  const opts = ['<option value="">挂载 APQC L3…</option>'];
+  for (const d of state.framework?.domains || []) {
+    for (const l2 of d.children || []) {
+      for (const l3 of l2.children || []) {
+        opts.push(`<option value="${esc(l3.code)}" ${l3.code === cur ? 'selected' : ''}>${esc(d.code)} ${esc(d.label)} / ${esc(l3.code)} ${esc(l3.label)}</option>`);
+      }
+    }
+  }
+  sel.innerHTML = opts.join('');
+}
+
+function flowEntityById(id) {
+  return (state.suite?.entities || []).find(e => e.id === id) || null;
+}
+
+function renderFlowProps() {
+  const empty = $('#fpEmpty'), body = $('#fpBody');
+  const isNode = flow.selected && flow.selected.kind === 'node';
+  $('#fpCode').textContent = '';
+  if (!isNode) { empty.style.display = ''; body.style.display = 'none'; return; }
+  const node = flowNodeById(flow.selected.id);
+  if (!node) { empty.style.display = ''; body.style.display = 'none'; return; }
+  empty.style.display = 'none'; body.style.display = '';
+  $('#fpCode').textContent = node.code ? node.code : '（无 APQC 编号）';
+
+  // 角色候选：ROLE / ACTOR 实体
+  $('#fpRoleList').innerHTML = (state.suite?.entities || [])
+    .filter(e => e.kind === 'ROLE' || e.kind === 'ACTOR')
+    .map(e => `<option value="${esc(e.name)}"></option>`).join('');
+
+  const act = flow.semantics.activities[node.id] || {};
+  $('#fpRole').value = act.roleRef || '';
+  $('#fpRules').value = (act.guardRules || []).join('\n');
+  $('#fpBehaviors').value = (act.behaviorRefs || []).join('\n');
+
+  const parts = flow.semantics.participations.map((p, idx) => ({ p, idx })).filter(x => x.p.nodeId === node.id);
+  const entOpts = (selectedId) => {
+    const ents = [...(state.suite?.entities || [])].sort((a, b) => a.name.localeCompare(b.name, 'zh'));
+    return ['<option value="">选择对象实体…</option>']
+      .concat(ents.map(e => `<option value="${esc(e.id)}" ${e.id === selectedId ? 'selected' : ''}>${esc(e.name)}（${esc(e.kind)}）</option>`))
+      .join('');
+  };
+  $('#fpParts').innerHTML = parts.length
+    ? parts.map(({ p, idx }) => `
+      <div class="fp-part" data-idx="${idx}">
+        <select class="fp-ent">${entOpts(p.entityId)}</select>
+        <select class="fp-op">${FLOW_OPS.map(op => `<option value="${op}" ${op === p.op ? 'selected' : ''}>${esc(FLOW_OP_LABELS[op])}</option>`).join('')}</select>
+        <button class="fp-del" title="移除该参与关系">✕</button>
+      </div>`).join('')
+    : '<div class="fp-none dim">尚无参与关系——该活动动哪些单据？</div>';
+}
+
+function flowSelectedNode() {
+  if (!flow.selected || flow.selected.kind !== 'node') return null;
+  return flowNodeById(flow.selected.id) || null;
+}
+
+function flowWriteActivity(nodeId, patch) {
+  const cur = flow.semantics.activities[nodeId] || {};
+  flow.semantics.activities[nodeId] = { ...cur, ...patch };
+}
+
+$('#fpRole').addEventListener('change', () => {
+  const n = flowSelectedNode(); if (!n) return;
+  flowWriteActivity(n.id, { roleRef: $('#fpRole').value.trim() || undefined });
+});
+$('#fpRules').addEventListener('change', () => {
+  const n = flowSelectedNode(); if (!n) return;
+  const rules = $('#fpRules').value.split('\n').map(s => s.trim()).filter(Boolean);
+  flowWriteActivity(n.id, { guardRules: rules.length ? rules : undefined });
+});
+$('#fpBehaviors').addEventListener('change', () => {
+  const n = flowSelectedNode(); if (!n) return;
+  const refs = $('#fpBehaviors').value.split('\n').map(s => s.trim()).filter(Boolean);
+  flowWriteActivity(n.id, { behaviorRefs: refs.length ? refs : undefined });
+});
+$('#fpAddPart').addEventListener('click', () => {
+  const n = flowSelectedNode(); if (!n) return;
+  flow.semantics.participations.push({ nodeId: n.id, entityId: '', op: 'create' });
+  renderFlowProps();
+});
+$('#fpParts').addEventListener('change', (e) => {
+  const row = e.target.closest('.fp-part'); if (!row) return;
+  const part = flow.semantics.participations[+row.dataset.idx]; if (!part) return;
+  if (e.target.classList.contains('fp-ent')) part.entityId = e.target.value;
+  if (e.target.classList.contains('fp-op')) part.op = e.target.value;
+});
+$('#fpParts').addEventListener('click', (e) => {
+  const btn = e.target.closest('.fp-del'); if (!btn) return;
+  const row = btn.closest('.fp-part');
+  flow.semantics.participations.splice(+row.dataset.idx, 1);
+  renderFlowProps();
+});
+$('#flowMount').addEventListener('change', (e) => { flow.apqcCode = e.target.value; });
 
 /* ─────────── 常用控制 ─────────── */
 $('#tab-flowchart').addEventListener('click', (e) => {
@@ -366,8 +482,11 @@ async function newFlow() {
   }
   flow.nodes = []; flow.edges = [];
   flow.currentId = null; flow.selected = null;
+  flowResetSemantics();
   $('#flowName').value = '';
+  renderMountSelect();
   renderFlow();
+  renderFlowProps();
   renderFlowList();
   flowWrap.scrollTop = 0; flowWrap.scrollLeft = 0;
   toast('已新建空白流程图，可从左侧拖入 APQC 节点', 'ok');
@@ -378,8 +497,11 @@ $('#flowClear').addEventListener('click', () => {
   if (flow.nodes.length && !confirm('确定清空画布？未保存的内容将丢失')) return;
   flow.nodes = []; flow.edges = [];
   flow.currentId = null; flow.selected = null;
+  flowResetSemantics();
   $('#flowName').value = '';
+  renderMountSelect();
   renderFlow();
+  renderFlowProps();
 });
 
 /* ─────────── 保存 / 导出 PNG ─────────── */
@@ -387,15 +509,29 @@ async function saveFlow() {
   const name = $('#flowName').value.trim();
   if (!name) { toast('请先填写流程图名称', 'err'); $('#flowName').focus(); return; }
   if (!flow.nodes.length) { toast('画布为空，请先添加节点', 'err'); return; }
+  // 清理无对象的参与关系（entityId 为空的行不落盘）
+  const participations = flow.semantics.participations.filter(p => p.entityId);
+  const semantics = {
+    activities: flow.semantics.activities,
+    participations,
+  };
   const btn = $('#flowSave');
   btn.disabled = true; btn.textContent = '保存中…';
   try {
     const saved = await api('/api/flowcharts', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id: flow.currentId || undefined, name, nodes: flow.nodes, edges: flow.edges }),
+      body: JSON.stringify({
+        id: flow.currentId || undefined, name,
+        suiteId: state.currentSuiteId || undefined,
+        apqcCode: flow.apqcCode || undefined,
+        nodes: flow.nodes, edges: flow.edges, semantics,
+      }),
     });
     flow.currentId = saved.id;
-    toast('流程图已保存', 'ok');
+    const projCount = participations.length;
+    toast(projCount || flow.apqcCode
+      ? `已保存${flow.apqcCode ? ' · 挂载 ' + flow.apqcCode : ''}${projCount ? ' · ' + projCount + ' 条参与关系已投影' : ''}`
+      : '流程图已保存', 'ok');
     await refreshFlowList();
   } catch (err) {
     toast('保存失败：' + err.message, 'err');
@@ -499,7 +635,7 @@ function renderFlowList() {
   box.innerHTML = flow.list.map(f => `
     <div class="flow-item ${f.id === flow.currentId ? 'selected' : ''}" data-id="${esc(f.id)}">
       <div class="fi-name">${esc(f.name)}</div>
-      <div class="fi-meta">${f.nodeCount} 节点 · ${f.edgeCount} 连线 · ${fmtTime(f.updatedAt)}</div>
+      <div class="fi-meta">${f.nodeCount} 节点 · ${f.edgeCount} 连线${f.apqcCode ? ' · 📍' + esc(f.apqcCode) : ''}${f.participationCount ? ' · 🔗' + f.participationCount : ''} · ${fmtTime(f.updatedAt)}</div>
       <button class="fi-del" title="删除该流程图">✕</button>
     </div>`).join('');
 }
@@ -534,8 +670,15 @@ async function openFlowchart(id) {
       if (m) flow.seq = Math.max(flow.seq, +m[1]);
     }
     flow.selected = null;
+    flow.apqcCode = data.apqcCode || '';
+    flow.semantics = {
+      activities: data.semantics?.activities || {},
+      participations: (data.semantics?.participations || []).map(p => ({ ...p })),
+    };
     $('#flowName').value = data.name;
+    renderMountSelect();
     renderFlow();
+    renderFlowProps();
     renderFlowList();
     flowWrap.scrollTop = 0; flowWrap.scrollLeft = 0;
   } catch (err) {

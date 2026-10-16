@@ -66,6 +66,11 @@ function sizeCanvas() {
   graph.height = rect.height;
   canvas.width = Math.round(rect.width * graph.dpr);
   canvas.height = Math.round(rect.height * graph.dpr);
+  // 显式固定 CSS 显示尺寸：否则 canvas 按 buffer 尺寸(rect×dpr)显示，
+  // 在非整数缩放屏（如 125%）下会溢出容器 —— 节点画出画布、且鼠标坐标与图坐标错位（点击时灵时不灵）
+  canvas.style.width = rect.width + 'px';
+  canvas.style.height = rect.height + 'px';
+  updateZoomUI();
   drawGraph();
 }
 
@@ -275,6 +280,30 @@ function drawGraph() {
     }
   }
   ctx.restore();
+  updateZoomUI();
+}
+
+const ZOOM_MIN = 0.15, ZOOM_MAX = 4, ZOOM_STEP = 1.2;
+
+/* 以画布点 (cx,cy) 为锚点缩放到 ns；不传锚点则围绕画布中心 */
+function setZoom(ns, cx, cy) {
+  ns = Math.max(ZOOM_MIN, Math.min(ZOOM_MAX, ns));
+  if (cx === undefined) { cx = graph.width / 2; cy = graph.height / 2; }
+  const k = ns / graph.scale;
+  graph.tx = (graph.tx + graph.width / 2 - cx) * k - graph.width / 2 + cx;
+  graph.ty = (graph.ty + graph.height / 2 - cy) * k - graph.height / 2 + cy;
+  graph.scale = ns;
+  clampView();
+  drawGraph();
+}
+
+/* 同步右下角缩放控件（滑动条 + 百分比） */
+function updateZoomUI() {
+  const slider = $('#zoomSlider'), label = $('#zoomPct');
+  if (!slider || !label) return;
+  const pct = Math.round(graph.scale * 100);
+  if (slider.valueAsNumber !== pct) slider.value = pct;
+  if (label.textContent !== pct + '%') label.textContent = pct + '%';
 }
 
 function screenToGraph(mx, my) {
@@ -351,21 +380,18 @@ window.addEventListener('mouseup', (e) => {
 canvasEl.addEventListener('wheel', (e) => {
   e.preventDefault();
   const rect = canvasEl.getBoundingClientRect();
-  const mx = e.clientX - rect.left, my = e.clientY - rect.top;
-  const k = e.deltaY < 0 ? 1.12 : 1 / 1.12;
-  const ns = Math.max(0.15, Math.min(4, graph.scale * k));
-  // 以鼠标为中心缩放
-  graph.tx = (graph.tx + graph.width / 2 - mx) * (ns / graph.scale) - graph.width / 2 + mx;
-  graph.ty = (graph.ty + graph.height / 2 - my) * (ns / graph.scale) - graph.height / 2 + my;
-  graph.scale = ns;
-  clampView();
-  drawGraph();
+  setZoom(graph.scale * (e.deltaY < 0 ? ZOOM_STEP : 1 / ZOOM_STEP), e.clientX - rect.left, e.clientY - rect.top);
 }, { passive: false });
 
 $('#btnGraphReset').addEventListener('click', () => {
   graph.scale = 1; graph.tx = 0; graph.ty = 0;
   drawGraph();
 });
+
+/* 右下角缩放控件：滑动条 / ± 按钮（围绕画布中心缩放） */
+$('#zoomSlider').addEventListener('input', (e) => setZoom(e.target.valueAsNumber / 100));
+$('#zoomOut').addEventListener('click', () => setZoom(graph.scale / ZOOM_STEP));
+$('#zoomIn').addEventListener('click', () => setZoom(graph.scale * ZOOM_STEP));
 
 function ensureSim(reheat) {
   if (graph.raf || !graph.nodes.length) return;
@@ -489,14 +515,147 @@ function renderOntologyDetail() {
         <h4>关联内容 <span class="sec-n">${others.length}</span></h4>
         ${others.length ? groupByType(others) : '<div class="rel-empty">暂无其他关联内容</div>'}
       </div>
+      <div class="detail-sec">
+        <h4>参与流程（派生反查）</h4>
+        <div id="odParts" class="rel-empty">加载中…</div>
+      </div>
     </div>`;
+  renderOntoParticipations(box.querySelector('#odParts'), ent.id);
 }
 
-$('#ontoDetail').addEventListener('click', (e) => {
+/* 参与流程反查：该实体被哪些流程/访谈以什么 op 引用（读 derived-relations，点击跳来源） */
+async function renderOntoParticipations(box, eid) {
+  if (!box) return;
+  try {
+    const d = await api(`/api/suites/${encodeURIComponent(state.currentSuiteId)}/derived-relations`);
+    // 异步返回前实体可能已切换
+    if (graph.selectedId !== eid || !box.isConnected) return;
+    const rels = (d.relations || []).filter(r => r.to === eid && r.type === 'ACTIVITY_OPERATES_OBJECT');
+    if (!rels.length) {
+      box.textContent = '暂无参与记录——在流程画板添加参与关系，或通过访谈四问投影';
+      return;
+    }
+    const uniq = new Map();
+    for (const r of rels) {
+      const key = `${r.properties?.derivedFrom}|${r.label}`;
+      if (!uniq.has(key)) uniq.set(key, r);
+    }
+    box.className = 'part-list';
+    box.innerHTML = [...uniq.values()].map(r => {
+      const src = String(r.properties?.derivedFrom || '');
+      const op = r.label;
+      let srcName = src, jump = '';
+      if (src.startsWith('flow:')) {
+        const fid = src.slice(5);
+        const meta = (flow.list || []).find(f => f.id === fid);
+        srcName = r.properties?.flowName || meta?.name || fid;
+        jump = 'flow';
+      } else if (src.startsWith('interview:')) {
+        const itv = (state.interviews || []).find(x => x.id === src.slice(10));
+        srcName = `访谈 · ${itv ? itv.apqcCode : src.slice(10)}`;
+        jump = 'interview';
+      }
+      return `<button class="part-item" data-jump="${jump}" data-src="${esc(src)}" data-op="${esc(op)}"
+        title="点击跳转到来源${jump === 'flow' ? '流程画板' : jump === 'interview' ? '访谈清单' : ''}">
+        <span class="op-chip op-${esc(op)}">${OP_SHORT[op] || esc(op)}</span>
+        <span class="pi-name">${esc(srcName)}</span>
+        <span class="pi-type mono">${esc(r.type)}</span></button>`;
+    }).join('');
+  } catch {
+    if (box && box.isConnected) box.textContent = '参与反查加载失败';
+  }
+}
+
+$('#ontoDetail') && $('#ontoDetail').addEventListener('click', (e) => {
+  const part = e.target.closest('.part-item');
+  if (part) {
+    const src = part.dataset.src || '';
+    if (part.dataset.jump === 'flow') { switchTab('flowchart'); openFlowchart(src.slice(5)); }
+    else if (part.dataset.jump === 'interview') {
+      const itv = (state.interviews || []).find(x => 'interview:' + x.id === src);
+      switchTab('interview');
+      if (itv) selectInterviewNode(itv.apqcCode);
+    }
+    return;
+  }
   if (e.target.closest('#odAnnotate')) {
     if (graph.selectedId) openDrawer(graph.selectedId);
     return;
   }
   const item = e.target.closest('.rel-item');
   if (item) selectOntoEntity(item.dataset.eid);
+});
+
+/* ═══════════ 视图切换：[图形] [CRUD 矩阵] ═══════════ */
+const OP_SHORT = { create: 'C', read: 'R', update: 'U', delete: 'D', approve: 'A' };
+const OP_TITLES = { create: '创建 create', read: '读取 read', update: '更新 update', delete: '删除 delete', approve: '审批 approve' };
+let ontoView = 'graph';
+
+function setOntoView(v) {
+  if (ontoView === v) return;
+  ontoView = v;
+  document.querySelectorAll('.view-toggle .toggle').forEach(b => b.classList.toggle('active', b.dataset.view === v));
+  $('#graphWrap').style.display = v === 'graph' ? '' : 'none';
+  $('#crudWrap').style.display = v === 'matrix' ? '' : 'none';
+  if (v === 'matrix') renderCrudMatrix();
+  else sizeCanvas();
+}
+
+document.querySelectorAll('.view-toggle .toggle').forEach(b => {
+  b.addEventListener('click', () => setOntoView(b.dataset.view));
+});
+
+async function renderCrudMatrix() {
+  const box = $('#crudWrap');
+  box.innerHTML = '<div class="empty-hint"><div class="big">⏳</div>正在计算 CRUD 矩阵…</div>';
+  try {
+    const m = await api(`/api/suites/${encodeURIComponent(state.currentSuiteId)}/crud-matrix`);
+    if (!m.columns.length) {
+      box.innerHTML = `<div class="empty-hint" style="height:220px"><div><div class="big">📊</div>尚无流程参与数据<br>
+        <span class="dim">在「流程画板」为节点添加参与关系，或通过「访谈」四问投影后即可生成矩阵</span></div></div>`;
+      return;
+    }
+    if (!m.rows.length) {
+      box.innerHTML = `<div class="empty-hint" style="height:220px"><div><div class="big">📊</div>流程已存在，但参与关系的对象未匹配到实体</div></div>`;
+      return;
+    }
+    const head = `<tr><th class="c-ent">实体</th>${m.columns.map(c =>
+      `<th class="c-flow" data-fid="${esc(c.flowId)}" title="${esc(c.name)}${c.apqcCode ? ' · ' + esc(c.apqcCode) : ''}（点击打开画板）">
+        <div class="cf-name">${esc(c.name)}</div>${c.apqcCode ? `<div class="cf-code">${esc(c.apqcCode)}</div>` : ''}</th>`).join('')}</tr>`;
+    const body = m.rows.map(r => `<tr>
+      <td class="c-ent" data-eid="${esc(r.entityId)}" title="${esc(r.entityId)}（点击查看详情）">
+        <span class="dot" style="background:${KIND_COLORS[r.kind] || '#9ca3af'}"></span>${esc(r.entityName)}
+        <span class="kind-tag">${esc(r.kind)}</span></td>
+      ${m.columns.map(c => {
+        const ops = r.cells[c.flowId] || [];
+        return `<td class="c-cell ${ops.length ? '' : 'none'}">${ops.length
+          ? ops.map(o => `<span class="op-chip op-${esc(o)}" title="${esc(OP_TITLES[o] || o)}">${OP_SHORT[o] || esc(o)}</span>`).join('')
+          : '<span class="no-op">—</span>'}</td>`;
+      }).join('')}</tr>`).join('');
+    box.innerHTML = `
+      <div class="crud-head">
+        <span>CRUD 矩阵 <b>${m.rows.length}</b> 实体 × <b>${m.columns.length}</b> 流程</span>
+        <span class="crud-legend">${['create','read','update','delete','approve'].map(o =>
+          `<span class="op-chip op-${o}">${OP_SHORT[o]}</span>${OP_TITLES[o].split(' ')[0]}`).join('　')}</span>
+      </div>
+      <div class="crud-scroll"><table class="crud-table"><thead>${head}</thead><tbody>${body}</tbody></table></div>`;
+  } catch (err) {
+    box.innerHTML = `<div class="empty-hint"><div>矩阵加载失败：${esc(err.message)}</div></div>`;
+  }
+}
+
+$('#crudWrap') && $('#crudWrap').addEventListener('click', (e) => {
+  const th = e.target.closest('.c-flow');
+  if (th) {
+    const key = th.dataset.fid || '';
+    if (key.startsWith('flow:')) { switchTab('flowchart'); openFlowchart(key.slice(5)); }
+    else if (key.startsWith('interview:')) {
+      const itv = (state.interviews || []).find(r => 'interview:' + r.id === key);
+      switchTab('interview');
+      if (itv) selectInterviewNode(itv.apqcCode);
+    }
+    return;
+  }
+  const ent = e.target.closest('.c-ent');
+  if (ent && ent.dataset.eid) goEntity(ent.dataset.eid);
 });

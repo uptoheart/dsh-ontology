@@ -21,10 +21,33 @@
 .lg-chip b { font-family: var(--mono); font-weight: 500; }
 .lg-chip.off { opacity: .38; }
 .lg-chip:hover { border-color: var(--border-h); }
-.graph-wrap { flex: 1; min-height: 0; position: relative; background: var(--bg); }
+.graph-wrap { flex: 1; min-height: 0; position: relative; background: var(--bg); overflow: hidden; }
 .graph-wrap canvas { position: absolute; inset: 0; display: block; cursor: grab; }
 .graph-wrap canvas.dragging { cursor: grabbing; }
 .graph-wrap canvas.pointing { cursor: pointer; }
+
+/* 右下角缩放控件 */
+.graph-zoom {
+  position: absolute; right: 10px; bottom: 10px; z-index: 3;
+  display: flex; align-items: center; gap: 6px;
+  background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+  padding: 4px 8px; box-shadow: 0 2px 8px rgba(0,0,0,.08);
+}
+.graph-zoom button {
+  width: 20px; height: 20px; line-height: 1; padding: 0; flex-shrink: 0;
+  border: 1px solid var(--border); background: var(--card); border-radius: 4px;
+  font-size: 13px; color: var(--text); cursor: pointer;
+}
+.graph-zoom button:hover { border-color: var(--border-h); background: var(--hover); }
+.graph-zoom input[type="range"] { width: 110px; accent-color: var(--accent); }
+.graph-zoom #btnGraphReset {
+  width: auto; height: 20px; padding: 0 8px; margin-left: 2px;
+  font-size: 11px; border-radius: 4px; white-space: nowrap;
+}
+.graph-zoom #zoomPct {
+  min-width: 36px; text-align: right; flex-shrink: 0;
+  font-family: var(--mono); font-size: 10.5px; color: var(--text-dim);
+}
 
 #tab-ontology .split-right { padding: 16px 18px; }
 .onto-detail h2 { font-size: 15px; margin-bottom: 4px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
@@ -56,3 +79,72 @@
 .rel-item .arrow { color: var(--text-dim); font-size: 10px; }
 .rel-item .dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
 .rel-empty { font-size: 11.5px; color: var(--text-dim); }
+
+/* ═══════════ 视图切换 [图形] [CRUD 矩阵] ═══════════ */
+.view-toggle { display: inline-flex; }
+.view-toggle .toggle.active {
+  background: var(--active); border-color: var(--border-h);
+  color: var(--text); font-weight: 600;
+}
+.view-toggle .toggle:first-child { border-radius: 6px 0 0 6px; }
+.view-toggle .toggle:last-child { border-radius: 0 6px 6px 0; }
+
+/* 参与流程反查 */
+.part-list { display: flex; flex-direction: column; gap: 5px; }
+.part-item {
+  display: flex; align-items: center; gap: 8px;
+  border: 1px solid var(--border); border-radius: 6px;
+  background: var(--card); padding: 5px 9px; font-size: 12px;
+  transition: border-color .1s, background .1s; text-align: left;
+}
+.part-item:hover { border-color: var(--border-h); background: var(--hover); }
+.part-item .pi-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.part-item .pi-type { font-size: 9.5px; color: var(--text-dim); flex-shrink: 0; }
+
+/* op 徽标（矩阵单元格 + 反查列表共用） */
+.op-chip {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 16px; height: 16px; border-radius: 4px;
+  font-family: var(--mono); font-size: 10px; font-weight: 700;
+  margin: 0 1px; flex-shrink: 0;
+}
+.op-chip.op-create  { background: var(--st-covered-bg); color: var(--st-covered); }
+.op-chip.op-read    { background: var(--st-unset-bg);   color: var(--st-unset); }
+.op-chip.op-update  { background: var(--st-partial-bg); color: var(--st-partial); }
+.op-chip.op-delete  { background: var(--st-gap-bg);     color: var(--st-gap); }
+.op-chip.op-approve { background: rgba(99,102,241,.12); color: #6366f1; }
+
+/* ───── CRUD 矩阵视图 ───── */
+.crud-wrap { flex: 1; min-height: 0; display: flex; flex-direction: column; overflow: hidden; }
+.crud-head {
+  flex-shrink: 0; display: flex; align-items: center; justify-content: space-between;
+  gap: 10px; padding: 8px 14px; border-bottom: 1px solid var(--border);
+  font-size: 12px; color: var(--text-dim); background: var(--surface);
+}
+.crud-head b { color: var(--text); }
+.crud-legend { display: inline-flex; align-items: center; gap: 4px; font-size: 10.5px; }
+.crud-scroll { flex: 1; min-height: 0; overflow: auto; }
+.crud-table { border-collapse: separate; border-spacing: 0; font-size: 12px; min-width: 100%; }
+.crud-table th, .crud-table td {
+  border-bottom: 1px solid var(--border); border-right: 1px solid var(--border);
+  padding: 5px 9px; text-align: left; vertical-align: middle;
+}
+.crud-table thead th {
+  position: sticky; top: 0; z-index: 2;
+  background: var(--card); font-size: 11px; font-weight: 600;
+}
+.crud-table .c-ent {
+  position: sticky; left: 0; z-index: 1;
+  background: var(--card); min-width: 170px; max-width: 260px; cursor: pointer;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.crud-table thead .c-ent { z-index: 3; cursor: default; }
+.crud-table tbody .c-ent:hover { background: var(--hover); }
+.crud-table .c-ent .dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 6px; }
+.crud-table .c-ent .kind-tag { margin-left: 5px; font-size: 9px; }
+.crud-table .c-flow { cursor: pointer; min-width: 130px; max-width: 190px; }
+.crud-table .c-flow:hover { color: var(--accent); background: var(--hover); }
+.crud-table .c-flow .cf-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.crud-table .c-flow .cf-code { font-family: var(--mono); font-size: 9.5px; color: var(--accent); font-weight: 400; }
+.crud-table .c-cell.none { text-align: center; }
+.crud-table .no-op { color: var(--border-h); }

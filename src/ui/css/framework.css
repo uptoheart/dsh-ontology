@@ -58,3 +58,27 @@
   transition: border-color .1s;
 }
 .ent-link:hover { border-color: var(--border-h); }
+
+/* ═══════════ L1/L2 域覆盖进度条 ═══════════ */
+.cov-bar {
+  display: flex; height: 7px; border-radius: 4px; overflow: hidden;
+  background: var(--st-unset-bg); margin-bottom: 16px; border: 1px solid var(--border);
+}
+.cov-bar i { height: 100%; }
+.cov-bar .cb-covered { background: var(--st-covered); }
+.cov-bar .cb-partial { background: var(--st-partial); }
+.cov-bar .cb-gap { background: var(--st-gap); }
+
+/* ═══════════ L3+ 流程工作区 ═══════════ */
+.fw-flows { display: flex; flex-direction: column; gap: 5px; margin-bottom: 14px; }
+.fw-flow-item {
+  display: flex; align-items: center; gap: 8px;
+  border: 1px solid var(--border); border-radius: 6px;
+  background: var(--card); padding: 6px 10px; cursor: pointer;
+  text-align: left; transition: border-color .1s;
+}
+.fw-flow-item:hover { border-color: var(--border-h); background: var(--hover); }
+.fw-flow-item .fi-name { flex: 1; font-size: 12.5px; font-weight: 600; word-break: break-all; }
+.fw-flow-item .fi-meta { font-size: 10.5px; color: var(--text-dim); flex-shrink: 0; }
+.itv-brief { font-size: 12px; line-height: 1.8; margin-bottom: 12px; color: var(--text); }
+.fw-jumps { display: flex; gap: 6px; margin-bottom: 16px; }

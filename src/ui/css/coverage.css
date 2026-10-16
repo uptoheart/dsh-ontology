@@ -41,3 +41,72 @@ tr.row-leaf td:first-child::before { content: '🌿 '; }
 .domain-row .bar .seg-gap     { background: var(--st-gap); }
 .domain-row .bar .seg-unset   { background: var(--st-unset-bg); border: 1px solid var(--st-unset-bg); }
 .domain-row .d-val { width: 130px; flex-shrink: 0; text-align: right; font-size: 12px; color: var(--text-dim); font-family: var(--mono); }
+
+/* ═══════════ 双指标布局 ═══════════ */
+.metric-block { border-left: 3px solid var(--accent); }
+.metric-head { display: flex; align-items: baseline; gap: 10px; margin-bottom: 12px; }
+.metric-head h2 { margin: 0; font-size: 15px; }
+.metric-sub { font-size: 11.5px; color: var(--text-dim); }
+
+/* 流程覆盖度占位（P2 上线前） */
+.process-placeholder {
+  background: var(--surface); border: 1px dashed var(--border); border-radius: var(--radius);
+  padding: 14px 16px; font-size: 12.5px;
+}
+.process-placeholder .pp-main { color: var(--text-dim); margin-bottom: 6px; }
+.process-placeholder .pp-preview b { color: var(--accent); font-family: var(--mono); }
+.process-placeholder .pp-preview { color: var(--text); }
+
+/* 流程覆盖度（自动推导） */
+.process-bar {
+  height: 10px; border-radius: 5px; overflow: hidden; display: flex;
+  background: var(--surface); border: 1px solid var(--border); margin: 12px 0;
+}
+.process-bar .seg-covered { background: var(--st-covered); height: 100%; }
+.process-bar .seg-partial { background: var(--st-partial); height: 100%; }
+.process-bar .seg-unset { background: var(--surface-muted, var(--hover)); height: 100%; }
+.mounted-flow {
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  padding: 6px 8px; border-radius: 6px; font-size: 12px;
+}
+.mounted-flow:hover { background: var(--hover); }
+.mounted-flow .mf-code { font-family: var(--mono); color: var(--accent); font-size: 11.5px; min-width: 48px; }
+.mounted-flow .mf-meta { color: var(--text-dim); font-size: 11.5px; flex: 1; }
+.mounted-flow .mf-open { color: var(--accent); font-size: 11.5px; cursor: pointer; }
+.mounted-flow .mf-open:hover { text-decoration: underline; }
+.gap-grid { display: flex; flex-wrap: wrap; gap: 6px; }
+.gap-item {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 4px 10px; border: 1px solid var(--border); border-radius: 14px;
+  font-size: 11.5px; cursor: pointer; color: var(--text);
+}
+.gap-item:hover { border-color: var(--accent); color: var(--accent); }
+.gap-item .mf-code { font-family: var(--mono); color: var(--text-dim); font-size: 10.5px; }
+
+/* 违规存量映射横幅 */
+.violated-banner { border-left: 3px solid var(--st-gap); }
+.violated-banner .vb-head { font-size: 12.5px; margin-bottom: 8px; color: var(--st-gap); }
+.violated-banner .vb-head .dim { color: var(--text-dim); font-size: 11.5px; }
+.violated-banner .vb-more { font-size: 11.5px; color: var(--text-dim); padding: 4px 8px; }
+.violated-item {
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  padding: 6px 8px; border-radius: 6px; cursor: pointer; font-size: 12px;
+}
+.violated-item:hover { background: var(--hover); }
+.violated-item .mono { font-family: var(--mono); color: var(--text-dim); }
+.violated-item .reason { color: var(--text-dim); font-size: 11.5px; flex: 1; }
+.violated-item .go { color: var(--accent); font-size: 11.5px; }
+
+/* 域词典只读面板 */
+.dict-panel { padding: 0; }
+.dict-panel summary {
+  cursor: pointer; padding: 10px 14px; font-size: 12.5px; font-weight: 600;
+  user-select: none; list-style: revert;
+}
+.dict-panel summary:hover { color: var(--accent); }
+.dict-panel .dict-body { padding: 4px 14px 12px; max-height: 320px; overflow: auto; }
+.dict-row { font-size: 12px; padding: 3px 0; display: flex; align-items: baseline; gap: 8px; }
+.dict-row .code { font-family: var(--mono); color: var(--text-dim); width: 44px; flex-shrink: 0; }
+.dict-row.l1 { font-weight: 600; margin-top: 6px; }
+.dict-row.l2 { padding-left: 18px; color: var(--text); }
+.dict-row .alias { color: var(--text-dim); font-size: 11px; margin-left: auto; }

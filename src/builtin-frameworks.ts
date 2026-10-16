@@ -1,8 +1,25 @@
 import { APQC_PCF_V721 } from './frameworks/apqc-pcf.js'
-import type { FrameworkDefinition, FrameworkDomain, FrameworkLeafNode, FrameworkNode } from './shared-types.js'
+import type { DomainDictionary, FrameworkDefinition, FrameworkDomain, FrameworkLeafNode, FrameworkNode } from './shared-types.js'
 
 export const BUILTIN_FRAMEWORKS: Record<string, FrameworkDefinition> = {
   'apqc-process': APQC_PCF_V721,
+}
+
+/**
+ * 域词典（P1 只读）：从内置框架的 L1/L2 自动生成受控词表。
+ * P2 起在 entries 上叠加客户化别名（持久化到 datastorage/dictionary.json）。
+ */
+export function buildDomainDictionary(frameworkId: string): DomainDictionary {
+  const fw = getBuiltinFramework(frameworkId)
+  if (!fw) return { frameworkId, entries: [], updatedAt: Date.now() }
+  const entries: DomainDictionary['entries'] = []
+  for (const domain of fw.domains) {
+    entries.push({ code: domain.code, label: domain.label, level: 'L1' })
+    for (const child of domain.children ?? []) {
+      entries.push({ code: child.code, label: child.label, level: 'L2', parentCode: domain.code })
+    }
+  }
+  return { frameworkId, entries, updatedAt: Date.now() }
 }
 
 export function deriveOntologyCode(apqcCode: string): string {

@@ -7,8 +7,10 @@ import type {
   SuiteData, OntologySuiteMeta, OntologyAnnotations, OntologyEntity, OntologyRelation,
   GraphData, GraphNode, GraphEdge, CoverageMatrix, CoverageCell, CoverageNodeInfo,
   DatastorageConfig, FrameworkDefinition, FrameworkNode, FrameworkDomain, FrameworkLevel,
-  FlowchartData, FlowchartMeta,
+  FlowchartData, FlowchartMeta, ViolatedMapping, EntityKind, ProcessCoverageMatrix,
+  InterviewRecord, CrudMatrix, FlowOp,
 } from './shared-types.js'
+import { mappingAxisOfKind, levelNumOfCode } from './shared-types.js'
 import { discoverSuites, parseSuite, resolveDatasourceRoot as resolveDatasourceRootAsync } from './ontology-parser.js'
 import { getBuiltinFramework, parseApqcCode, listBuiltinFrameworks } from './builtin-frameworks.js'
 
@@ -194,15 +196,19 @@ export function assembleGraph(suite: SuiteData): GraphData {
 
 // ─────────────── 覆盖度计算 ───────────────
 
-import { collectLeafNodes, findNodeByCode } from './builtin-frameworks.js'
+import { findNodeByCode } from './builtin-frameworks.js'
 
 function calcRollupStatus(counts: { covered: number; partial: number; gap: number; unset: number; total: number }): import('./shared-types.js').CoverageStatus {
   if (counts.covered === counts.total && counts.total > 0) return 'covered'
   if (counts.covered > 0 && counts.gap === 0) return 'partial'
   if (counts.gap > 0 && counts.covered === 0 && counts.partial === 0) return 'gap'
   if (counts.total === 0) return 'unset'
+  // 全部为未标注（无任何显式状态）时不误报为部分覆盖
+  if (counts.unset === counts.total) return 'unset'
   return 'partial'
 }
+
+type CoverageEntry = { entityId: string; status: import('./shared-types.js').CoverageStatus }
 
 export function computeCoverage(suite: SuiteData, frameworkId: string): CoverageMatrix {
   const fw = getBuiltinFramework(frameworkId)
@@ -214,10 +220,15 @@ export function computeCoverage(suite: SuiteData, frameworkId: string): Coverage
       totalEntities: suite.entities.length,
       leafTotal: 0, leafCovered: 0, leafPartial: 0, leafGap: 0, leafUnset: 0,
       tree: [],
+      domainEntityCount: 0, fullTree: [], violatedMappings: [],
     }
   }
 
-  const nodeEntityMap = new Map<string, { entityId: string; status: import('./shared-types.js').CoverageStatus }[]>()
+  // ── 1. 按 kind 分流：域轴（L1/L2）与流程轴（L3+）分桶，违规映射只标记不删除 ──
+  const domainNodeMap = new Map<string, CoverageEntry[]>()
+  const processNodeMap = new Map<string, CoverageEntry[]>()
+  const violatedMappings: ViolatedMapping[] = []
+  const domainEntityIds = new Set<string>()
 
   for (const [entityId, frameMapping] of Object.entries(suite.annotations.entityFrameMapping)) {
     if (frameMapping.frameworkId !== frameworkId || !frameMapping.apqcCode) continue
@@ -225,23 +236,59 @@ export function computeCoverage(suite: SuiteData, frameworkId: string): Coverage
     if (!entity) continue
     const mark = suite.annotations.coverageMarks[entityId]
     const status = mark?.status ?? 'unset'
+    const axis = mappingAxisOfKind(entity.kind)
+    const lvl = levelNumOfCode(frameMapping.apqcCode)
+    const levelId = `L${Math.min(Math.max(lvl, 1), 5)}`
 
-    const allAncestorCodes = collectAncestorCodes(fw, frameMapping.apqcCode)
-    for (const code of allAncestorCodes) {
-      const list = nodeEntityMap.get(code) ?? []
+    if (axis === 'none') {
+      violatedMappings.push({
+        entityId, entityName: entity.name, kind: entity.kind,
+        apqcCode: frameMapping.apqcCode, levelId,
+        reason: `${entity.kind} 类型暂不参与 APQC 映射`,
+      })
+      continue
+    }
+    if (axis === 'domain' && lvl > 2) {
+      violatedMappings.push({
+        entityId, entityName: entity.name, kind: entity.kind,
+        apqcCode: frameMapping.apqcCode, levelId,
+        reason: '实体类（名词轴）仅允许映射到 L1/L2，L3+ 属流程轴',
+      })
+      continue
+    }
+    if (axis === 'process' && lvl < 3) {
+      violatedMappings.push({
+        entityId, entityName: entity.name, kind: entity.kind,
+        apqcCode: frameMapping.apqcCode, levelId,
+        reason: '流程类（动词轴）仅允许映射到 L3-L5',
+      })
+      continue
+    }
+
+    // 只登记到同轴层级的祖先节点：域轴仅 L1/L2，流程轴仅 L3+
+    const target = axis === 'domain' ? domainNodeMap : processNodeMap
+    if (axis === 'domain') domainEntityIds.add(entityId)
+    for (const code of collectAncestorCodes(fw, frameMapping.apqcCode)) {
+      const ancestorLvl = levelNumOfCode(code)
+      if (axis === 'domain' && ancestorLvl > 2) continue
+      if (axis === 'process' && ancestorLvl < 3) continue
+      const list = target.get(code) ?? []
       list.push({ entityId, status })
-      nodeEntityMap.set(code, list)
+      target.set(code, list)
     }
   }
 
-  const tree: CoverageNodeInfo[] = fw.domains.map(domain => buildCoverageForNode(
+  // ── 2. 域覆盖树（截断到 L2，仅统计名词轴实体）──
+  const truncated = truncateFrameworkToL2(fw)
+  const tree: CoverageNodeInfo[] = truncated.map(node => buildCoverageForNode(node, domainNodeMap))
+  const leafStats = computeLeafStatsFromTree(tree)
+  const cells = computeLevelAggregation(fw, domainNodeMap)
+
+  // ── 3. 全深度树（APQC 地图页导航用，按节点层级取对应轴的数据）──
+  const fullTree: CoverageNodeInfo[] = fw.domains.map(domain => buildAxisAwareNode(
     { code: domain.code, name: domain.name, label: domain.label, levelId: 'L1', pcfId: domain.pcfId, definition: domain.definition, children: domain.children },
-    nodeEntityMap,
+    domainNodeMap, processNodeMap,
   ))
-
-  const cells = computeLevelAggregation(fw, nodeEntityMap)
-
-  const leafStats = computeLeafStats(fw, nodeEntityMap)
 
   return {
     frameworkId,
@@ -250,12 +297,108 @@ export function computeCoverage(suite: SuiteData, frameworkId: string): Coverage
     levels: fw.levels,
     cells,
     totalEntities: suite.entities.length,
+    domainEntityCount: domainEntityIds.size,
     leafTotal: leafStats.total,
     leafCovered: leafStats.covered,
     leafPartial: leafStats.partial,
     leafGap: leafStats.gap,
     leafUnset: leafStats.unset,
     tree,
+    fullTree,
+    violatedMappings,
+  }
+}
+
+/** 域覆盖树：L1（domain）→ L2 截断（丢弃 L2 的 children） */
+function truncateFrameworkToL2(fw: FrameworkDefinition): FrameworkNode[] {
+  return fw.domains.map(domain => ({
+    code: domain.code, name: domain.name, label: domain.label,
+    levelId: 'L1', pcfId: domain.pcfId, definition: domain.definition,
+    children: (domain.children ?? []).map(c => ({
+      code: c.code, name: c.name, label: c.label, levelId: c.levelId,
+      pcfId: c.pcfId, definition: c.definition, children: undefined,
+    })),
+  }))
+}
+
+function computeLeafStatsFromTree(tree: CoverageNodeInfo[]): { total: number; covered: number; partial: number; gap: number; unset: number } {
+  const stats = { total: 0, covered: 0, partial: 0, gap: 0, unset: 0 }
+  const walk = (n: CoverageNodeInfo): void => {
+    if (n.children && n.children.length > 0) { n.children.forEach(walk); return }
+    stats.total++
+    stats[n.status]++
+  }
+  tree.forEach(walk)
+  return stats
+}
+
+/**
+ * 全深度树构建：节点取数按自身层级分轴——L1/L2 读域轴桶，L3+ 读流程轴桶；
+ * rollup 只聚合同轴子节点（L1←L2、L3←L4←L5），不跨轴汇总。
+ */
+function buildAxisAwareNode(
+  node: FrameworkNode,
+  domainMap: Map<string, CoverageEntry[]>,
+  processMap: Map<string, CoverageEntry[]>,
+): CoverageNodeInfo {
+  const lvl = levelNumOfCode(node.code)
+  const isDomainLevel = lvl <= 2
+  const map = isDomainLevel ? domainMap : processMap
+
+  const childNodes = node.children && node.children.length > 0
+    ? node.children.map(c => buildAxisAwareNode(c, domainMap, processMap))
+    : undefined
+
+  const direct = map.get(node.code) ?? []
+  let coveredCount = 0
+  let partialCount = 0
+  let gapCount = 0
+  let entityCount = direct.length
+  const entities = new Set<string>()
+  for (const e of direct) {
+    entities.add(e.entityId)
+    if (e.status === 'covered') coveredCount++
+    else if (e.status === 'partial') partialCount++
+    else if (e.status === 'gap') gapCount++
+  }
+
+  // 仅聚合同轴子节点
+  const sameAxisKids = (childNodes ?? []).filter(c => (levelNumOfCode(c.code) <= 2) === isDomainLevel)
+  for (const c of sameAxisKids) {
+    entityCount += c.entityCount
+    for (const eid of c.entities) entities.add(eid)
+    coveredCount += c.coveredCount
+    partialCount += c.partialCount
+    gapCount += c.gapCount
+  }
+
+  let status: import('./shared-types.js').CoverageStatus
+  if (sameAxisKids.length > 0) {
+    status = calcRollupStatus({
+      covered: coveredCount, partial: partialCount, gap: gapCount,
+      unset: entityCount - coveredCount - partialCount - gapCount,
+      total: entityCount,
+    })
+  } else {
+    status = direct.length === 0 ? 'unset' : calcRollupStatus({
+      covered: coveredCount, partial: partialCount, gap: gapCount,
+      unset: direct.length - coveredCount - partialCount - gapCount,
+      total: direct.length,
+    })
+  }
+
+  return {
+    code: node.code,
+    name: node.name,
+    label: node.label,
+    levelId: node.levelId,
+    entityCount,
+    coveredCount,
+    partialCount,
+    gapCount,
+    status,
+    entities: Array.from(entities),
+    children: childNodes,
   }
 }
 
@@ -395,26 +538,6 @@ function collectFrameworkChildren(nodes: FrameworkNode[], bucket: FrameworkNode[
   }
 }
 
-function computeLeafStats(
-  fw: FrameworkDefinition,
-  nodeEntityMap: Map<string, { entityId: string; status: import('./shared-types.js').CoverageStatus }[]>,
-): { total: number; covered: number; partial: number; gap: number; unset: number } {
-  const leaves = collectLeafNodes(fw)
-  let covered = 0, partial = 0, gap = 0, unset = 0
-  for (const leaf of leaves) {
-    const list = nodeEntityMap.get(leaf.code) ?? []
-    if (list.length === 0) { unset++; continue }
-    const hasCovered = list.some(e => e.status === 'covered')
-    const hasGap = list.some(e => e.status === 'gap')
-    const hasPartial = list.some(e => e.status === 'partial')
-    if (hasCovered && !hasGap && !hasPartial) covered++
-    else if (hasGap) gap++
-    else if (hasPartial) partial++
-    else unset++
-  }
-  return { total: leaves.length, covered, partial, gap, unset }
-}
-
 // ─────────────── 流程图存取 ───────────────
 
 function flowchartsDir(storageRoot: string): string {
@@ -440,7 +563,9 @@ export async function listFlowcharts(): Promise<FlowchartMeta[]> {
     if (!isFlowchartData(data)) continue
     metas.push({
       id: data.id, name: data.name,
+      suiteId: data.suiteId, apqcCode: data.apqcCode,
       nodeCount: data.nodes.length, edgeCount: data.edges.length,
+      participationCount: data.semantics?.participations?.length ?? 0,
       createdAt: data.createdAt ?? 0, updatedAt: data.updatedAt ?? 0,
     })
   }
@@ -456,7 +581,12 @@ export async function getFlowchart(id: string): Promise<FlowchartData | null> {
   return isFlowchartData(data) ? data : null
 }
 
-export async function saveFlowchart(input: { id?: string; name: string; nodes: FlowchartData['nodes']; edges: FlowchartData['edges'] }): Promise<FlowchartData> {
+export async function saveFlowchart(input: {
+  id?: string; name: string
+  suiteId?: string; apqcCode?: string
+  nodes: FlowchartData['nodes']; edges: FlowchartData['edges']
+  semantics?: FlowchartData['semantics']
+}): Promise<FlowchartData> {
   const cfg = await getConfig()
   const dir = flowchartsDir(resolveDatastorageRoot(cfg))
   const existing = input.id ? await getFlowchart(input.id) : null
@@ -464,13 +594,299 @@ export async function saveFlowchart(input: { id?: string; name: string; nodes: F
   const data: FlowchartData = {
     id: existing?.id ?? `flow-${now.toString(36)}-${Math.random().toString(36).slice(2, 7)}`,
     name: input.name,
+    suiteId: input.suiteId || existing?.suiteId,
+    apqcCode: input.apqcCode || undefined,
     nodes: input.nodes,
     edges: input.edges,
+    semantics: input.semantics,
     createdAt: existing?.createdAt ?? now,
     updatedAt: now,
   }
   await writeJson(join(dir, `${data.id}.json`), data)
   return data
+}
+
+/** 读取某套件下的全部流程图（含语义层；旧数据无 suiteId 不计入） */
+export async function listFlowchartsForSuite(suiteId: string): Promise<FlowchartData[]> {
+  const cfg = await getConfig()
+  const dir = flowchartsDir(resolveDatastorageRoot(cfg))
+  let entries: string[]
+  try { entries = (await readdir(dir)).filter(f => f.endsWith('.json')) } catch { return [] }
+  const out: FlowchartData[] = []
+  for (const f of entries) {
+    const data = await readJsonSafe<FlowchartData | null>(join(dir, f), null)
+    if (isFlowchartData(data) && data.suiteId === suiteId) out.push(data)
+  }
+  return out.sort((a, b) => (b.updatedAt ?? 0) - (a.updatedAt ?? 0))
+}
+
+/**
+ * 语义投影（读取时推导）：将流程图 participations 投影为 ACTIVITY_OPERATES_OBJECT 派生关系。
+ * - 活动端：优先取 participation 节点 APQC 编号所映射的流程类实体（kind ∈ PROCESS_KINDS）
+ * - 无可解析活动实体时不产出关系（参与关系仍计入流程覆盖度）
+ * - 幂等且重导入安全：不落库，suite.relations 保持纯净；删除流程图后派生关系自动消失
+ */
+export function deriveFlowRelations(suite: SuiteData, flows: FlowchartData[]): OntologyRelation[] {
+  const kindOf = new Map(suite.entities.map(e => [e.id, e.kind]))
+  const activityByCode = new Map<string, string[]>()
+  for (const [entityId, fm] of Object.entries(suite.annotations.entityFrameMapping)) {
+    if (!fm.apqcCode) continue
+    const kind = kindOf.get(entityId)
+    if (!kind || mappingAxisOfKind(kind) !== 'process') continue
+    const list = activityByCode.get(fm.apqcCode) ?? []
+    list.push(entityId)
+    activityByCode.set(fm.apqcCode, list)
+  }
+
+  const out: OntologyRelation[] = []
+  for (const flow of flows) {
+    for (const p of flow.semantics?.participations ?? []) {
+      const node = flow.nodes.find(n => n.id === p.nodeId)
+      const actId = node?.code ? activityByCode.get(node.code)?.[0] : undefined
+      if (!actId || !p.entityId) continue
+      out.push({
+        id: `flow-${flow.id}-${p.nodeId}-${p.entityId}-${p.op}`,
+        from: actId,
+        to: p.entityId,
+        type: 'ACTIVITY_OPERATES_OBJECT',
+        label: p.op,
+        properties: {
+          op: p.op,
+          derivedFrom: `flow:${flow.id}`,
+          flowName: flow.name,
+          nodeId: p.nodeId,
+        },
+      })
+    }
+  }
+  return out
+}
+
+/** 套件数据 + 派生关系合并视图（图谱/覆盖度使用；原 loadSuite 保持纯净） */
+export async function loadSuiteWithDerived(suiteId: string): Promise<(SuiteData & { derivedRelations: OntologyRelation[] }) | null> {
+  const suite = await loadSuite(suiteId)
+  if (!suite) return null
+  const flows = await listFlowchartsForSuite(suiteId)
+  const interviews = await listInterviews(suiteId)
+  const derivedRelations = [
+    ...deriveFlowRelations(suite, flows),
+    ...deriveInterviewRelations(suite, interviews),
+  ]
+  return { ...suite, relations: [...suite.relations, ...derivedRelations], derivedRelations }
+}
+
+/**
+ * 流程覆盖度（动词轴，自动推导，只读）：
+ * - L3 covered ⇔ 存在挂载 FlowDoc 且 participations 非空；partial ⇔ 挂载但无参与；否则未挂载
+ * - L4/L5 covered ⇔ 画板节点（该编号）有 op 且有角色；partial ⇔ 仅其一；无画板活动时回看 ACTIVITY 实体映射
+ * - rollup 沿用 calcRollupStatus，L3 状态由子树/自身推导
+ */
+export function computeProcessCoverage(
+  suite: SuiteData,
+  flows: FlowchartData[],
+  frameworkId: string,
+  interviews: InterviewRecord[] = [],
+): ProcessCoverageMatrix {
+  const fw = getBuiltinFramework(frameworkId)
+  if (!fw) {
+    return { frameworkId, suiteId: suite.meta.suiteId, tree: [], l3Total: 0, l3Covered: 0, l3Partial: 0, l3Unmounted: 0, mountedFlows: [], gapList: [] }
+  }
+
+  // L3 挂载表
+  const mountByCode = new Map<string, { flowIds: string[]; hasParts: boolean }>()
+  for (const f of flows) {
+    if (!f.apqcCode || levelNumOfCode(f.apqcCode) !== 3) continue
+    const hasParts = (f.semantics?.participations ?? []).length > 0
+    const cur = mountByCode.get(f.apqcCode) ?? { flowIds: [], hasParts: false }
+    cur.flowIds.push(f.id)
+    cur.hasParts = cur.hasParts || hasParts
+    mountByCode.set(f.apqcCode, cur)
+  }
+
+  // L4/L5 画板活动表：编号 → { hasOp, hasRole }
+  const actByCode = new Map<string, { hasOp: boolean; hasRole: boolean }>()
+  for (const f of flows) {
+    for (const n of f.nodes) {
+      if (!n.code || levelNumOfCode(n.code) < 4) continue
+      const parts = (f.semantics?.participations ?? []).filter(p => p.nodeId === n.id)
+      const roleRef = f.semantics?.activities?.[n.id]?.roleRef
+      const cur = actByCode.get(n.code) ?? { hasOp: false, hasRole: false }
+      if (parts.length > 0) cur.hasOp = true
+      if (roleRef) cur.hasRole = true
+      actByCode.set(n.code, cur)
+    }
+  }
+
+  // ACTIVITY 实体映射回退：L4+ 编号 → 实体标注状态
+  const entityMarkByCode = new Map<string, import('./shared-types.js').CoverageStatus[]>()
+  for (const [entityId, fm] of Object.entries(suite.annotations.entityFrameMapping)) {
+    if (!fm.apqcCode || levelNumOfCode(fm.apqcCode) < 4) continue
+    const e = suite.entities.find(x => x.id === entityId)
+    if (!e || mappingAxisOfKind(e.kind) !== 'process') continue
+    const mark = suite.annotations.coverageMarks[entityId]
+    const status = mark?.status ?? 'unset'
+    const list = entityMarkByCode.get(fm.apqcCode) ?? []
+    list.push(status)
+    entityMarkByCode.set(fm.apqcCode, list)
+  }
+
+  // 访谈记录：L4/L5 编号 → 四问信号（有对象=op，有角色=role）
+  for (const itv of interviews) {
+    if (!itv.apqcCode || levelNumOfCode(itv.apqcCode) < 4) continue
+    const cur = actByCode.get(itv.apqcCode) ?? { hasOp: false, hasRole: false }
+    const a = itv.answers ?? {}
+    if (a.hasObject?.value && a.hasObject.entityId && a.hasObject.op) cur.hasOp = true
+    if (a.hasRole?.value && a.hasRole.roleRef) cur.hasRole = true
+    actByCode.set(itv.apqcCode, cur)
+  }
+
+  const statusOfL4 = (code: string): import('./shared-types.js').CoverageStatus => {
+    const c = actByCode.get(code)
+    if (c) {
+      if (c.hasOp && c.hasRole) return 'covered'
+      if (c.hasOp || c.hasRole) return 'partial'
+    }
+    const marks = entityMarkByCode.get(code)
+    if (marks && marks.length) {
+      return calcRollupStatus({
+        covered: marks.filter(s => s === 'covered').length,
+        partial: marks.filter(s => s === 'partial').length,
+        gap: marks.filter(s => s === 'gap').length,
+        unset: marks.filter(s => s === 'unset').length,
+        total: marks.length,
+      })
+    }
+    return 'unset'
+  }
+
+  // 构建裁剪树：L3 仅保留挂载/有子活动的分支；L4/L5 保留有状态的分支
+  const l3Total = { n: 0 }
+  const counters = { covered: 0, partial: 0, unmounted: 0 }
+  const gapList: ProcessCoverageMatrix['gapList'] = []
+  const classify = (st: import('./shared-types.js').CoverageStatus): void => {
+    if (st === 'covered') counters.covered++
+    else if (st === 'partial') counters.partial++
+    else counters.unmounted++
+  }
+
+  /** L4/L5 子树：叶子状态查表，非叶子递归 + 自身状态合并 */
+  const buildSub = (node: FrameworkNode): CoverageNodeInfo | null => {
+    const lvl = levelNumOfCode(node.code)
+    if (lvl < 4) return null
+    const selfSt = statusOfL4(node.code)
+    const kids = (node.children ?? []).map(buildSub).filter(Boolean) as CoverageNodeInfo[]
+    if (!kids.length) return selfSt === 'unset' ? null : leafInfo(node, selfSt, 1)
+    const info = rollupInfo(node, kids)
+    if (selfSt !== 'unset') {
+      const total = 1 + info.entityCount
+      const covered = (selfSt === 'covered' ? 1 : 0) + info.coveredCount
+      const partial = (selfSt === 'partial' ? 1 : 0) + info.partialCount
+      const gap = (selfSt === 'gap' ? 1 : 0) + info.gapCount
+      info.entityCount = total
+      info.coveredCount = covered
+      info.partialCount = partial
+      info.gapCount = gap
+      info.status = calcRollupStatus({ covered, partial, gap, unset: total - covered - partial - gap, total })
+    }
+    return info
+  }
+
+  const buildL3 = (node: FrameworkNode): CoverageNodeInfo | null => {
+    l3Total.n++
+    const mount = mountByCode.get(node.code)
+    const kids = (node.children ?? []).map(buildSub).filter(Boolean) as CoverageNodeInfo[]
+    if (!mount && !kids.length) {
+      gapList.push({ code: node.code, label: node.label, path: pathOf(fw, node.code) })
+      counters.unmounted++ // 未挂载且无子活动：只进 gapList，不进树
+      return null
+    }
+    if (!mount) {
+      const info = rollupInfo(node, kids)
+      classify(info.status)
+      return info
+    }
+    // 有挂载：自身（1 个单元）+ 子树合并
+    const selfCovered = mount.hasParts ? 1 : 0
+    const selfPartial = mount.hasParts ? 0 : 1
+    const total = 1 + kids.reduce((a, c) => a + c.entityCount, 0)
+    const covered = selfCovered + kids.reduce((a, c) => a + c.coveredCount, 0)
+    const partial = selfPartial + kids.reduce((a, c) => a + c.partialCount, 0)
+    const gap = kids.reduce((a, c) => a + c.gapCount, 0)
+    const info = leafInfo(node, 'unset', total)
+    info.coveredCount = covered
+    info.partialCount = partial
+    info.gapCount = gap
+    info.status = calcRollupStatus({ covered, partial, gap, unset: total - covered - partial - gap, total })
+    info.children = kids.length ? kids : undefined
+    classify(info.status)
+    return info
+  }
+
+  // L1/L2 结构容器（不直接参与状态，仅承载子树）
+  const tree: CoverageNodeInfo[] = fw.domains.map(domain => {
+    const l3Kids = (domain.children ?? []).flatMap(l2 => (l2.children ?? []).map(buildL3)).filter(Boolean) as CoverageNodeInfo[]
+    if (!l3Kids.length) return null
+    const container = leafInfo(
+      { code: domain.code, name: domain.name, label: domain.label, levelId: 'L1' },
+      'unset', l3Kids.length,
+    )
+    container.children = l3Kids
+    return container
+  }).filter(Boolean) as CoverageNodeInfo[]
+
+  return {
+    frameworkId,
+    suiteId: suite.meta.suiteId,
+    tree,
+    l3Total: l3Total.n,
+    l3Covered: counters.covered,
+    l3Partial: counters.partial,
+    l3Unmounted: counters.unmounted,
+    mountedFlows: flows.filter(f => f.apqcCode).map(f => ({
+      flowId: f.id, name: f.name, apqcCode: f.apqcCode!,
+      nodeCount: f.nodes.length,
+      participationCount: (f.semantics?.participations ?? []).length,
+      updatedAt: f.updatedAt ?? 0,
+    })),
+    gapList,
+  }
+}
+
+function leafInfo(node: Pick<FrameworkNode, 'code' | 'name' | 'label'> & { levelId?: string }, status: import('./shared-types.js').CoverageStatus, entityCount: number): CoverageNodeInfo {
+  return {
+    code: node.code, name: node.name, label: node.label,
+    levelId: node.levelId ?? `L${Math.min(Math.max(levelNumOfCode(node.code), 1), 5)}`,
+    entityCount, coveredCount: status === 'covered' ? entityCount : 0,
+    partialCount: status === 'partial' ? entityCount : 0,
+    gapCount: status === 'gap' ? entityCount : 0,
+    status, entities: [],
+  }
+}
+
+function rollupInfo(node: Pick<FrameworkNode, 'code' | 'name' | 'label'> & { levelId?: string }, kids: CoverageNodeInfo[]): CoverageNodeInfo {
+  const covered = kids.reduce((a, c) => a + c.coveredCount, 0)
+  const partial = kids.reduce((a, c) => a + c.partialCount, 0)
+  const gap = kids.reduce((a, c) => a + c.gapCount, 0)
+  const total = kids.reduce((a, c) => a + c.entityCount, 0)
+  return {
+    code: node.code, name: node.name, label: node.label,
+    levelId: node.levelId ?? `L${Math.min(Math.max(levelNumOfCode(node.code), 1), 5)}`,
+    entityCount: total, coveredCount: covered, partialCount: partial, gapCount: gap,
+    status: calcRollupStatus({ covered, partial, gap, unset: total - covered - partial - gap, total }),
+    entities: [],
+    children: kids,
+  }
+}
+
+function pathOf(fw: FrameworkDefinition, code: string): string[] {
+  const parts = code.split('.')
+  const out: string[] = []
+  for (let i = 1; i <= parts.length; i++) {
+    const c = parts.slice(0, i).join('.')
+    const hit = findNodeByCode(fw, c)
+    if (hit) out.push(hit.node.label)
+  }
+  return out
 }
 
 export async function deleteFlowchart(id: string): Promise<boolean> {
@@ -481,6 +897,142 @@ export async function deleteFlowchart(id: string): Promise<boolean> {
     await unlink(path)
     return true
   } catch { return false }
+}
+
+// ─────────────── 访谈记录存取（datastorage/interviews/<suiteId>.json） ───────────────
+
+function interviewsFile(root: string, suiteId: string): string {
+  const safe = suiteId.replace(/[^\w.-]/g, '_')
+  return join(root, 'interviews', `${safe}.json`)
+}
+
+export async function listInterviews(suiteId: string): Promise<InterviewRecord[]> {
+  const cfg = await getConfig()
+  const data = await readJsonSafe<InterviewRecord[] | null>(interviewsFile(resolveDatastorageRoot(cfg), suiteId), null)
+  if (!Array.isArray(data)) return []
+  return data.filter(r => r && r.id && r.apqcCode)
+}
+
+export async function saveInterview(suiteId: string, input: {
+  id?: string; apqcCode: string
+  answers: InterviewRecord['answers']
+  note?: string
+}): Promise<InterviewRecord> {
+  const cfg = await getConfig()
+  const file = interviewsFile(resolveDatastorageRoot(cfg), suiteId)
+  const list = await readJsonSafe<InterviewRecord[]>(file, [])
+  const now = Date.now()
+  const existing = input.id ? list.find(r => r.id === input.id) : null
+  const record: InterviewRecord = {
+    id: existing?.id ?? `itv-${now.toString(36)}-${Math.random().toString(36).slice(2, 7)}`,
+    suiteId,
+    apqcCode: input.apqcCode,
+    answers: input.answers ?? {},
+    note: typeof input.note === 'string' && input.note.trim() ? input.note : undefined,
+    createdAt: existing?.createdAt ?? now,
+    updatedAt: now,
+  }
+  const next = existing
+    ? list.map(r => (r.id === record.id ? record : r))
+    : [...list, record]
+  await writeJson(file, next)
+  return record
+}
+
+export async function deleteInterview(suiteId: string, id: string): Promise<boolean> {
+  const cfg = await getConfig()
+  const file = interviewsFile(resolveDatastorageRoot(cfg), suiteId)
+  const list = await readJsonSafe<InterviewRecord[]>(file, [])
+  const next = list.filter(r => r.id !== id)
+  if (next.length === list.length) return false
+  await writeJson(file, next)
+  return true
+}
+
+/**
+ * 访谈派生关系：hasObject（对象 + op）的记录投影为 ACTIVITY_OPERATES_OBJECT，
+ * derivedFrom = interview:<id>。与流程画板同桥，读取时推导、不落库。
+ */
+export function deriveInterviewRelations(suite: SuiteData, interviews: InterviewRecord[]): OntologyRelation[] {
+  const kindOf = new Map(suite.entities.map(e => [e.id, e.kind]))
+  const activityByCode = new Map<string, string[]>()
+  for (const [entityId, fm] of Object.entries(suite.annotations.entityFrameMapping)) {
+    if (!fm.apqcCode) continue
+    const kind = kindOf.get(entityId)
+    if (!kind || mappingAxisOfKind(kind) !== 'process') continue
+    const list = activityByCode.get(fm.apqcCode) ?? []
+    list.push(entityId)
+    activityByCode.set(fm.apqcCode, list)
+  }
+
+  const out: OntologyRelation[] = []
+  for (const itv of interviews) {
+    const a = itv.answers?.hasObject
+    if (!a?.value || !a.entityId || !a.op) continue
+    const actId = activityByCode.get(itv.apqcCode)?.[0]
+    if (!actId) continue
+    out.push({
+      id: `interview-${itv.id}-${a.entityId}-${a.op}`,
+      from: actId,
+      to: a.entityId,
+      type: 'ACTIVITY_OPERATES_OBJECT',
+      label: a.op,
+      properties: { op: a.op, derivedFrom: `interview:${itv.id}`, nodeId: undefined },
+    })
+  }
+  return out
+}
+
+// ─────────────── CRUD 矩阵（实体 × 流程，交付物视图） ───────────────
+
+/**
+ * CRUD 矩阵（实体 × 来源，交付物视图）。
+ * 数据源 = 派生关系（画板参与 + 访谈投影）而非原始 participations，
+ * 保证矩阵与 derived-relations / 覆盖度口径一致：
+ * 活动端无法解析的参与不进矩阵（与「不产出关系」规则相同）。
+ * 列键为派生来源：flow:<id> | interview:<id>。
+ */
+export function computeCrudMatrix(suite: SuiteData, flows: FlowchartData[], interviews: InterviewRecord[] = []): CrudMatrix {
+  const derived = [...deriveFlowRelations(suite, flows), ...deriveInterviewRelations(suite, interviews)]
+  const flowById = new Map(flows.map(f => [f.id, f]))
+  const itvById = new Map(interviews.map(i => [i.id, i]))
+  const colMap = new Map<string, CrudMatrix['columns'][number]>()
+  const rowMap = new Map<string, CrudMatrix['rows'][number]>()
+  for (const r of derived) {
+    const src = String(r.properties?.derivedFrom ?? '')
+    if (!colMap.has(src)) {
+      if (src.startsWith('flow:')) {
+        const f = flowById.get(src.slice(5))
+        if (f) colMap.set(src, { flowId: src, name: f.name, apqcCode: f.apqcCode })
+      } else if (src.startsWith('interview:')) {
+        const itv = itvById.get(src.slice(10))
+        if (itv) colMap.set(src, { flowId: src, name: `访谈 · ${itv.apqcCode}`, apqcCode: itv.apqcCode })
+      }
+    }
+    if (!colMap.has(src)) continue
+    const ent = suite.entities.find(e => e.id === r.to)
+    if (!ent) continue
+    let row = rowMap.get(ent.id)
+    if (!row) {
+      row = { entityId: ent.id, entityName: ent.name, kind: ent.kind, cells: {}, opCount: 0 }
+      rowMap.set(ent.id, row)
+    }
+    const op = (r.properties?.op as FlowOp) ?? 'read'
+    const cell = row.cells[src] ?? []
+    if (!cell.includes(op)) cell.push(op)
+    row.cells[src] = cell
+    row.opCount++
+  }
+  const cols = [...colMap.values()]
+  const flowCols = cols.filter(c => c.flowId.startsWith('flow:'))
+    .sort((a, b) => (a.apqcCode ?? '').localeCompare(b.apqcCode ?? '') || a.name.localeCompare(b.name, 'zh'))
+  const itvCols = cols.filter(c => c.flowId.startsWith('interview:'))
+    .sort((a, b) => (a.apqcCode ?? '').localeCompare(b.apqcCode ?? ''))
+  return {
+    suiteId: suite.meta.suiteId,
+    columns: [...flowCols, ...itvCols],
+    rows: [...rowMap.values()].sort((a, b) => a.entityName.localeCompare(b.entityName, 'zh')),
+  }
 }
 
 // ─────────────── 框架查询 ───────────────

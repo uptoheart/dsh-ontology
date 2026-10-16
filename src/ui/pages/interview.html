@@ -1,0 +1,99 @@
+<!-- Tab 5: 访谈清单 -->
+<section class="tab-panel" id="tab-interview">
+  <!-- 左栏：L3/L4 节点选择器 + 进度 -->
+  <div class="iv-left">
+    <div class="fw-search">
+      <input type="text" id="ivTreeSearch" placeholder="🔍 搜索 L3/L4 编号或名称">
+      <div class="hint" id="ivProgress">—</div>
+    </div>
+    <div class="tree-wrap" id="ivTreeWrap"></div>
+    <div class="iv-legend">
+      <span><i class="iv-dot st-done"></i>已完成</span>
+      <span><i class="iv-dot st-doing"></i>进行中</span>
+      <span><i class="iv-dot st-none"></i>未开始</span>
+    </div>
+  </div>
+
+  <!-- 中栏：四问 checklist 表单 -->
+  <div class="iv-center">
+    <div class="iv-toolbar">
+      <div class="iv-node-info">
+        <span class="iv-node-code" id="ivNodeCode">—</span>
+        <span class="iv-node-label" id="ivNodeLabel">从左侧选择要访谈的 L3/L4 节点</span>
+        <span class="iv-node-status" id="ivNodeStatus"></span>
+      </div>
+      <div class="iv-actions">
+        <button class="btn" id="ivGoFlow" title="跳转流程画板（已挂载则直接打开）">✏️ 去画板补画</button>
+        <button class="btn danger" id="ivDelete" title="删除该节点的访谈记录">🗑 删除记录</button>
+        <button class="btn primary" id="ivSave" title="保存访谈记录，自动投影为参与关系">💾 保存并投影</button>
+      </div>
+    </div>
+
+    <div class="iv-form-wrap" id="ivFormWrap">
+      <div class="iv-empty" id="ivEmpty">
+        <div class="big">🎤</div>
+        <div>四问访谈：这个流程<strong>谁做</strong>？动<strong>哪些单据</strong>？有什么<strong>规矩</strong>？系统里<strong>怎么处理</strong>？</div>
+        <div class="dim">现场只做记录，保存后自动生成参与关系并点亮流程覆盖度</div>
+      </div>
+
+      <div class="iv-form" id="ivForm" style="display:none">
+        <div class="iv-q" data-q="hasRole">
+          <label class="iv-q-head">
+            <input type="checkbox" id="ivHasRole">
+            <span class="iv-q-title">① 角色 —— 这个活动谁做？</span>
+          </label>
+          <div class="iv-q-body">
+            <input type="text" id="ivRole" list="ivRoleList" placeholder="如：订单专员 / 库管员">
+            <datalist id="ivRoleList"></datalist>
+          </div>
+        </div>
+
+        <div class="iv-q" data-q="hasObject">
+          <label class="iv-q-head">
+            <input type="checkbox" id="ivHasObject">
+            <span class="iv-q-title">② 对象 —— 动哪些单据/记录？</span>
+          </label>
+          <div class="iv-q-body iv-q-obj">
+            <select id="ivEntity"></select>
+            <select id="ivOp"></select>
+          </div>
+        </div>
+
+        <div class="iv-q" data-q="hasRule">
+          <label class="iv-q-head">
+            <input type="checkbox" id="ivHasRule">
+            <span class="iv-q-title">③ 规则 —— 有什么规矩/约束？</span>
+          </label>
+          <div class="iv-q-body">
+            <input type="text" id="ivRule" list="ivRuleList" placeholder="如：金额 &gt; 5 万需总监审批（客户未提可留空记为 gap）">
+            <datalist id="ivRuleList"></datalist>
+          </div>
+        </div>
+
+        <div class="iv-q" data-q="hasBehavior">
+          <label class="iv-q-head">
+            <input type="checkbox" id="ivHasBehavior">
+            <span class="iv-q-title">④ 行为 —— 系统里怎么处理？</span>
+          </label>
+          <div class="iv-q-body">
+            <input type="text" id="ivBehavior" list="ivBehaviorList" placeholder="如：调用 ERP 创建销售订单">
+            <datalist id="ivBehaviorList"></datalist>
+          </div>
+        </div>
+
+        <div class="iv-q">
+          <label class="iv-q-head"><span class="iv-q-title">备注（客户原话 / 口径说明）</span></label>
+          <div class="iv-q-body"><textarea id="ivNote" rows="2" placeholder="选填"></textarea></div>
+        </div>
+
+        <div class="iv-project" id="ivProjectLine"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 右栏：本套件访谈记录列表 -->
+  <div class="iv-right">
+    <div class="pane-head">访谈记录 <span class="ph-extra" id="ivCount"></span></div>
+    <div class="iv-list" id="ivList"></div>
+  </div>
+</section>

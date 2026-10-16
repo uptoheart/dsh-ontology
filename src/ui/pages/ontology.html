@@ -4,12 +4,25 @@
     <div class="graph-toolbar">
       <div class="gt-row">
         <span class="gt-title">🕸️ 实体关系图</span>
-        <button class="btn" id="btnGraphReset" title="复位视图缩放与平移">⌖ 复位视图</button>
+        <span class="view-toggle">
+          <button class="btn toggle active" data-view="graph" title="力导向图形视图">🕸️ 图形</button>
+          <button class="btn toggle" data-view="matrix" title="实体 × 流程 CRUD 矩阵（来自画板参与关系与访谈投影）">📊 CRUD 矩阵</button>
+        </span>
         <span class="gt-hint">拖拽节点 · 滚轮缩放 · 点击查看详情</span>
       </div>
       <div class="legend" id="kindLegend"></div>
     </div>
-    <div class="graph-wrap" id="graphWrap"><canvas id="ontoCanvas"></canvas></div>
+    <div class="graph-wrap" id="graphWrap">
+      <canvas id="ontoCanvas"></canvas>
+      <div class="graph-zoom" title="缩放（15% – 400%）">
+        <button id="zoomOut" title="缩小">−</button>
+        <input type="range" id="zoomSlider" min="15" max="400" step="1" value="100" title="拖动调整缩放">
+        <button id="zoomIn" title="放大">+</button>
+        <span id="zoomPct">100%</span>
+        <button id="btnGraphReset" title="复位视图缩放与平移">⌖ 复位视图</button>
+      </div>
+    </div>
+    <div class="crud-wrap" id="crudWrap" style="display:none"></div>
   </div>
   <div class="split-right" id="ontoDetail"><div class="empty-hint"><div><div class="big">🧩</div>点击左侧实体节点，查看行为、规则与关联内容</div></div></div>
 </section>

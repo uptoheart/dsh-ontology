@@ -38,15 +38,22 @@ async function selectSuite(suiteId) {
   if (!suiteId || suiteId === state.currentSuiteId) { if (suiteId) { $('#suiteSelect').value = suiteId; } return; }
   state.loading = true;
   try {
-    const [suite, coverage, framework] = await Promise.all([
+    const [suite, coverage, framework, dictionary, interviews] = await Promise.all([
       api('/api/suites/' + encodeURIComponent(suiteId)),
       api('/api/coverage?suite=' + encodeURIComponent(suiteId) + '&framework=' + DEFAULT_FW),
       api('/api/frameworks/' + DEFAULT_FW),
+      api('/api/dictionary?framework=' + DEFAULT_FW),
+      api('/api/suites/' + encodeURIComponent(suiteId) + '/interviews'),
     ]);
     state.currentSuiteId = suiteId;
     state.suite = suite;
     state.coverage = coverage;
     state.framework = framework;
+    state.dictionary = dictionary;
+    state.interviews = interviews || [];
+    iv.selectedCode = null; iv.currentId = null;
+    iv.treeExpanded = new Set(); iv.treeQuery = ''; iv.seeded = false;
+    $('#ivTreeSearch').value = '';
     state.flatFw = flattenFramework(framework);
     state.entityFilter = { kind: '', keyword: '' };
     state.entityPage = 1;

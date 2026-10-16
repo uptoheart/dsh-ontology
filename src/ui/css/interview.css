@@ -1,0 +1,131 @@
+/* ═══════════ Tab5 访谈清单 ═══════════ */
+#tab-interview { display: none; padding: 0; }
+#tab-interview.active { display: flex; }
+
+/* ───── 左栏 ───── */
+.iv-left {
+  flex-shrink: 0; width: 292px; min-width: 240px;
+  display: flex; flex-direction: column; min-height: 0;
+  border-right: 1px solid var(--border); background: var(--card);
+}
+.iv-left .fw-search { flex-shrink: 0; }
+.iv-left .tree-wrap { flex: 1; overflow: auto; padding: 6px 8px 12px; }
+.iv-legend {
+  flex-shrink: 0; display: flex; gap: 12px; padding: 8px 12px;
+  border-top: 1px solid var(--border); background: var(--surface);
+  font-size: 10.5px; color: var(--text-dim);
+}
+.iv-legend span { display: inline-flex; align-items: center; gap: 4px; }
+.iv-dot {
+  display: inline-block; width: 8px; height: 8px; border-radius: 50%;
+}
+.iv-dot.st-done { background: var(--st-covered); }
+.iv-dot.st-doing { background: var(--st-partial); }
+.iv-dot.st-none { background: var(--border-h); }
+
+/* 树行 */
+.iv-tree-row {
+  display: flex; align-items: center; gap: 6px;
+  padding: 4px 8px; border-radius: 6px; cursor: pointer;
+  font-size: 12.5px; line-height: 1.5; user-select: none;
+}
+.iv-tree-row:hover { background: var(--hover); }
+.iv-tree-row.selected { background: var(--active); box-shadow: inset 2px 0 0 var(--accent); }
+.iv-tree-row .caret {
+  width: 14px; flex-shrink: 0; text-align: center;
+  color: var(--text-dim); font-size: 10px; transition: transform .1s; user-select: none;
+}
+.iv-tree-row .caret.open { transform: rotate(90deg); }
+.iv-tree-row .caret.leaf { visibility: hidden; }
+.iv-tree-row .code { font-family: var(--mono); font-size: 11.5px; color: var(--accent); flex-shrink: 0; min-width: 56px; }
+.iv-tree-row .t-label { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.iv-tree-row .iv-dot { flex-shrink: 0; }
+
+/* ───── 中栏 ───── */
+.iv-center { flex: 1; min-width: 0; min-height: 0; display: flex; flex-direction: column; }
+.iv-toolbar {
+  flex-shrink: 0; display: flex; align-items: center; gap: 10px;
+  padding: 10px 14px; border-bottom: 1px solid var(--border); background: var(--card);
+}
+.iv-node-info { flex: 1; min-width: 0; display: flex; align-items: baseline; gap: 8px; }
+.iv-node-code { font-family: var(--mono); font-size: 13px; color: var(--accent); flex-shrink: 0; }
+.iv-node-label { font-size: 13.5px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.iv-node-status { font-size: 11px; flex-shrink: 0; }
+.iv-node-status.st-done { color: var(--st-covered); }
+.iv-node-status.st-doing { color: var(--st-partial); }
+.iv-node-status.st-none { color: var(--text-dim); }
+.iv-actions { display: flex; gap: 6px; flex-shrink: 0; }
+.btn.danger:hover { color: var(--st-gap); border-color: var(--st-gap); }
+
+.iv-form-wrap { flex: 1; min-height: 0; overflow: auto; padding: 14px 18px; }
+.iv-empty {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 8px; height: 100%; min-height: 220px; text-align: center;
+  color: var(--text-dim); font-size: 13px; line-height: 1.9;
+}
+.iv-empty .big { font-size: 36px; }
+.iv-empty .dim { font-size: 11.5px; }
+
+.iv-form { max-width: 640px; display: flex; flex-direction: column; gap: 10px; }
+.iv-q {
+  border: 1px solid var(--border); border-radius: var(--radius);
+  background: var(--card); padding: 10px 12px;
+}
+.iv-q-head {
+  display: flex; align-items: center; gap: 8px; cursor: pointer; user-select: none;
+}
+.iv-q-head input[type="checkbox"] { width: 15px; height: 15px; accent-color: var(--accent); cursor: pointer; }
+.iv-q-title { font-size: 13px; font-weight: 600; }
+.iv-q-body { margin-top: 8px; padding-left: 23px; }
+.iv-q-body input[type="text"], .iv-q-body textarea {
+  width: 100%; box-sizing: border-box; padding: 6px 9px; font-size: 12.5px;
+  border: 1px solid var(--border); border-radius: 6px; background: var(--surface);
+  color: var(--text); resize: vertical; font-family: inherit;
+}
+.iv-q-body input:focus, .iv-q-body textarea:focus { outline: none; border-color: var(--accent); }
+.iv-q-body input:disabled, .iv-q-body select:disabled { opacity: .45; }
+.iv-q.off .iv-q-body { display: none; }
+.iv-q-obj { display: flex; gap: 6px; }
+.iv-q-obj select {
+  padding: 6px 8px; font-size: 12.5px; border: 1px solid var(--border);
+  border-radius: 6px; background: var(--surface); color: var(--text);
+}
+.iv-q-obj #ivEntity { flex: 1; min-width: 0; }
+.iv-q-obj #ivOp { width: 150px; flex-shrink: 0; }
+
+/* 投影预览行 */
+.iv-project {
+  font-size: 12px; line-height: 1.7; padding: 8px 12px;
+  border-radius: var(--radius); border: 1px dashed var(--border);
+  background: var(--surface); color: var(--text-dim);
+}
+.iv-project.on { border-color: var(--st-covered); color: var(--st-covered); background: var(--st-covered-bg); }
+.iv-project .mono { font-family: var(--mono); font-size: 11px; }
+
+/* ───── 右栏 ───── */
+.iv-right {
+  flex-shrink: 0; width: 264px; min-width: 220px;
+  display: flex; flex-direction: column; min-height: 0;
+  border-left: 1px solid var(--border); background: var(--card);
+}
+.iv-list { flex: 1; overflow: auto; padding: 8px; display: flex; flex-direction: column; gap: 6px; }
+.iv-item {
+  position: relative; border: 1px solid var(--border); border-radius: 6px;
+  padding: 8px 10px; cursor: pointer; background: var(--card);
+  transition: border-color .1s;
+}
+.iv-item:hover { border-color: var(--border-h); }
+.iv-item.selected { border-color: var(--accent); background: var(--active); }
+.iv-item .ii-code { font-family: var(--mono); font-size: 11px; color: var(--accent); }
+.iv-item .ii-name { font-size: 12.5px; font-weight: 600; margin-top: 2px; word-break: break-all; }
+.iv-item .ii-sum { font-size: 10.5px; color: var(--text-dim); margin-top: 4px; line-height: 1.6; }
+.iv-item .ii-badge {
+  display: inline-block; margin-top: 5px; padding: 1px 7px; border-radius: 9px;
+  font-size: 10px; background: var(--st-covered-bg); color: var(--st-covered);
+}
+.iv-item .ii-del {
+  position: absolute; top: 6px; right: 6px;
+  background: none; border: none; color: var(--text-dim);
+  font-size: 12px; line-height: 1; padding: 3px; border-radius: 4px;
+}
+.iv-item .ii-del:hover { color: var(--st-gap); background: var(--st-gap-bg); }

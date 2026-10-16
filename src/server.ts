@@ -4,13 +4,15 @@ import { resolve, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { sendJson, sendHtml, sendOptions, readJsonBody } from './server-utils.js'
 import {
-  listImportedSuites, loadSuite, saveAnnotations,
-  importFromDatasource, assembleGraph, computeCoverage,
+  listImportedSuites, loadSuite, loadSuiteWithDerived, saveAnnotations,
+  importFromDatasource, assembleGraph, computeCoverage, computeProcessCoverage, computeCrudMatrix,
   listFrameworks,
-  listFlowcharts, getFlowchart, saveFlowchart, deleteFlowchart,
+  listFlowcharts, listFlowchartsForSuite, getFlowchart, saveFlowchart, deleteFlowchart,
+  deriveFlowRelations, deriveInterviewRelations,
+  listInterviews, saveInterview, deleteInterview,
 } from './datastore.js'
 import { resolveDatasourceRoot, discoverSuites } from './ontology-parser.js'
-import { getBuiltinFramework, deriveOntologyCode, deriveApqcCode, parseApqcCode } from './builtin-frameworks.js'
+import { getBuiltinFramework, buildDomainDictionary, deriveOntologyCode, deriveApqcCode, parseApqcCode } from './builtin-frameworks.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
@@ -43,10 +45,16 @@ function matchRoute(method: string, path: string): { handler: Handler; params: R
     { method: 'POST', pattern: /^\/api\/suites\/import$/,               handler: apiImportSuites },
     { method: 'GET', pattern: /^\/api\/suites\/([^/]+)\/entities$/,     handler: apiListEntities },
     { method: 'GET', pattern: /^\/api\/suites\/([^/]+)\/graph$/,        handler: apiGetGraph },
+    { method: 'GET', pattern: /^\/api\/suites\/([^/]+)\/derived-relations$/, handler: apiDerivedRelations },
+    { method: 'GET', pattern: /^\/api\/suites\/([^/]+)\/crud-matrix$/,  handler: apiCrudMatrix },
+    { method: 'GET', pattern: /^\/api\/suites\/([^/]+)\/interviews$/,   handler: apiListInterviews },
+    { method: 'POST', pattern: /^\/api\/suites\/([^/]+)\/interviews$/,  handler: apiSaveInterview },
+    { method: 'DELETE', pattern: /^\/api\/suites\/([^/]+)\/interviews\/([^/]+)$/, handler: apiDeleteInterview },
     { method: 'POST', pattern: /^\/api\/suites\/([^/]+)\/annotations$/, handler: apiSaveAnnotations },
     { method: 'GET', pattern: /^\/api\/frameworks$/,                    handler: apiListFrameworks },
     { method: 'GET', pattern: /^\/api\/frameworks\/([^/]+)$/,           handler: apiGetFramework },
     { method: 'GET', pattern: /^\/api\/coverage$/,                      handler: apiCoverage },
+    { method: 'GET', pattern: /^\/api\/dictionary$/,                    handler: apiDictionary },
     { method: 'GET', pattern: /^\/api\/datasource\/suites$/,           handler: apiDatasourceSuites },
     { method: 'GET', pattern: /^\/api\/ontology-code\/derive$/,        handler: apiDeriveOntologyCode },
     { method: 'GET', pattern: /^\/api\/flowcharts$/,                   handler: apiListFlowcharts },
@@ -158,9 +166,76 @@ async function apiListEntities(_req: IncomingMessage, res: ServerResponse, param
 }
 
 async function apiGetGraph(_req: IncomingMessage, res: ServerResponse, params: Record<string, string>): Promise<void> {
-  const suite = await loadSuite(params.p1)
+  const suite = await loadSuiteWithDerived(params.p1)
   if (!suite) { sendJson(res, 404, { success: false, message: `suite ${params.p1} not found` }); return }
   sendJson(res, 200, { success: true, data: assembleGraph(suite) })
+}
+
+async function apiDerivedRelations(_req: IncomingMessage, res: ServerResponse, params: Record<string, string>): Promise<void> {
+  const suite = await loadSuite(params.p1)
+  if (!suite) { sendJson(res, 404, { success: false, message: `suite ${params.p1} not found` }); return }
+  const flows = await listFlowchartsForSuite(params.p1)
+  const interviews = await listInterviews(params.p1)
+  sendJson(res, 200, {
+    success: true,
+    data: {
+      relations: [...deriveFlowRelations(suite, flows), ...deriveInterviewRelations(suite, interviews)],
+      flowCount: flows.length,
+      interviewCount: interviews.length,
+    },
+  })
+}
+
+async function apiCrudMatrix(_req: IncomingMessage, res: ServerResponse, params: Record<string, string>): Promise<void> {
+  const suite = await loadSuite(params.p1)
+  if (!suite) { sendJson(res, 404, { success: false, message: `suite ${params.p1} not found` }); return }
+  const [flows, interviews] = await Promise.all([
+    listFlowchartsForSuite(params.p1),
+    listInterviews(params.p1),
+  ])
+  sendJson(res, 200, { success: true, data: computeCrudMatrix(suite, flows, interviews) })
+}
+
+async function apiListInterviews(_req: IncomingMessage, res: ServerResponse, params: Record<string, string>): Promise<void> {
+  sendJson(res, 200, { success: true, data: await listInterviews(params.p1) })
+}
+
+async function apiSaveInterview(req: IncomingMessage, res: ServerResponse, params: Record<string, string>): Promise<void> {
+  const body = await readJsonBody(req) as {
+    id?: string; apqcCode?: string; note?: string
+    answers?: { hasRole?: unknown; hasObject?: unknown; hasRule?: unknown; hasBehavior?: unknown }
+  }
+  if (!body || typeof body.apqcCode !== 'string' || !body.apqcCode.trim()) {
+    sendJson(res, 400, { success: false, message: 'apqcCode required' }); return
+  }
+  const answers: Record<string, unknown> = {}
+  for (const key of ['hasRole', 'hasObject', 'hasRule', 'hasBehavior'] as const) {
+    const a = body.answers?.[key]
+    if (a && typeof a === 'object') {
+      answers[key] = {
+        value: Boolean((a as any).value),
+        roleRef: typeof (a as any).roleRef === 'string' ? (a as any).roleRef : undefined,
+        entityId: typeof (a as any).entityId === 'string' ? (a as any).entityId : undefined,
+        op: typeof (a as any).op === 'string' ? (a as any).op : undefined,
+        ruleRef: typeof (a as any).ruleRef === 'string' ? (a as any).ruleRef : undefined,
+        behaviorRef: typeof (a as any).behaviorRef === 'string' ? (a as any).behaviorRef : undefined,
+        note: typeof (a as any).note === 'string' ? (a as any).note : undefined,
+      }
+    }
+  }
+  const saved = await saveInterview(params.p1, {
+    id: typeof body.id === 'string' && body.id ? body.id : undefined,
+    apqcCode: body.apqcCode.trim(),
+    answers: answers as any,
+    note: typeof body.note === 'string' ? body.note : undefined,
+  })
+  sendJson(res, 200, { success: true, data: saved })
+}
+
+async function apiDeleteInterview(_req: IncomingMessage, res: ServerResponse, params: Record<string, string>): Promise<void> {
+  const ok = await deleteInterview(params.p1, params.p2)
+  if (!ok) { sendJson(res, 404, { success: false, message: 'interview not found' }); return }
+  sendJson(res, 200, { success: true, data: { deleted: params.p2 } })
 }
 
 async function apiSaveAnnotations(req: IncomingMessage, res: ServerResponse, params: Record<string, string>): Promise<void> {
@@ -186,7 +261,16 @@ async function apiCoverage(_req: IncomingMessage, res: ServerResponse, _p: Recor
   if (!suiteId) { sendJson(res, 400, { success: false, message: 'suite query param required' }); return }
   const suite = await loadSuite(suiteId)
   if (!suite) { sendJson(res, 404, { success: false, message: `suite ${suiteId} not found` }); return }
-  sendJson(res, 200, { success: true, data: computeCoverage(suite, fw) })
+  const flows = await listFlowchartsForSuite(suiteId)
+  const interviews = await listInterviews(suiteId)
+  const data = computeCoverage(suite, fw)
+  data.process = computeProcessCoverage(suite, flows, fw, interviews)
+  sendJson(res, 200, { success: true, data })
+}
+
+async function apiDictionary(_req: IncomingMessage, res: ServerResponse, _p: Record<string, string>, query: Record<string, string>): Promise<void> {
+  const fw = query.framework ?? 'apqc-process'
+  sendJson(res, 200, { success: true, data: buildDomainDictionary(fw) })
 }
 
 async function apiDatasourceSuites(_req: IncomingMessage, res: ServerResponse): Promise<void> {
@@ -233,18 +317,32 @@ async function apiGetFlowchart(_req: IncomingMessage, res: ServerResponse, param
 }
 
 async function apiSaveFlowchart(req: IncomingMessage, res: ServerResponse): Promise<void> {
-  const body = await readJsonBody(req) as { id?: string; name?: string; nodes?: unknown; edges?: unknown }
+  const body = await readJsonBody(req) as {
+    id?: string; name?: string; nodes?: unknown; edges?: unknown
+    suiteId?: unknown; apqcCode?: unknown; semantics?: unknown
+  }
   if (!body || typeof body.name !== 'string' || !body.name.trim()) {
     sendJson(res, 400, { success: false, message: 'name required' }); return
   }
   if (!Array.isArray(body.nodes) || !Array.isArray(body.edges)) {
     sendJson(res, 400, { success: false, message: 'nodes and edges required' }); return
   }
+  // 语义层轻校验：participations/activities 结构不符合时不落盘语义
+  let semantics = body.semantics as any
+  if (semantics && typeof semantics === 'object') {
+    if (!Array.isArray(semantics.participations)) semantics.participations = []
+    if (!semantics.activities || typeof semantics.activities !== 'object') semantics.activities = {}
+  } else {
+    semantics = undefined
+  }
   const saved = await saveFlowchart({
     id: typeof body.id === 'string' && body.id ? body.id : undefined,
     name: body.name.trim().slice(0, 80),
+    suiteId: typeof body.suiteId === 'string' && body.suiteId ? body.suiteId : undefined,
+    apqcCode: typeof body.apqcCode === 'string' && body.apqcCode ? body.apqcCode : undefined,
     nodes: body.nodes as any,
     edges: body.edges as any,
+    semantics,
   })
   sendJson(res, 200, { success: true, data: saved })
 }

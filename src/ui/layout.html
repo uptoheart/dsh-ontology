@@ -10,6 +10,7 @@
 /* @include: css/coverage.css */
 /* @include: css/framework.css */
 /* @include: css/flowchart.css */
+/* @include: css/interview.css */
 /* @include: css/ontology.css */
 </style>
 </head>
@@ -31,10 +32,13 @@
 </header>
 
 <nav class="tabs" id="tabs">
-  <button data-tab="ontology" class="active">本体<span class="tab-count" id="cntEntities">0</span></button>
-  <button data-tab="suites">本体管理<span class="tab-count" id="cntSuites">0</span></button>
-  <button data-tab="framework" disabled>APQC</button>
-  <button data-tab="flowchart" disabled>流程图<span class="tab-count" id="cntFlows">0</span></button>
+  <span class="tab-group-label">▎流程工作台</span>
+  <button data-tab="framework" disabled>APQC 地图</button>
+  <button data-tab="flowchart" disabled>流程画板<span class="tab-count" id="cntFlows">0</span></button>
+  <button data-tab="interview" disabled>访谈清单<span class="tab-count" id="cntInterviews">0</span></button>
+  <span class="tab-group-label">▎本体资产库</span>
+  <button data-tab="ontology" class="active">本体图谱<span class="tab-count" id="cntEntities">0</span></button>
+  <button data-tab="suites">套件管理<span class="tab-count" id="cntSuites">0</span></button>
   <button data-tab="coverage" disabled>覆盖度</button>
 </nav>
 
@@ -43,6 +47,7 @@
 <!-- @include: pages/coverage.html -->
 <!-- @include: pages/framework.html -->
 <!-- @include: pages/flowchart.html -->
+<!-- @include: pages/interview.html -->
 <!-- @include: pages/ontology.html -->
 </main>
 
@@ -64,10 +69,12 @@
     </div>
     <div class="drawer-sec">
       <h4>APQC 编号</h4>
+      <div class="domain-line" id="dwDomain" style="display:none"></div>
       <div class="apqc-box">
         <input type="text" id="dwApqc" placeholder="如 9.3.1，输入以搜索…" autocomplete="off">
         <div class="apqc-sug" id="dwSug"></div>
       </div>
+      <div class="map-warn" id="dwWarn" style="display:none"></div>
       <div class="derive-line" id="dwDerive"></div>
     </div>
     <div class="drawer-sec">
@@ -94,6 +101,7 @@
 /* @include: scripts/coverage.js */
 /* @include: scripts/framework.js */
 /* @include: scripts/flowchart.js */
+/* @include: scripts/interview.js */
 /* @include: scripts/ontology.js */
 /* @include: scripts/main.js */
 </script>

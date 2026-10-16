@@ -1,0 +1,28 @@
+[
+  {
+    "id": "itv-mva9rs9r-wdw3b",
+    "suiteId": "reference-example",
+    "apqcCode": "1.2.5",
+    "answers": {
+      "hasRole": {
+        "value": true,
+        "roleRef": "战略规划组"
+      },
+      "hasObject": {
+        "value": true,
+        "entityId": "reference-example:AGGREGATE_ROOT:AGG-CUSTOMER-001",
+        "op": "create"
+      },
+      "hasRule": {
+        "value": true,
+        "ruleRef": "合同审批层级判定"
+      },
+      "hasBehavior": {
+        "value": true,
+        "behaviorRef": "提交合同审批"
+      }
+    },
+    "createdAt": 1792112937183,
+    "updatedAt": 1792114484412
+  }
+]

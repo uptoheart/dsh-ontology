@@ -27,6 +27,9 @@
   <div class="flow-center">
     <div class="flow-toolbar">
       <input type="text" id="flowName" placeholder="流程图名称…" maxlength="80">
+      <select id="flowMount" title="挂载到 APQC L3 节点（决定流程覆盖度）">
+        <option value="">挂载 APQC L3…</option>
+      </select>
       <button class="btn primary" id="flowSave">💾 保存</button>
       <div class="flow-export-group">
         <button class="btn" id="flowNew" title="新建流程图（会先询问是否保存当前画布内容）">🆕 新建</button>
@@ -54,8 +57,30 @@
     </div>
   </div>
 
-  <!-- 右栏：已保存流程图列表 -->
+  <!-- 右栏：上 选中节点属性（语义层）/ 下 已保存流程图列表 -->
   <div class="flow-right">
+    <div class="pane-head">选中节点属性 <span class="ph-extra" id="fpCode"></span></div>
+    <div class="flow-props" id="flowProps">
+      <div class="fp-empty" id="fpEmpty">点击画布节点，录入角色 / 对象 / 规则 / 行为<br><span class="dim">（四问沉淀，保存时生成参与关系）</span></div>
+      <div class="fp-body" id="fpBody" style="display:none">
+        <div class="fp-row">
+          <label>角色（谁做）</label>
+          <input type="text" id="fpRole" list="fpRoleList" placeholder="如：订单专员">
+          <datalist id="fpRoleList"></datalist>
+        </div>
+        <div class="fp-row">
+          <label>守卫规则（有什么规矩，每行一条）</label>
+          <textarea id="fpRules" rows="2" placeholder="如：金额 &gt; 5 万需总监审批"></textarea>
+        </div>
+        <div class="fp-row">
+          <label>行为引用（系统里怎么处理，每行一条）</label>
+          <textarea id="fpBehaviors" rows="2" placeholder="如：调用 ERP 创建销售订单"></textarea>
+        </div>
+        <div class="fp-sep">参与关系（动哪些单据）<span class="dim">op × 对象</span></div>
+        <div id="fpParts"></div>
+        <button class="btn" id="fpAddPart">+ 添加参与</button>
+      </div>
+    </div>
     <div class="pane-head">已保存流程图 <span class="ph-extra" id="flowCount"></span></div>
     <div class="flow-list" id="flowList"></div>
   </div>
