@@ -1,6 +1,12 @@
-<!-- Tab: 本体管理（左：套件列表 / 右：实体列表） -->
+<!-- Tab: 套件管理（左：套件列表 / 右：实体列表） -->
 <section class="tab-panel split" id="tab-suites">
   <div class="split-left">
+    <div class="suite-bar">
+      <label for="suiteSelect">选择套件:</label>
+      <select id="suiteSelect"><option value="">— 加载中… —</option></select>
+      <button class="btn" id="btnRefresh" title="重新加载套件与覆盖度数据">🔄 刷新</button>
+      <button class="btn" id="btnReimport" title="从 datasource 重新解析并导入（保留标注；已有套件框架保持不变，可在「流程框架」下拉中切换）">📦 重新导入</button>
+    </div>
     <div class="pane-head">📦 套件列表 <span class="ph-extra" id="suiteExtra"></span></div>
     <div class="suite-list" id="suiteList"></div>
   </div>

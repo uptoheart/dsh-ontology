@@ -24,10 +24,6 @@
   </div>
   <div class="spacer"></div>
   <div class="suite-bar">
-    <label for="suiteSelect">选择套件:</label>
-    <select id="suiteSelect"><option value="">— 加载中… —</option></select>
-    <button class="btn" id="btnRefresh" title="重新加载套件与覆盖度数据">🔄 刷新</button>
-    <button class="btn" id="btnReimport" title="从 datasource 重新解析并导入（保留标注；已有套件框架保持不变，可在「流程框架」下拉中切换）">📦 重新导入</button>
     <label for="fwNewSelect" title="当前套件使用的流程框架（切换后流程地图/覆盖度按新框架展示；重新导入时新套件也使用该框架）">流程框架:</label>
     <select id="fwNewSelect" title="当前套件使用的流程框架；切换后旧框架下的实体映射需重新锚定（保留但不再参与统计）"></select>
     <button class="btn" id="btnImportFw" title="导入自定义流程框架 JSON（校验后持久化，重启后自动加载）">🗂 导入框架</button>
