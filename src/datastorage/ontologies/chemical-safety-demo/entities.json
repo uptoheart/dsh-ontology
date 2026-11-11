@@ -1,0 +1,1225 @@
+[
+  {
+    "id": "reg:SAFETY-LAW",
+    "rawId": "reg:SAFETY-LAW",
+    "name": "安全生产法（2021 修正）",
+    "kind": "SAFETY_REGULATION",
+    "domain": "化工安全",
+    "sourceFile": "seed",
+    "properties": {
+      "code": "SAFETY-LAW",
+      "title": "安全生产法（2021 修正）",
+      "type": "法律",
+      "issuer": "全国人大常委会"
+    }
+  },
+  {
+    "id": "reg:HC-REG",
+    "rawId": "reg:HC-REG",
+    "name": "危险化学品安全管理条例",
+    "kind": "SAFETY_REGULATION",
+    "domain": "化工安全",
+    "sourceFile": "seed",
+    "properties": {
+      "code": "HC-REG",
+      "title": "危险化学品安全管理条例",
+      "type": "行政法规",
+      "issuer": "国务院"
+    }
+  },
+  {
+    "id": "reg:GB30871",
+    "rawId": "reg:GB30871",
+    "name": "GB 30871-2022 危险化学品企业特殊作业安全规范",
+    "kind": "SAFETY_REGULATION",
+    "domain": "化工安全",
+    "sourceFile": "seed",
+    "properties": {
+      "code": "GB30871",
+      "title": "GB 30871-2022 危险化学品企业特殊作业安全规范",
+      "type": "国家标准",
+      "issuer": "市场监管总局"
+    }
+  },
+  {
+    "id": "reg:GB18218",
+    "rawId": "reg:GB18218",
+    "name": "GB 18218-2018 危险化学品重大危险源辨识",
+    "kind": "SAFETY_REGULATION",
+    "domain": "化工安全",
+    "sourceFile": "seed",
+    "properties": {
+      "code": "GB18218",
+      "title": "GB 18218-2018 危险化学品重大危险源辨识",
+      "type": "国家标准",
+      "issuer": "市场监管总局"
+    }
+  },
+  {
+    "id": "reg:GBT33000",
+    "rawId": "reg:GBT33000",
+    "name": "GB/T 33000-2016 企业安全生产标准化基本规范",
+    "kind": "SAFETY_REGULATION",
+    "domain": "化工安全",
+    "sourceFile": "seed",
+    "properties": {
+      "code": "GBT33000",
+      "title": "GB/T 33000-2016 企业安全生产标准化基本规范",
+      "type": "国家标准",
+      "issuer": "市场监管总局"
+    }
+  },
+  {
+    "id": "clause:GB30871:6.2",
+    "rawId": "clause:GB30871:6.2",
+    "name": "GB30871 6.2",
+    "kind": "SAFETY_CLAUSE",
+    "domain": "化工安全",
+    "sourceFile": "seed",
+    "properties": {
+      "clauseNo": "6.2",
+      "regulationCode": "GB30871",
+      "text": "动火作业前应进行气体检测，确认可燃气体浓度符合要求。",
+      "mandatory": true
+    }
+  },
+  {
+    "id": "clause:GB30871:6.3",
+    "rawId": "clause:GB30871:6.3",
+    "name": "GB30871 6.3",
+    "kind": "SAFETY_CLAUSE",
+    "domain": "化工安全",
+    "sourceFile": "seed",
+    "properties": {
+      "clauseNo": "6.3",
+      "regulationCode": "GB30871",
+      "text": "动火作业应办理动火作业票并经审批。",
+      "mandatory": true
+    }
+  },
+  {
+    "id": "clause:GB30871:6.4",
+    "rawId": "clause:GB30871:6.4",
+    "name": "GB30871 6.4",
+    "kind": "SAFETY_CLAUSE",
+    "domain": "化工安全",
+    "sourceFile": "seed",
+    "properties": {
+      "clauseNo": "6.4",
+      "regulationCode": "GB30871",
+      "text": "动火作业应设置专人监护。",
+      "mandatory": true
+    }
+  },
+  {
+    "id": "clause:GB30871:8.2",
+    "rawId": "clause:GB30871:8.2",
+    "name": "GB30871 8.2",
+    "kind": "SAFETY_CLAUSE",
+    "domain": "化工安全",
+    "sourceFile": "seed",
+    "properties": {
+      "clauseNo": "8.2",
+      "regulationCode": "GB30871",
+      "text": "受限空间作业前应进行隔离、清洗、置换。",
+      "mandatory": true
+    }
+  },
+  {
+    "id": "clause:GB30871:8.3",
+    "rawId": "clause:GB30871:8.3",
+    "name": "GB30871 8.3",
+    "kind": "SAFETY_CLAUSE",
+    "domain": "化工安全",
+    "sourceFile": "seed",
+    "properties": {
+      "clauseNo": "8.3",
+      "regulationCode": "GB30871",
+      "text": "受限空间作业应检测氧含量与有毒有害气体。",
+      "mandatory": true
+    }
+  },
+  {
+    "id": "clause:GB30871:9.2",
+    "rawId": "clause:GB30871:9.2",
+    "name": "GB30871 9.2",
+    "kind": "SAFETY_CLAUSE",
+    "domain": "化工安全",
+    "sourceFile": "seed",
+    "properties": {
+      "clauseNo": "9.2",
+      "regulationCode": "GB30871",
+      "text": "高处作业应正确佩戴安全带。",
+      "mandatory": true
+    }
+  },
+  {
+    "id": "clause:GB30871:10.2",
+    "rawId": "clause:GB30871:10.2",
+    "name": "GB30871 10.2",
+    "kind": "SAFETY_CLAUSE",
+    "domain": "化工安全",
+    "sourceFile": "seed",
+    "properties": {
+      "clauseNo": "10.2",
+      "regulationCode": "GB30871",
+      "text": "吊装作业应设置警戒区域。",
+      "mandatory": true
+    }
+  },
+  {
+    "id": "clause:GB30871:11.2",
+    "rawId": "clause:GB30871:11.2",
+    "name": "GB30871 11.2",
+    "kind": "SAFETY_CLAUSE",
+    "domain": "化工安全",
+    "sourceFile": "seed",
+    "properties": {
+      "clauseNo": "11.2",
+      "regulationCode": "GB30871",
+      "text": "临时用电应可靠接地。",
+      "mandatory": true
+    }
+  },
+  {
+    "id": "clause:GB30871:12.2",
+    "rawId": "clause:GB30871:12.2",
+    "name": "GB30871 12.2",
+    "kind": "SAFETY_CLAUSE",
+    "domain": "化工安全",
+    "sourceFile": "seed",
+    "properties": {
+      "clauseNo": "12.2",
+      "regulationCode": "GB30871",
+      "text": "盲板抽堵作业应完成有效隔离。",
+      "mandatory": true
+    }
+  },
+  {
+    "id": "clause:GB30871:5.2",
+    "rawId": "clause:GB30871:5.2",
+    "name": "GB30871 5.2",
+    "kind": "SAFETY_CLAUSE",
+    "domain": "化工安全",
+    "sourceFile": "seed",
+    "properties": {
+      "clauseNo": "5.2",
+      "regulationCode": "GB30871",
+      "text": "检维修作业前应开展风险分析（JSA）。",
+      "mandatory": true
+    }
+  },
+  {
+    "id": "clause:GB18218:4.1",
+    "rawId": "clause:GB18218:4.1",
+    "name": "GB18218 4.1",
+    "kind": "SAFETY_CLAUSE",
+    "domain": "化工安全",
+    "sourceFile": "seed",
+    "properties": {
+      "clauseNo": "4.1",
+      "regulationCode": "GB18218",
+      "text": "危险化学品构成重大危险源的应进行辨识。",
+      "mandatory": true
+    }
+  },
+  {
+    "id": "clause:GB18218:4.2",
+    "rawId": "clause:GB18218:4.2",
+    "name": "GB18218 4.2",
+    "kind": "SAFETY_CLAUSE",
+    "domain": "化工安全",
+    "sourceFile": "seed",
+    "properties": {
+      "clauseNo": "4.2",
+      "regulationCode": "GB18218",
+      "text": "重大危险源应按危险程度分级。",
+      "mandatory": true
+    }
+  },
+  {
+    "id": "clause:GBT33000:5.1",
+    "rawId": "clause:GBT33000:5.1",
+    "name": "GBT33000 5.1",
+    "kind": "SAFETY_CLAUSE",
+    "domain": "化工安全",
+    "sourceFile": "seed",
+    "properties": {
+      "clauseNo": "5.1",
+      "regulationCode": "GBT33000",
+      "text": "企业应建立风险分级管控机制。",
+      "mandatory": false
+    }
+  },
+  {
+    "id": "clause:GBT33000:5.2",
+    "rawId": "clause:GBT33000:5.2",
+    "name": "GBT33000 5.2",
+    "kind": "SAFETY_CLAUSE",
+    "domain": "化工安全",
+    "sourceFile": "seed",
+    "properties": {
+      "clauseNo": "5.2",
+      "regulationCode": "GBT33000",
+      "text": "企业应建立隐患排查治理机制。",
+      "mandatory": false
+    }
+  },
+  {
+    "id": "clause:SAFETY-LAW:40",
+    "rawId": "clause:SAFETY-LAW:40",
+    "name": "SAFETY-LAW 40",
+    "kind": "SAFETY_CLAUSE",
+    "domain": "化工安全",
+    "sourceFile": "seed",
+    "properties": {
+      "clauseNo": "40",
+      "regulationCode": "SAFETY-LAW",
+      "text": "从业人员应接受安全生产教育和培训。",
+      "mandatory": true
+    }
+  },
+  {
+    "id": "clause:SAFETY-LAW:44",
+    "rawId": "clause:SAFETY-LAW:44",
+    "name": "SAFETY-LAW 44",
+    "kind": "SAFETY_CLAUSE",
+    "domain": "化工安全",
+    "sourceFile": "seed",
+    "properties": {
+      "clauseNo": "44",
+      "regulationCode": "SAFETY-LAW",
+      "text": "应为从业人员提供符合标准的劳动防护用品。",
+      "mandatory": true
+    }
+  },
+  {
+    "id": "clause:SAFETY-LAW:45",
+    "rawId": "clause:SAFETY-LAW:45",
+    "name": "SAFETY-LAW 45",
+    "kind": "SAFETY_CLAUSE",
+    "domain": "化工安全",
+    "sourceFile": "seed",
+    "properties": {
+      "clauseNo": "45",
+      "regulationCode": "SAFETY-LAW",
+      "text": "危险作业应安排专门人员进行现场安全管理。",
+      "mandatory": true
+    }
+  },
+  {
+    "id": "clause:HC-REG:24",
+    "rawId": "clause:HC-REG:24",
+    "name": "HC-REG 24",
+    "kind": "SAFETY_CLAUSE",
+    "domain": "化工安全",
+    "sourceFile": "seed",
+    "properties": {
+      "clauseNo": "24",
+      "regulationCode": "HC-REG",
+      "text": "重大危险源应向应急管理部门备案。",
+      "mandatory": true
+    }
+  },
+  {
+    "id": "control:CT-GAS-TEST",
+    "rawId": "control:CT-GAS-TEST",
+    "name": "气体检测",
+    "kind": "SAFETY_CONTROL",
+    "domain": "化工安全",
+    "sourceFile": "seed",
+    "properties": {
+      "controlCode": "CT-GAS-TEST",
+      "level": "engineering",
+      "implemented": false
+    }
+  },
+  {
+    "id": "control:CT-PERMIT",
+    "rawId": "control:CT-PERMIT",
+    "name": "作业票审批",
+    "kind": "SAFETY_CONTROL",
+    "domain": "化工安全",
+    "sourceFile": "seed",
+    "properties": {
+      "controlCode": "CT-PERMIT",
+      "level": "management",
+      "implemented": true
+    }
+  },
+  {
+    "id": "control:CT-GUARD",
+    "rawId": "control:CT-GUARD",
+    "name": "专人监护",
+    "kind": "SAFETY_CONTROL",
+    "domain": "化工安全",
+    "sourceFile": "seed",
+    "properties": {
+      "controlCode": "CT-GUARD",
+      "level": "management",
+      "implemented": false
+    }
+  },
+  {
+    "id": "control:CT-ISOLATE",
+    "rawId": "control:CT-ISOLATE",
+    "name": "隔离置换",
+    "kind": "SAFETY_CONTROL",
+    "domain": "化工安全",
+    "sourceFile": "seed",
+    "properties": {
+      "controlCode": "CT-ISOLATE",
+      "level": "engineering",
+      "implemented": false
+    }
+  },
+  {
+    "id": "control:CT-SEATBELT",
+    "rawId": "control:CT-SEATBELT",
+    "name": "安全带",
+    "kind": "SAFETY_CONTROL",
+    "domain": "化工安全",
+    "sourceFile": "seed",
+    "properties": {
+      "controlCode": "CT-SEATBELT",
+      "level": "engineering",
+      "implemented": true
+    }
+  },
+  {
+    "id": "control:CT-BARRICADE",
+    "rawId": "control:CT-BARRICADE",
+    "name": "吊装警戒",
+    "kind": "SAFETY_CONTROL",
+    "domain": "化工安全",
+    "sourceFile": "seed",
+    "properties": {
+      "controlCode": "CT-BARRICADE",
+      "level": "management",
+      "implemented": true
+    }
+  },
+  {
+    "id": "control:CT-GROUND",
+    "rawId": "control:CT-GROUND",
+    "name": "临时用电接地",
+    "kind": "SAFETY_CONTROL",
+    "domain": "化工安全",
+    "sourceFile": "seed",
+    "properties": {
+      "controlCode": "CT-GROUND",
+      "level": "engineering",
+      "implemented": true
+    }
+  },
+  {
+    "id": "control:CT-JSA",
+    "rawId": "control:CT-JSA",
+    "name": "检维修风险分析",
+    "kind": "SAFETY_CONTROL",
+    "domain": "化工安全",
+    "sourceFile": "seed",
+    "properties": {
+      "controlCode": "CT-JSA",
+      "level": "management",
+      "implemented": false
+    }
+  },
+  {
+    "id": "control:CT-REGISTER",
+    "rawId": "control:CT-REGISTER",
+    "name": "重大危险源备案",
+    "kind": "SAFETY_CONTROL",
+    "domain": "化工安全",
+    "sourceFile": "seed",
+    "properties": {
+      "controlCode": "CT-REGISTER",
+      "level": "management",
+      "implemented": true
+    }
+  },
+  {
+    "id": "control:CT-RISK-LIST",
+    "rawId": "control:CT-RISK-LIST",
+    "name": "风险分级清单",
+    "kind": "SAFETY_CONTROL",
+    "domain": "化工安全",
+    "sourceFile": "seed",
+    "properties": {
+      "controlCode": "CT-RISK-LIST",
+      "level": "management",
+      "implemented": true
+    }
+  },
+  {
+    "id": "control:CT-INSPECT",
+    "rawId": "control:CT-INSPECT",
+    "name": "隐患排查治理",
+    "kind": "SAFETY_CONTROL",
+    "domain": "化工安全",
+    "sourceFile": "seed",
+    "properties": {
+      "controlCode": "CT-INSPECT",
+      "level": "management",
+      "implemented": true
+    }
+  },
+  {
+    "id": "control:CT-TRAIN",
+    "rawId": "control:CT-TRAIN",
+    "name": "安全培训",
+    "kind": "SAFETY_CONTROL",
+    "domain": "化工安全",
+    "sourceFile": "seed",
+    "properties": {
+      "controlCode": "CT-TRAIN",
+      "level": "training",
+      "implemented": false
+    }
+  },
+  {
+    "id": "control:CT-PPE",
+    "rawId": "control:CT-PPE",
+    "name": "劳动防护用品",
+    "kind": "SAFETY_CONTROL",
+    "domain": "化工安全",
+    "sourceFile": "seed",
+    "properties": {
+      "controlCode": "CT-PPE",
+      "level": "engineering",
+      "implemented": true
+    }
+  },
+  {
+    "id": "hazard:H-FLAM",
+    "rawId": "hazard:H-FLAM",
+    "name": "可燃气体",
+    "kind": "SAFETY_HAZARD",
+    "domain": "化工安全",
+    "sourceFile": "seed",
+    "properties": {
+      "code": "H-FLAM",
+      "name": "可燃气体",
+      "category": "化学",
+      "accidentType": "火灾爆炸"
+    }
+  },
+  {
+    "id": "hazard:H-TOXIC",
+    "rawId": "hazard:H-TOXIC",
+    "name": "中毒窒息",
+    "kind": "SAFETY_HAZARD",
+    "domain": "化工安全",
+    "sourceFile": "seed",
+    "properties": {
+      "code": "H-TOXIC",
+      "name": "中毒窒息",
+      "category": "化学",
+      "accidentType": "中毒窒息"
+    }
+  },
+  {
+    "id": "hazard:H-FALL",
+    "rawId": "hazard:H-FALL",
+    "name": "高处坠落",
+    "kind": "SAFETY_HAZARD",
+    "domain": "化工安全",
+    "sourceFile": "seed",
+    "properties": {
+      "code": "H-FALL",
+      "name": "高处坠落",
+      "category": "物理",
+      "accidentType": "高处坠落"
+    }
+  },
+  {
+    "id": "hazard:H-MECH",
+    "rawId": "hazard:H-MECH",
+    "name": "机械伤害",
+    "kind": "SAFETY_HAZARD",
+    "domain": "化工安全",
+    "sourceFile": "seed",
+    "properties": {
+      "code": "H-MECH",
+      "name": "机械伤害",
+      "category": "物理",
+      "accidentType": "机械伤害"
+    }
+  },
+  {
+    "id": "hazard:H-SHOCK",
+    "rawId": "hazard:H-SHOCK",
+    "name": "触电",
+    "kind": "SAFETY_HAZARD",
+    "domain": "化工安全",
+    "sourceFile": "seed",
+    "properties": {
+      "code": "H-SHOCK",
+      "name": "触电",
+      "category": "电气",
+      "accidentType": "触电"
+    }
+  },
+  {
+    "id": "hazard:H-OBJ",
+    "rawId": "hazard:H-OBJ",
+    "name": "物体打击",
+    "kind": "SAFETY_HAZARD",
+    "domain": "化工安全",
+    "sourceFile": "seed",
+    "properties": {
+      "code": "H-OBJ",
+      "name": "物体打击",
+      "category": "物理",
+      "accidentType": "物体打击"
+    }
+  },
+  {
+    "id": "mat:MAT-TOLUENE",
+    "rawId": "mat:MAT-TOLUENE",
+    "name": "甲苯",
+    "kind": "SAFETY_MATERIAL",
+    "domain": "化工安全",
+    "sourceFile": "seed",
+    "properties": {
+      "code": "MAT-TOLUENE",
+      "name": "甲苯",
+      "cas": "108-88-3",
+      "flashPoint": 4,
+      "criticalQuantity": 500,
+      "hazardClass": "易燃液体"
+    }
+  },
+  {
+    "id": "mat:MAT-METHANOL",
+    "rawId": "mat:MAT-METHANOL",
+    "name": "甲醇",
+    "kind": "SAFETY_MATERIAL",
+    "domain": "化工安全",
+    "sourceFile": "seed",
+    "properties": {
+      "code": "MAT-METHANOL",
+      "name": "甲醇",
+      "cas": "67-56-1",
+      "flashPoint": 11,
+      "criticalQuantity": 500,
+      "hazardClass": "易燃液体"
+    }
+  },
+  {
+    "id": "mat:MAT-GASOLINE",
+    "rawId": "mat:MAT-GASOLINE",
+    "name": "汽油",
+    "kind": "SAFETY_MATERIAL",
+    "domain": "化工安全",
+    "sourceFile": "seed",
+    "properties": {
+      "code": "MAT-GASOLINE",
+      "name": "汽油",
+      "cas": "8006-61-9",
+      "flashPoint": -50,
+      "criticalQuantity": 200,
+      "hazardClass": "易燃液体"
+    }
+  },
+  {
+    "id": "area:AREA-A",
+    "rawId": "area:AREA-A",
+    "name": "罐区",
+    "kind": "SAFETY_AREA",
+    "domain": "化工安全",
+    "sourceFile": "seed",
+    "properties": {
+      "code": "AREA-A",
+      "name": "罐区",
+      "riskLevel": "红色",
+      "headcount": 30,
+      "stock": 1200
+    }
+  },
+  {
+    "id": "area:AREA-B",
+    "rawId": "area:AREA-B",
+    "name": "生产车间",
+    "kind": "SAFETY_AREA",
+    "domain": "化工安全",
+    "sourceFile": "seed",
+    "properties": {
+      "code": "AREA-B",
+      "name": "生产车间",
+      "riskLevel": "橙色",
+      "headcount": 60,
+      "stock": 300
+    }
+  },
+  {
+    "id": "area:AREA-C",
+    "rawId": "area:AREA-C",
+    "name": "公用工程",
+    "kind": "SAFETY_AREA",
+    "domain": "化工安全",
+    "sourceFile": "seed",
+    "properties": {
+      "code": "AREA-C",
+      "name": "公用工程",
+      "riskLevel": "黄色",
+      "headcount": 20,
+      "stock": 50
+    }
+  },
+  {
+    "id": "unit:UNIT-A1",
+    "rawId": "unit:UNIT-A1",
+    "name": "常压储罐区",
+    "kind": "SAFETY_UNIT",
+    "domain": "化工安全",
+    "sourceFile": "seed",
+    "properties": {
+      "code": "UNIT-A1",
+      "name": "常压储罐区",
+      "area": "AREA-A",
+      "process": "储存",
+      "stock": 900,
+      "headcount": 12
+    }
+  },
+  {
+    "id": "unit:UNIT-A2",
+    "rawId": "unit:UNIT-A2",
+    "name": "装卸车区",
+    "kind": "SAFETY_UNIT",
+    "domain": "化工安全",
+    "sourceFile": "seed",
+    "properties": {
+      "code": "UNIT-A2",
+      "name": "装卸车区",
+      "area": "AREA-A",
+      "process": "装卸",
+      "stock": 200,
+      "headcount": 8
+    }
+  },
+  {
+    "id": "unit:UNIT-B1",
+    "rawId": "unit:UNIT-B1",
+    "name": "反应装置",
+    "kind": "SAFETY_UNIT",
+    "domain": "化工安全",
+    "sourceFile": "seed",
+    "properties": {
+      "code": "UNIT-B1",
+      "name": "反应装置",
+      "area": "AREA-B",
+      "process": "反应",
+      "stock": 200,
+      "headcount": 30
+    }
+  },
+  {
+    "id": "unit:UNIT-B2",
+    "rawId": "unit:UNIT-B2",
+    "name": "精馏装置",
+    "kind": "SAFETY_UNIT",
+    "domain": "化工安全",
+    "sourceFile": "seed",
+    "properties": {
+      "code": "UNIT-B2",
+      "name": "精馏装置",
+      "area": "AREA-B",
+      "process": "精馏",
+      "stock": 100,
+      "headcount": 20
+    }
+  },
+  {
+    "id": "unit:UNIT-C1",
+    "rawId": "unit:UNIT-C1",
+    "name": "公用工程站",
+    "kind": "SAFETY_UNIT",
+    "domain": "化工安全",
+    "sourceFile": "seed",
+    "properties": {
+      "code": "UNIT-C1",
+      "name": "公用工程站",
+      "area": "AREA-C",
+      "process": "公用工程",
+      "stock": 50,
+      "headcount": 10
+    }
+  },
+  {
+    "id": "eq:EQ-A1-T01",
+    "rawId": "eq:EQ-A1-T01",
+    "name": "1#储罐",
+    "kind": "SAFETY_EQUIPMENT",
+    "domain": "化工安全",
+    "sourceFile": "seed",
+    "properties": {
+      "equipmentCode": "EQ-A1-T01",
+      "equipmentClass": "常压储罐",
+      "inspectionValidUntil": "2026-12-31",
+      "status": "在用",
+      "unitCode": "UNIT-A1",
+      "stock": 500
+    }
+  },
+  {
+    "id": "eq:EQ-A1-T02",
+    "rawId": "eq:EQ-A1-T02",
+    "name": "2#储罐",
+    "kind": "SAFETY_EQUIPMENT",
+    "domain": "化工安全",
+    "sourceFile": "seed",
+    "properties": {
+      "equipmentCode": "EQ-A1-T02",
+      "equipmentClass": "常压储罐",
+      "inspectionValidUntil": "2025-06-30",
+      "status": "在用",
+      "unitCode": "UNIT-A1",
+      "stock": 300
+    }
+  },
+  {
+    "id": "eq:EQ-A1-P01",
+    "rawId": "eq:EQ-A1-P01",
+    "name": "输送泵",
+    "kind": "SAFETY_EQUIPMENT",
+    "domain": "化工安全",
+    "sourceFile": "seed",
+    "properties": {
+      "equipmentCode": "EQ-A1-P01",
+      "equipmentClass": "输送泵",
+      "inspectionValidUntil": "2027-03-31",
+      "status": "在用",
+      "unitCode": "UNIT-A1",
+      "stock": 0
+    }
+  },
+  {
+    "id": "eq:EQ-A2-L01",
+    "rawId": "eq:EQ-A2-L01",
+    "name": "装车鹤管",
+    "kind": "SAFETY_EQUIPMENT",
+    "domain": "化工安全",
+    "sourceFile": "seed",
+    "properties": {
+      "equipmentCode": "EQ-A2-L01",
+      "equipmentClass": "装车鹤管",
+      "inspectionValidUntil": "2026-09-30",
+      "status": "在用",
+      "unitCode": "UNIT-A2",
+      "stock": 100
+    }
+  },
+  {
+    "id": "eq:EQ-B1-R01",
+    "rawId": "eq:EQ-B1-R01",
+    "name": "反应釜",
+    "kind": "SAFETY_EQUIPMENT",
+    "domain": "化工安全",
+    "sourceFile": "seed",
+    "properties": {
+      "equipmentCode": "EQ-B1-R01",
+      "equipmentClass": "反应釜",
+      "inspectionValidUntil": "2026-08-31",
+      "status": "在用",
+      "unitCode": "UNIT-B1",
+      "stock": 100
+    }
+  },
+  {
+    "id": "eq:EQ-B2-C01",
+    "rawId": "eq:EQ-B2-C01",
+    "name": "精馏塔",
+    "kind": "SAFETY_EQUIPMENT",
+    "domain": "化工安全",
+    "sourceFile": "seed",
+    "properties": {
+      "equipmentCode": "EQ-B2-C01",
+      "equipmentClass": "精馏塔",
+      "inspectionValidUntil": "2026-11-30",
+      "status": "在用",
+      "unitCode": "UNIT-B2",
+      "stock": 0
+    }
+  },
+  {
+    "id": "eq:EQ-C1-U01",
+    "rawId": "eq:EQ-C1-U01",
+    "name": "空压机",
+    "kind": "SAFETY_EQUIPMENT",
+    "domain": "化工安全",
+    "sourceFile": "seed",
+    "properties": {
+      "equipmentCode": "EQ-C1-U01",
+      "equipmentClass": "空压机",
+      "inspectionValidUntil": "2027-01-31",
+      "status": "在用",
+      "unitCode": "UNIT-C1",
+      "stock": 0
+    }
+  },
+  {
+    "id": "op:OP-HOT-01",
+    "rawId": "op:OP-HOT-01",
+    "name": "罐区动火作业",
+    "kind": "SAFETY_OPERATION",
+    "domain": "化工安全",
+    "sourceFile": "seed",
+    "properties": {
+      "operationCode": "OP-HOT-01",
+      "operationType": "动火",
+      "areaCode": "AREA-A",
+      "equipmentCodes": [
+        "EQ-A1-T01"
+      ],
+      "permitType": "动火"
+    }
+  },
+  {
+    "id": "op:OP-CS-01",
+    "rawId": "op:OP-CS-01",
+    "name": "储罐受限空间清理",
+    "kind": "SAFETY_OPERATION",
+    "domain": "化工安全",
+    "sourceFile": "seed",
+    "properties": {
+      "operationCode": "OP-CS-01",
+      "operationType": "受限空间",
+      "areaCode": "AREA-A",
+      "equipmentCodes": [
+        "EQ-A1-T02"
+      ],
+      "permitType": "受限空间"
+    }
+  },
+  {
+    "id": "op:OP-HW-01",
+    "rawId": "op:OP-HW-01",
+    "name": "反应釜高处检维修",
+    "kind": "SAFETY_OPERATION",
+    "domain": "化工安全",
+    "sourceFile": "seed",
+    "properties": {
+      "operationCode": "OP-HW-01",
+      "operationType": "高处",
+      "areaCode": "AREA-B",
+      "equipmentCodes": [
+        "EQ-B1-R01"
+      ],
+      "permitType": "高处"
+    }
+  },
+  {
+    "id": "op:OP-LIFT-01",
+    "rawId": "op:OP-LIFT-01",
+    "name": "空压机吊装作业",
+    "kind": "SAFETY_OPERATION",
+    "domain": "化工安全",
+    "sourceFile": "seed",
+    "properties": {
+      "operationCode": "OP-LIFT-01",
+      "operationType": "吊装",
+      "areaCode": "AREA-C",
+      "equipmentCodes": [
+        "EQ-C1-U01"
+      ],
+      "permitType": "吊装"
+    }
+  },
+  {
+    "id": "op:OP-POWER-01",
+    "rawId": "op:OP-POWER-01",
+    "name": "精馏塔临时用电",
+    "kind": "SAFETY_OPERATION",
+    "domain": "化工安全",
+    "sourceFile": "seed",
+    "properties": {
+      "operationCode": "OP-POWER-01",
+      "operationType": "临时用电",
+      "areaCode": "AREA-B",
+      "equipmentCodes": [
+        "EQ-B2-C01"
+      ],
+      "permitType": "临时用电"
+    }
+  },
+  {
+    "id": "op:OP-BLIND-01",
+    "rawId": "op:OP-BLIND-01",
+    "name": "储罐盲板抽堵",
+    "kind": "SAFETY_OPERATION",
+    "domain": "化工安全",
+    "sourceFile": "seed",
+    "properties": {
+      "operationCode": "OP-BLIND-01",
+      "operationType": "盲板抽堵",
+      "areaCode": "AREA-A",
+      "equipmentCodes": [
+        "EQ-A1-T01"
+      ],
+      "permitType": "盲板抽堵"
+    }
+  },
+  {
+    "id": "op:OP-ROAD-01",
+    "rawId": "op:OP-ROAD-01",
+    "name": "厂区断路作业",
+    "kind": "SAFETY_OPERATION",
+    "domain": "化工安全",
+    "sourceFile": "seed",
+    "properties": {
+      "operationCode": "OP-ROAD-01",
+      "operationType": "断路",
+      "areaCode": "AREA-C",
+      "equipmentCodes": [],
+      "permitType": "断路"
+    }
+  },
+  {
+    "id": "op:OP-MAINT-01",
+    "rawId": "op:OP-MAINT-01",
+    "name": "1#储罐检维修",
+    "kind": "SAFETY_OPERATION",
+    "domain": "化工安全",
+    "sourceFile": "seed",
+    "properties": {
+      "operationCode": "OP-MAINT-01",
+      "operationType": "检维修",
+      "areaCode": "AREA-A",
+      "equipmentCodes": [
+        "EQ-A1-T01"
+      ],
+      "permitType": "检维修"
+    }
+  },
+  {
+    "id": "op:OP-LOAD-01",
+    "rawId": "op:OP-LOAD-01",
+    "name": "装卸车作业",
+    "kind": "SAFETY_OPERATION",
+    "domain": "化工安全",
+    "sourceFile": "seed",
+    "properties": {
+      "operationCode": "OP-LOAD-01",
+      "operationType": "其他",
+      "areaCode": "AREA-A",
+      "equipmentCodes": [
+        "EQ-A2-L01"
+      ],
+      "permitType": "其他"
+    }
+  },
+  {
+    "id": "op:OP-FEED-01",
+    "rawId": "op:OP-FEED-01",
+    "name": "反应釜投料",
+    "kind": "SAFETY_OPERATION",
+    "domain": "化工安全",
+    "sourceFile": "seed",
+    "properties": {
+      "operationCode": "OP-FEED-01",
+      "operationType": "其他",
+      "areaCode": "AREA-B",
+      "equipmentCodes": [
+        "EQ-B1-R01"
+      ],
+      "permitType": "其他"
+    }
+  },
+  {
+    "id": "permit:PTW-HOT-001",
+    "rawId": "permit:PTW-HOT-001",
+    "name": "动火作业票 PTW-HOT-001",
+    "kind": "SAFETY_PERMIT",
+    "domain": "化工安全",
+    "sourceFile": "seed",
+    "properties": {
+      "code": "PTW-HOT-001",
+      "name": "动火作业票 PTW-HOT-001",
+      "permitType": "动火",
+      "valid": true,
+      "status": "已批准"
+    }
+  },
+  {
+    "id": "permit:PTW-CS-002",
+    "rawId": "permit:PTW-CS-002",
+    "name": "受限空间作业票 PTW-CS-002",
+    "kind": "SAFETY_PERMIT",
+    "domain": "化工安全",
+    "sourceFile": "seed",
+    "properties": {
+      "code": "PTW-CS-002",
+      "name": "受限空间作业票 PTW-CS-002",
+      "permitType": "受限空间",
+      "valid": false,
+      "status": "已过期"
+    }
+  },
+  {
+    "id": "permit:PTW-HW-003",
+    "rawId": "permit:PTW-HW-003",
+    "name": "高处作业票 PTW-HW-003",
+    "kind": "SAFETY_PERMIT",
+    "domain": "化工安全",
+    "sourceFile": "seed",
+    "properties": {
+      "code": "PTW-HW-003",
+      "name": "高处作业票 PTW-HW-003",
+      "permitType": "高处",
+      "valid": true,
+      "status": "已批准"
+    }
+  },
+  {
+    "id": "check:CI-GAS",
+    "rawId": "check:CI-GAS",
+    "name": "气体检测记录",
+    "kind": "SAFETY_CHECK_ITEM",
+    "domain": "化工安全",
+    "sourceFile": "seed",
+    "properties": {
+      "code": "CI-GAS",
+      "name": "气体检测记录",
+      "clause": "GB30871:6.2",
+      "frequency": "每次作业"
+    }
+  },
+  {
+    "id": "check:CI-PERMIT",
+    "rawId": "check:CI-PERMIT",
+    "name": "审批签字",
+    "kind": "SAFETY_CHECK_ITEM",
+    "domain": "化工安全",
+    "sourceFile": "seed",
+    "properties": {
+      "code": "CI-PERMIT",
+      "name": "审批签字",
+      "clause": "GB30871:6.3",
+      "frequency": "每票"
+    }
+  },
+  {
+    "id": "check:CI-GUARD",
+    "rawId": "check:CI-GUARD",
+    "name": "监护到位",
+    "kind": "SAFETY_CHECK_ITEM",
+    "domain": "化工安全",
+    "sourceFile": "seed",
+    "properties": {
+      "code": "CI-GUARD",
+      "name": "监护到位",
+      "clause": "GB30871:6.4",
+      "frequency": "每次作业"
+    }
+  },
+  {
+    "id": "check:CI-ISOLATE",
+    "rawId": "check:CI-ISOLATE",
+    "name": "隔离确认",
+    "kind": "SAFETY_CHECK_ITEM",
+    "domain": "化工安全",
+    "sourceFile": "seed",
+    "properties": {
+      "code": "CI-ISOLATE",
+      "name": "隔离确认",
+      "clause": "GB30871:8.2",
+      "frequency": "每次作业"
+    }
+  },
+  {
+    "id": "check:CI-TRAIN",
+    "rawId": "check:CI-TRAIN",
+    "name": "培训记录",
+    "kind": "SAFETY_CHECK_ITEM",
+    "domain": "化工安全",
+    "sourceFile": "seed",
+    "properties": {
+      "code": "CI-TRAIN",
+      "name": "培训记录",
+      "clause": "SAFETY-LAW:40",
+      "frequency": "每季度"
+    }
+  },
+  {
+    "id": "event:EV-INC-01",
+    "rawId": "event:EV-INC-01",
+    "name": "1#储罐动火闪爆",
+    "kind": "SAFETY_EVENT",
+    "domain": "化工安全",
+    "sourceFile": "seed",
+    "properties": {
+      "eventCode": "EV-INC-01",
+      "severity": "较大",
+      "occurredAt": "2026-03-12",
+      "consequences": "1 人重伤，储罐局部损毁",
+      "category": "机"
+    }
+  },
+  {
+    "id": "cause:CAUSE-C1",
+    "rawId": "cause:CAUSE-C1",
+    "name": "未有效置换/清洗",
+    "kind": "SAFETY_CAUSE",
+    "domain": "化工安全",
+    "sourceFile": "seed",
+    "properties": {
+      "code": "CAUSE-C1",
+      "name": "未有效置换/清洗",
+      "category": "法"
+    }
+  },
+  {
+    "id": "cause:CAUSE-C2",
+    "rawId": "cause:CAUSE-C2",
+    "name": "动火前气体检测缺失",
+    "kind": "SAFETY_CAUSE",
+    "domain": "化工安全",
+    "sourceFile": "seed",
+    "properties": {
+      "code": "CAUSE-C2",
+      "name": "动火前气体检测缺失",
+      "category": "法"
+    }
+  },
+  {
+    "id": "cause:CAUSE-C3",
+    "rawId": "cause:CAUSE-C3",
+    "name": "作业票审批流于形式",
+    "kind": "SAFETY_CAUSE",
+    "domain": "化工安全",
+    "sourceFile": "seed",
+    "properties": {
+      "code": "CAUSE-C3",
+      "name": "作业票审批流于形式",
+      "category": "法"
+    }
+  },
+  {
+    "id": "cause:CAUSE-C4",
+    "rawId": "cause:CAUSE-C4",
+    "name": "承包商未受专项培训",
+    "kind": "SAFETY_CAUSE",
+    "domain": "化工安全",
+    "sourceFile": "seed",
+    "properties": {
+      "code": "CAUSE-C4",
+      "name": "承包商未受专项培训",
+      "category": "人"
+    }
+  },
+  {
+    "id": "cause:CAUSE-C5",
+    "rawId": "cause:CAUSE-C5",
+    "name": "动火作业 JSA 风险分析缺失",
+    "kind": "SAFETY_CAUSE",
+    "domain": "化工安全",
+    "sourceFile": "seed",
+    "properties": {
+      "code": "CAUSE-C5",
+      "name": "动火作业 JSA 风险分析缺失",
+      "category": "法"
+    }
+  }
+]

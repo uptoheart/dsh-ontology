@@ -49,7 +49,7 @@ function flowFindNode(code) {
   return state.framework ? walk(state.framework.domains) : null;
 }
 
-/* ─────────── 左栏：APQC 节点树（可拖拽） ─────────── */
+/* ─────────── 左栏：框架节点树（可拖拽） ─────────── */
 function renderFlowTree() {
   const wrap = $('#flowTreeWrap');
   if (!state.framework || !state.framework.domains) {

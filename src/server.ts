@@ -4,7 +4,7 @@ import { resolve, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { sendJson, sendHtml, sendOptions, readJsonBody } from './server-utils.js'
 import {
-  listImportedSuites, loadSuite, loadSuiteWithDerived, saveAnnotations, setSuiteFramework,
+  listImportedSuites, loadSuite, loadSuiteWithDerived, saveAnnotations, setSuiteFramework, setSuiteFrameworks,
   importFromDatasource, assembleGraph, computeCoverage, computeProcessCoverage, computeCrudMatrix,
   listFrameworks, buildExport, createEntitiesBatch, buildFlowDraftFromInterviews,
   loadUserFrameworksIntoRegistry, saveUserFramework, exportPackage, importPackage,
@@ -17,6 +17,11 @@ import {
   getBuiltinFramework, buildDomainDictionary, deriveOntologyCode, deriveApqcCode, parseApqcCode,
   registerFramework, validateFrameworkDefinition,
 } from './builtin-frameworks.js'
+import { getRegisteredRoutes } from './kernel/route-registry.js'
+import { listAppSummaries } from './kernel/app-registry.js'
+import './apps/index.js'
+import './apps/safety/routes.js'
+import './agent/routes.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
@@ -44,6 +49,7 @@ function matchRoute(method: string, path: string): { handler: Handler; params: R
   const routes: RouteDef[] = [
     { method: 'GET', pattern: /^\/$/,                                    handler: serveHtml },
     { method: 'GET', pattern: /^\/index\.html$/,                        handler: serveHtml },
+    { method: 'GET', pattern: /^\/api\/apps$/,                          handler: apiListApps },
     { method: 'GET', pattern: /^\/api\/suites$/,                        handler: apiListSuites },
     { method: 'GET', pattern: /^\/api\/suites\/([^/]+)$/,               handler: apiGetSuite },
     { method: 'POST', pattern: /^\/api\/suites\/import$/,               handler: apiImportSuites },
@@ -60,6 +66,7 @@ function matchRoute(method: string, path: string): { handler: Handler; params: R
     { method: 'DELETE', pattern: /^\/api\/suites\/([^/]+)\/interviews\/([^/]+)$/, handler: apiDeleteInterview },
     { method: 'POST', pattern: /^\/api\/suites\/([^/]+)\/annotations$/, handler: apiSaveAnnotations },
     { method: 'POST', pattern: /^\/api\/suites\/([^/]+)\/framework$/,   handler: apiSetSuiteFramework },
+    { method: 'POST', pattern: /^\/api\/suites\/([^/]+)\/frameworks$/,  handler: apiSetSuiteFrameworks },
     { method: 'POST', pattern: /^\/api\/suites\/([^/]+)\/flow-draft$/,  handler: apiFlowDraft },
     { method: 'GET', pattern: /^\/api\/frameworks$/,                    handler: apiListFrameworks },
     { method: 'POST', pattern: /^\/api\/frameworks\/import$/,           handler: apiImportFramework },
@@ -73,6 +80,7 @@ function matchRoute(method: string, path: string): { handler: Handler; params: R
     { method: 'POST', pattern: /^\/api\/flowcharts$/,                  handler: apiSaveFlowchart },
     { method: 'GET', pattern: /^\/api\/flowcharts\/([^/]+)$/,          handler: apiGetFlowchart },
     { method: 'DELETE', pattern: /^\/api\/flowcharts\/([^/]+)$/,       handler: apiDeleteFlowchart },
+    ...getRegisteredRoutes(),
   ]
 
   for (const r of routes) {
@@ -152,8 +160,12 @@ async function serveHtml(_req: IncomingMessage, res: ServerResponse): Promise<vo
   sendHtml(res, HTML)
 }
 
-async function apiListSuites(_req: IncomingMessage, res: ServerResponse): Promise<void> {
-  const suites = await listImportedSuites()
+async function apiListApps(_req: IncomingMessage, res: ServerResponse): Promise<void> {
+  sendJson(res, 200, { success: true, data: listAppSummaries() })
+}
+
+async function apiListSuites(_req: IncomingMessage, res: ServerResponse, _params: Record<string, string>, query: Record<string, string>): Promise<void> {
+  const suites = await listImportedSuites(query.appId || undefined)
   sendJson(res, 200, { success: true, data: suites })
 }
 
@@ -349,6 +361,47 @@ async function apiSetSuiteFramework(req: IncomingMessage, res: ServerResponse, p
   if (!frameworkId) { sendJson(res, 400, { success: false, message: 'frameworkId required' }); return }
   if (!getBuiltinFramework(frameworkId)) { sendJson(res, 400, { success: false, message: `unknown framework: ${frameworkId}` }); return }
   const meta = await setSuiteFramework(params.p1, frameworkId)
+  if (!meta) { sendJson(res, 404, { success: false, message: `suite ${params.p1} not found` }); return }
+  sendJson(res, 200, { success: true, data: meta })
+}
+
+/** 多框架切换/管理：POST { frameworks: [], activeFrameworkId } 或仅 { activeFrameworkId } */
+async function apiSetSuiteFrameworks(req: IncomingMessage, res: ServerResponse, params: Record<string, string>): Promise<void> {
+  const body = await readJsonBody(req) as { frameworks?: unknown; activeFrameworkId?: unknown }
+  const all = await listFrameworks()
+  const existingIds = new Set(all.map(f => f.frameworkId))
+
+  let frameworks: string[] | undefined
+  if (Array.isArray(body?.frameworks)) {
+    frameworks = (body.frameworks as unknown[]).filter(v => typeof v === 'string').map(v => (v as string).trim()).filter(Boolean)
+    for (const id of frameworks) {
+      if (!existingIds.has(id)) { sendJson(res, 400, { success: false, message: `unknown framework: ${id}` }); return }
+    }
+    if (!frameworks.length) { sendJson(res, 400, { success: false, message: 'frameworks must include at least one id' }); return }
+  }
+
+  let activeFrameworkId: string | undefined
+  if (typeof body?.activeFrameworkId === 'string') {
+    activeFrameworkId = body.activeFrameworkId.trim()
+    if (!activeFrameworkId || !existingIds.has(activeFrameworkId)) { sendJson(res, 400, { success: false, message: `unknown activeFrameworkId: ${body.activeFrameworkId}` }); return }
+  }
+
+  // 若只给 activeFrameworkId、没给 frameworks，等于把 active 加入（如果不在）或单独激活它
+  if (!frameworks && activeFrameworkId) {
+    const suite = await loadSuite(params.p1)
+    if (!suite) { sendJson(res, 404, { success: false, message: `suite ${params.p1} not found` }); return }
+    const current = suite.meta.frameworks && suite.meta.frameworks.length ? suite.meta.frameworks : [suite.meta.frameworkId || 'apqc-process']
+    if (!current.includes(activeFrameworkId)) current.push(activeFrameworkId)
+    frameworks = current
+  }
+
+  if (!frameworks || !frameworks.length) {
+    const suite = await loadSuite(params.p1)
+    if (!suite) { sendJson(res, 404, { success: false, message: `suite ${params.p1} not found` }); return }
+    frameworks = suite.meta.frameworks && suite.meta.frameworks.length ? suite.meta.frameworks : [suite.meta.frameworkId || 'apqc-process']
+  }
+
+  const meta = await setSuiteFrameworks(params.p1, frameworks, activeFrameworkId)
   if (!meta) { sendJson(res, 404, { success: false, message: `suite ${params.p1} not found` }); return }
   sendJson(res, 200, { success: true, data: meta })
 }

@@ -1,0 +1,30 @@
+{
+  "version": "1.0.0",
+  "weights": {
+    "lec": 0.35,
+    "hazard": 0.25,
+    "compliance": 0.3,
+    "indicator": 0.1,
+    "propagation": 0.4
+  },
+  "grades": {
+    "red": 60,
+    "orange": 75,
+    "yellow": 90
+  },
+  "caps": {
+    "ifChildRed": 59,
+    "ifChildOrange": 74
+  },
+  "propagationWeights": {
+    "headcount": 0.5,
+    "stock": 0.3,
+    "output": 0.2
+  },
+  "rcaMaxDepth": 5,
+  "controllability": {
+    "engineering": 1,
+    "management": 0.9,
+    "training": 0.7
+  }
+}

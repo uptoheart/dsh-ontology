@@ -9,5 +9,10 @@
   "sourceFileCount": 8,
   "entityCount": 170,
   "relationCount": 331,
-  "frameworkId": "hw-style-pcf"
+  "frameworkId": "hw-style-pcf",
+  "frameworks": [
+    "hw-style-pcf",
+    "apqc-process"
+  ],
+  "activeFrameworkId": "hw-style-pcf"
 }

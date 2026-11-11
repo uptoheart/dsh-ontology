@@ -154,6 +154,7 @@ function selectInterviewNode(code) {
   renderInterviewForm();
   renderInterviewTree();
   renderIvRightList();
+  ivLoadEvidence();
 }
 
 function renderInterviewForm() {
@@ -257,6 +258,7 @@ $('#ivSave') && $('#ivSave').addEventListener('click', async () => {
     renderInterviewForm();
     renderInterviewTree();
     renderIvRightList();
+    ivLoadEvidence(true);
     const proj = saved.answers.hasObject?.value && saved.answers.hasObject.entityId && saved.answers.hasObject.op;
     toast(proj ? '已保存，参与关系已自动投影' : '已保存访谈记录', 'ok');
   } catch (err) {
@@ -274,6 +276,7 @@ $('#ivDelete') && $('#ivDelete').addEventListener('click', async () => {
     renderInterviewForm();
     renderInterviewTree();
     renderIvRightList();
+    ivLoadEvidence(true);
     toast('已删除访谈记录', 'ok');
   } catch (err) { toast('删除失败：' + err.message, 'err'); }
 });
@@ -283,7 +286,7 @@ $('#ivGoFlow') && $('#ivGoFlow').addEventListener('click', () => {
   const code = iv.selectedCode;
   switchTab('flowchart');
   const mounted = flow.list.find(f => f.apqcCode === code && (f.suiteId === state.currentSuiteId || !f.suiteId));
-  if (mounted) openFlowchart(mounted.flowId);
+  if (mounted) openFlowchart(mounted.id);
   else toast(`画板尚无挂载 ${code} 的流程图，可「新建」后在挂载下拉框选择`, '');
 });
 
@@ -367,6 +370,219 @@ $('#ivList') && $('#ivList').addEventListener('click', async (e) => {
   if (item) selectInterviewNode(item.dataset.code);
 });
 
+/* ─────────── 右栏：证据板（流程图 + 本体同屏） ─────────── */
+const ivEv = { code: null, flow: null, meta: null };
+
+function ivL3Of(code) { return String(code || '').split('.').slice(0, 3).join('.'); }
+
+function ivMountedFlow(code) {
+  const list = (flow.list || []).filter(f => !f.suiteId || f.suiteId === state.currentSuiteId);
+  return list.find(f => f.apqcCode === code)
+    || (code !== ivL3Of(code) ? list.find(f => f.apqcCode === ivL3Of(code)) : null)
+    || null;
+}
+
+function ivEvFlowSvg(data) {
+  const nodes = data.nodes || [], edges = data.edges || [];
+  if (!nodes.length) return '<div class="iv-ev-empty">画板为空</div>';
+  /* 紧凑排版：按原画板的 x 坐标分列、列内按 y 排序，忽略绝对尺寸，
+     这样在 300px 窄栏里节点文字仍然可读（直接缩放眼图会缩成不可读的小字） */
+  const cols = [];
+  nodes.slice().sort((a, b) => a.x - b.x).forEach(n => {
+    const last = cols[cols.length - 1];
+    if (!last || n.x - last.x0 > 60) { const c = [n]; c.x0 = n.x; cols.push(c); }
+    else last.push(n);
+  });
+  cols.forEach(c => c.sort((a, b) => a.y - b.y));
+  const W = 300, GAP = 14;
+  const NW = Math.min(104, Math.floor((W - 16 - (cols.length - 1) * GAP) / Math.max(cols.length, 1)));
+  const NH = 26;
+  const rows = Math.max(...cols.map(c => c.length), 1);
+  const H = rows * (NH + 8) + 12;
+  const totalW = cols.length * NW + (cols.length - 1) * GAP;
+  const startX = Math.max(8, (W - totalW) / 2);
+  const pos = new Map();
+  cols.forEach((col, ci) => {
+    const x = startX + ci * (NW + GAP);
+    const y0 = (H - (col.length * (NH + 8) - 8)) / 2;
+    col.forEach((n, ri) => pos.set(n.id, { x, y: y0 + ri * (NH + 8) }));
+  });
+  const acts = (data.semantics && data.semantics.activities) || {};
+  const parts = (data.semantics && data.semantics.participations) || [];
+  const filled = (id) => {
+    const a = acts[id];
+    if (a && (a.roleRef || (a.behaviorRefs || []).length || (a.guardRules || []).length)) return true;
+    return parts.some(p => p.nodeId === id);
+  };
+  const edgeSvg = edges.map(ed => {
+    const a = pos.get(ed.from), b = pos.get(ed.to);
+    if (!a || !b) return '';
+    return `<line x1="${a.x + NW / 2}" y1="${a.y + NH / 2}" x2="${b.x + NW / 2}" y2="${b.y + NH / 2}" stroke="#c9c2b4" stroke-width="1" marker-end="url(#ivEvArrow)"/>`;
+  }).join('');
+  const maxChars = Math.max(3, Math.floor((NW - 8) / 9));
+  const nodeSvg = nodes.map(n => {
+    const p = pos.get(n.id), on = filled(n.id);
+    const label = (n.name || n.label || '').slice(0, maxChars);
+    const stroke = on ? '#c9873a' : '#c9c2b4';
+    const fill = on ? 'rgba(201,135,58,.14)' : '#fff';
+    const cx = p.x + NW / 2, cy = p.y + NH / 2;
+    const shape = n.type === 'decision'
+      ? `<polygon points="${cx},${p.y} ${p.x + NW},${cy} ${cx},${p.y + NH} ${p.x},${cy}" fill="${fill}" stroke="${stroke}" stroke-width="1.2"/>`
+      : `<rect x="${p.x}" y="${p.y}" width="${NW}" height="${NH}" rx="5" fill="${fill}" stroke="${stroke}" stroke-width="1.2" ${on ? '' : 'stroke-dasharray="3 3"'}/>`;
+    return `<g class="iv-onto-node" data-fnode="${esc(n.id)}">${shape}<text x="${cx}" y="${cy + 3}" text-anchor="middle" font-size="9" fill="#4b5563">${esc(label)}</text></g>`;
+  }).join('');
+  return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet">
+    <defs><marker id="ivEvArrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#c9c2b4"/></marker></defs>
+    ${edgeSvg}${nodeSvg}</svg>`;
+}
+
+function ivEvOntoIds() {
+  const ids = new Set();
+  const byName = (name) => (state.suite ? state.suite.entities.find(e => e.name === name) : null);
+  if ($('#ivEntity').value) ids.add($('#ivEntity').value);
+  [['#ivRole'], ['#ivRule'], ['#ivBehavior']].forEach(([sel]) => {
+    const v = ($(sel).value || '').trim();
+    if (!v) return;
+    const e = byName(v);
+    if (e) ids.add(e.id);
+  });
+  if (ivEv.flow) (ivEv.flow.semantics?.participations || []).forEach(p => ids.add(p.entityId));
+  const all = state.suite ? state.suite.entities : [];
+  return [...ids].filter(id => all.some(e => e.id === id)).slice(0, 9);
+}
+
+function ivEvOntoSvg(ids) {
+  const ents = ids.map(id => state.suite.entities.find(e => e.id === id)).filter(Boolean);
+  const W = 300, H = 152, cx = W / 2, cy = H / 2;
+  const pos = new Map();
+  const n = ents.length;
+  ents.forEach((e, i) => {
+    const ang = -Math.PI / 2 + (2 * Math.PI * i) / Math.max(n, 1);
+    const r = n <= 1 ? 0 : (n <= 4 ? 40 : 54);
+    pos.set(e.id, { x: cx + Math.cos(ang) * r * 1.5, y: cy + Math.sin(ang) * r });
+  });
+  const rels = (state.suite.relations || []).filter(r => pos.has(r.from) && pos.has(r.to));
+  const lines = rels.map(r => {
+    const a = pos.get(r.from), b = pos.get(r.to);
+    return `<path d="M${a.x} ${a.y} Q${(a.x + b.x) / 2} ${(a.y + b.y) / 2 - 12} ${b.x} ${b.y}" fill="none" stroke="#c9c2b4" stroke-width="1"/>`;
+  }).join('');
+  const circles = ents.map(e => {
+    const p = pos.get(e.id);
+    const color = (typeof KIND_COLORS !== 'undefined' && KIND_COLORS[e.kind]) || '#9ca3af';
+    return `<g class="iv-onto-node" data-eid="${esc(e.id)}">
+      <circle cx="${p.x}" cy="${p.y}" r="11" fill="${color}" fill-opacity=".18" stroke="${color}" stroke-width="1.4"/>
+      <text x="${p.x}" y="${p.y + 3}" text-anchor="middle" font-size="7.5" fill="#374151">${esc((e.name || '').slice(0, 2))}</text>
+      <text x="${p.x}" y="${p.y + 22}" text-anchor="middle" font-size="7" fill="#6b7280">${esc((e.name || '').slice(0, 7))}</text>
+    </g>`;
+  }).join('');
+  return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet">${lines}${circles}</svg>`;
+}
+
+function ivRenderEvidence() {
+  if (!$('#ivEvidence')) return;
+  const flowBox = $('#ivEvFlow'), ontoBox = $('#ivEvOnto');
+  const code = iv.selectedCode, meta = ivEv.meta;
+
+  $('#ivEvFlowMeta').textContent = meta ? meta.name : (code ? '未挂载' : '—');
+  if (!code) {
+    flowBox.innerHTML = '<div class="iv-ev-empty">从左栏选择 L3/L4 节点<br>这里同时显示该流程的画板与本体</div>';
+    $('#ivEvFlowNote').textContent = '';
+  } else if (!meta) {
+    flowBox.innerHTML = `<div class="iv-ev-empty">${esc(ivL3Of(code))} 还没有挂载画板<button class="btn" id="ivEvGoFlow">去画板补画</button></div>`;
+    $('#ivEvFlowNote').textContent = '访谈记录仍会投影为参与关系，只是暂时没有图形。';
+  } else if (!ivEv.flow) {
+    flowBox.innerHTML = '<div class="iv-ev-empty">加载画板…</div>';
+    $('#ivEvFlowNote').textContent = '';
+  } else {
+    const f = ivEv.flow;
+    flowBox.innerHTML = ivEvFlowSvg(f);
+    const nodeN = (f.nodes || []).length, partN = (f.semantics?.participations || []).length;
+    $('#ivEvFlowNote').innerHTML = `<b>${esc(meta.name)}</b> · ${nodeN} 节点 · ${partN} 条参与关系`
+      + (meta.apqcCode !== code ? `（挂在 ${esc(meta.apqcCode)}）` : '');
+  }
+
+  const ids = state.suite ? ivEvOntoIds() : [];
+  const relN = state.suite
+    ? (state.suite.relations || []).filter(r => ids.includes(r.from) && ids.includes(r.to)).length
+    : 0;
+  $('#ivEvOntoMeta').textContent = ids.length ? `${ids.length} 个实体` : '—';
+  if (!state.suite) ontoBox.innerHTML = '<div class="iv-ev-empty">未加载套件</div>';
+  else if (!ids.length) ontoBox.innerHTML = '<div class="iv-ev-empty">还没有引用本体对象<br>填第②问或画板锚定后会亮起</div>';
+  else ontoBox.innerHTML = ivEvOntoSvg(ids);
+
+  const missing = [];
+  if (!$('#ivHasRole').checked) missing.push('角色');
+  if (!$('#ivHasObject').checked) missing.push('对象');
+  if (!$('#ivHasRule').checked) missing.push('规则');
+  if (!$('#ivHasBehavior').checked) missing.push('行为');
+  $('#ivEvNote').innerHTML = state.suite
+    ? `已引用 <b>${ids.length}</b> 个实体 · 关系 <b>${relN}</b> 条 · ${missing.length ? '未答：' + missing.join('/') : '四问已齐'}`
+    : '';
+}
+
+async function ivLoadEvidence(force) {
+  const code = iv.selectedCode;
+  ivEv.code = code;
+  if (!code) { ivEv.flow = null; ivEv.meta = null; ivRenderEvidence(); return; }
+  const meta = ivMountedFlow(code);
+  ivEv.meta = meta;
+  if (!meta) { ivEv.flow = null; ivRenderEvidence(); return; }
+  if (!force && ivEv.flow && ivEv.flow.id === meta.id) { ivRenderEvidence(); return; }
+  ivEv.flow = null;
+  ivRenderEvidence();
+  try {
+    const data = await api('/api/flowcharts/' + encodeURIComponent(meta.id));
+    if (ivEv.code !== code) return;
+    ivEv.flow = data;
+  } catch (err) { ivEv.flow = null; }
+  ivRenderEvidence();
+}
+
+let ivEvTimer = null;
+function ivEvRefreshSoon() {
+  clearTimeout(ivEvTimer);
+  ivEvTimer = setTimeout(ivRenderEvidence, 200);
+}
+
+$('#ivSideSeg') && $('#ivSideSeg').addEventListener('click', (e) => {
+  const btn = e.target.closest('button[data-side]');
+  if (!btn) return;
+  [...$('#ivSideSeg').children].forEach(x => x.classList.toggle('on', x === btn));
+  const ev = btn.dataset.side === 'evidence';
+  $('#ivEvidence').style.display = ev ? '' : 'none';
+  $('#ivList').style.display = ev ? 'none' : '';
+});
+
+$('#ivForm') && $('#ivForm').addEventListener('input', ivEvRefreshSoon);
+$('#ivForm') && $('#ivForm').addEventListener('change', ivEvRefreshSoon);
+
+$('#ivEvFlow') && $('#ivEvFlow').addEventListener('click', (e) => {
+  if (e.target.closest('#ivEvGoFlow')) { $('#ivGoFlow').click(); return; }
+  const g = e.target.closest('[data-fnode]');
+  if (!g || !ivEv.flow) return;
+  const id = g.dataset.fnode;
+  const f = ivEv.flow;
+  const n = (f.nodes || []).find(x => x.id === id);
+  const a = (f.semantics?.activities || {})[id] || {};
+  const objs = (f.semantics?.participations || []).filter(p => p.nodeId === id).map(p => {
+    const en = state.suite ? state.suite.entities.find(x => x.id === p.entityId) : null;
+    return en ? `${en.name}·${String(p.op || '').toUpperCase()}` : p.entityId;
+  });
+  $('#ivEvFlowNote').innerHTML = `选中 <b>${esc((n && n.name) || id)}</b>：角色 ${esc(a.roleRef || '—')}；规则 ${esc((a.guardRules || []).join('、') || '—')}；行为 ${esc((a.behaviorRefs || []).join('、') || '—')}`
+    + (objs.length ? `；对象 ${esc(objs.join('、'))}` : '');
+});
+
+$('#ivEvOnto') && $('#ivEvOnto').addEventListener('click', (e) => {
+  const g = e.target.closest('[data-eid]');
+  if (!g || !state.suite) return;
+  const ent = state.suite.entities.find(x => x.id === g.dataset.eid);
+  if (!ent) return;
+  const relN = (state.suite.relations || []).filter(r => r.from === ent.id || r.to === ent.id).length;
+  $('#ivEvNote').innerHTML = `<b>${esc(ent.name)}</b> · ${esc(ent.kind)} · ${esc(ent.domain || '—')} · 关系 ${relN}`;
+  // 直接开实体抽屉：与套件列表、流程地图的行为保持一致，且能顺手看框架路径 / 定位到流程地图
+  openDrawer(ent.id);
+});
+
 /* ─────────── Tab 入口（switchTab 调用） ─────────── */
 function renderInterviewTab() {
   renderIvEntitySelect();
@@ -374,4 +590,9 @@ function renderInterviewTab() {
   renderInterviewTree();
   renderIvRightList();
   renderInterviewForm();
+  if (!(flow.list && flow.list.length) && typeof refreshFlowList === 'function') {
+    Promise.resolve(refreshFlowList()).then(() => ivLoadEvidence()).catch(() => ivLoadEvidence());
+  } else {
+    ivLoadEvidence();
+  }
 }

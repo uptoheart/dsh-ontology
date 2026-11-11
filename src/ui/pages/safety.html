@@ -1,0 +1,47 @@
+<!-- Tab: 化工安全应用（法规 · 资产 · 作业 · 评级 · 根因） -->
+<section class="tab-panel" id="tab-safety">
+  <div class="safety-head">
+    <div>
+      <div class="safety-title">化工安全智能应用</div>
+      <div class="safety-sub" id="safetySub">国家安全法规 · 企业设备与作业 · 厂区安全评级 · 根因链路</div>
+    </div>
+    <div class="safety-actions">
+      <button class="btn" id="btnSafetyAssess">⚙ 运行评级</button>
+      <button class="btn" id="btnSafetyRules">🧪 规则评估</button>
+      <button class="btn primary" id="btnSafetyRca">🔎 根因链路</button>
+    </div>
+  </div>
+
+  <div class="safety-tabs" id="safetyTabs">
+    <button data-stab="overview" class="on">安全总览</button>
+    <button data-stab="regulation">法规库</button>
+    <button data-stab="asset">资产台账</button>
+    <button data-stab="operation">作业分析</button>
+    <button data-stab="assessment">安全评级</button>
+    <button data-stab="rca">根因分析</button>
+  </div>
+
+  <div class="safety-body">
+    <div class="safety-panel active" id="stab-overview"></div>
+    <div class="safety-panel" id="stab-regulation"></div>
+    <div class="safety-panel" id="stab-asset"></div>
+    <div class="safety-panel" id="stab-operation"></div>
+    <div class="safety-panel" id="stab-assessment"></div>
+
+    <div class="safety-panel" id="stab-rca">
+      <div class="rca-head">
+        <label for="rcaIncident">事件：</label>
+        <select id="rcaIncident"></select>
+        <button class="btn" id="btnRcaRun">生成因果链路</button>
+        <button class="btn" id="btnRcaRefresh" title="忽略缓存，重新计算">↻ 重算</button>
+        <span class="dim" id="rcaMeta"></span>
+      </div>
+      <div class="rca-layout">
+        <div class="rca-chain" id="rcaChain">
+          <div class="empty-hint"><div><div class="big">🕸</div>选择事件后生成因果链路</div></div>
+        </div>
+        <aside class="rca-side" id="rcaSide"></aside>
+      </div>
+    </div>
+  </div>
+</section>

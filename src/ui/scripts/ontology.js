@@ -14,6 +14,7 @@ const KIND_COLORS = {
   UI_MENU: '#64748b',
   UI_SCREEN: '#22c55e',
   DANGLING_REF: '#9ca3af',
+  PCF: '#c9873a',
 };
 const RELATION_LABELS = {
   REFERENCE: '引用',
@@ -37,6 +38,7 @@ const RELATION_LABELS = {
   MENU_CONTAINS_MENU: '菜单包含',
   MENU_SCREEN: '菜单屏幕',
   CUSTOM: '自定义',
+  PCF_HAS_ENTITY: '编号锚定',
 };
 const relLabel = (t) => RELATION_LABELS[t] || t;
 
@@ -51,6 +53,7 @@ const graph = {
   raf: 0,
   scale: 1, tx: 0, ty: 0,
   selectedId: null, hoverId: null,
+  showPcf: false,   // PCF 投影图层：把「框架编号」作为节点画进本体图
   dragNode: null, panning: false, moved: false,
   lastMouse: { x: 0, y: 0 },
   width: 0, height: 0, dpr: 1,
@@ -83,15 +86,31 @@ function kindCounts(entities) {
 function renderLegend() {
   if (!state.suite) { $('#kindLegend').innerHTML = ''; return; }
   const counts = kindCounts(state.suite.entities);
+  const maps = pcfMapping();
+  const codes = new Set();
+  for (const e of state.suite.entities) {
+    const entry = fwEntryOf(e.id);
+    if (entry && entry.apqcCode && graph.visibleKinds.has(e.kind)) codes.add(entry.apqcCode);
+  }
+  const pcfChip = codes.size
+    ? `<button class="lg-chip ${graph.showPcf ? '' : 'off'}" data-pcf="1" title="显示/隐藏 PCF 编号投影节点"><i style="background:${KIND_COLORS.PCF}"></i>PCF 投影 <b>${codes.size}</b></button>`
+    : '';
   $('#kindLegend').innerHTML = Array.from(counts.entries()).sort((a, b) => b[1] - a[1]).map(([k, n]) => `
     <button class="lg-chip ${graph.visibleKinds.has(k) ? '' : 'off'}" data-kind="${esc(k)}" title="点击显示/隐藏该类型">
       <i style="background:${KIND_COLORS[k] || '#9ca3af'}"></i>${esc(k)} <b>${n}</b>
-    </button>`).join('');
+    </button>`).join('') + pcfChip;
 }
 
 $('#kindLegend').addEventListener('click', (e) => {
   const chip = e.target.closest('.lg-chip');
   if (!chip) return;
+  if (chip.dataset.pcf) {
+    graph.showPcf = !graph.showPcf;
+    rebuildGraph(false);
+    ensureSim(true);
+    renderOntologyDetail();
+    return;
+  }
   const k = chip.dataset.kind;
   if (graph.visibleKinds.has(k)) graph.visibleKinds.delete(k);
   else graph.visibleKinds.add(k);
@@ -99,6 +118,37 @@ $('#kindLegend').addEventListener('click', (e) => {
   ensureSim(true);
   renderOntologyDetail(); // 全部关闭时 selectedId 被清空，右侧详情同步回空提示
 });
+
+function pcfMapping() {
+  return (state.suite && state.suite.annotations && state.suite.annotations.entityFrameMapping) || {};
+}
+
+/* PCF 投影图层：把已锚定的框架编号作为节点接入本体图，只读，不改动数据 */
+function addPcfProjection() {
+  if (!graph.showPcf) return;
+  const maps = pcfMapping();
+  const groups = new Map();
+  for (const [eid] of Object.entries(maps)) {
+    const entry = fwEntryOf(eid);   // 按当前激活框架取（多格式兼容）
+    if (!entry || !entry.apqcCode) continue;
+    if (!graph.nodeById.has(eid)) continue;
+    if (!groups.has(entry.apqcCode)) groups.set(entry.apqcCode, []);
+    groups.get(entry.apqcCode).push(eid);
+  }
+  for (const [code, eids] of groups) {
+    const id = 'pcf:' + code;
+    if (graph.nodeById.has(id)) continue;
+    const item = state.flatFw ? state.flatFw.find(x => x.code === code) : null;
+    const node = {
+      id, name: code, label: item ? item.label : code, kind: 'PCF',
+      ...(graph.posMap.get(id) || { x: (Math.random() - 0.5) * 180, y: (Math.random() - 0.5) * 180 }),
+      vx: 0, vy: 0, degree: eids.length, fixed: false,
+    };
+    graph.nodes.push(node);
+    graph.nodeById.set(id, node);
+    for (const eid of eids) graph.edges.push({ source: id, target: eid, type: 'PCF_HAS_ENTITY' });
+  }
+}
 
 function rebuildGraph(resetView) {
   if (!state.suite) { graph.nodes = []; graph.edges = []; renderLegend(); drawGraph(); return; }
@@ -124,6 +174,7 @@ function rebuildGraph(resetView) {
     deg.set(ed.target, (deg.get(ed.target) || 0) + 1);
   }
   for (const n of graph.nodes) n.degree = deg.get(n.id) || 0;
+  addPcfProjection();
   // 新节点没有历史位置 → 按类型聚簇初始化
   const kindsArr = Array.from(graph.visibleKinds);
   let fresh = 0;
@@ -253,7 +304,13 @@ function drawGraph() {
     const r = nodeRadius(n);
     const isSel = n.id === sel, isHov = n.id === hov;
     ctx.beginPath();
-    ctx.arc(n.x, n.y, r, 0, Math.PI * 2);
+    if (n.kind === 'PCF') {
+      // 编号投影节点画成方形，和实体圆点在图上区分开
+      const s = r + 1;
+      ctx.rect(n.x - s, n.y - s, s * 2, s * 2);
+    } else {
+      ctx.arc(n.x, n.y, r, 0, Math.PI * 2);
+    }
     ctx.fillStyle = KIND_COLORS[n.kind] || '#9ca3af';
     ctx.fill();
     if (isSel) {
@@ -435,9 +492,41 @@ function selectOntoEntity(eid) {
   renderOntologyDetail();
 }
 
+function renderPcfDetail(code) {
+  const ents = state.suite.entities.filter(e => { const en = fwEntryOf(e.id); return en && en.apqcCode === code; });
+  const item = state.flatFw ? state.flatFw.find(x => x.code === code) : null;
+  const path = typeof fwPathOf === 'function' ? fwPathOf(code) : null;
+  const chain = path
+    ? path.codes.map((c, i) => `<span class="mono" style="color:var(--accent)">${esc(c)}</span> ${esc(path.labels[i] || '')}`).join(' › ')
+    : esc(code);
+  $('#ontoDetail').innerHTML = `
+    <div class="onto-detail">
+      <h2>
+        <span class="dot" style="width:11px;height:11px;border-radius:50%;background:${KIND_COLORS.PCF};display:inline-block"></span>
+        ${esc(item ? item.label : code)}
+        <span class="kind-tag">PCF</span>
+        <button class="btn" id="odGotoFw" style="margin-left:auto">在流程地图中查看</button>
+      </h2>
+      <div class="od-sub">${chain}</div>
+      <div class="detail-sec">
+        <h4>锚定实体 <span class="sec-n">${ents.length}</span></h4>
+        ${ents.length ? `<div class="rel-items">${ents.map(e => `
+          <button class="rel-item" data-eid="${esc(e.id)}">
+            <span class="dot" style="background:${KIND_COLORS[e.kind] || '#9ca3af'}"></span>
+            <span>${esc(e.name)}</span>
+          </button>`).join('')}</div>` : '<div class="rel-empty">还没有实体锚定到该编号</div>'}
+      </div>
+      <div class="detail-sec">
+        <h4>说明</h4>
+        <div class="rel-empty">投影节点只表示「编号 ↔ 实体」的锚定关系，不写回本体数据。</div>
+      </div>
+    </div>`;
+}
+
 function renderOntologyDetail() {
   const box = $('#ontoDetail');
   const eid = graph.selectedId;
+  if (eid && eid.indexOf('pcf:') === 0) { renderPcfDetail(eid.slice(4)); return; }
   const ent = eid && state.suite ? state.suite.entities.find(x => x.id === eid) : null;
   if (!ent) {
     box.innerHTML = '<div class="empty-hint"><div><div class="big">🧩</div>点击左侧实体节点，查看行为、规则与关联内容</div></div>';
@@ -580,6 +669,10 @@ $('#ontoDetail') && $('#ontoDetail').addEventListener('click', (e) => {
   }
   if (e.target.closest('#odAnnotate')) {
     if (graph.selectedId) openDrawer(graph.selectedId);
+    return;
+  }
+  if (e.target.closest('#odGotoFw')) {
+    if (graph.selectedId && graph.selectedId.indexOf('pcf:') === 0) gotoFrameworkNode(graph.selectedId.slice(4));
     return;
   }
   const item = e.target.closest('.rel-item');

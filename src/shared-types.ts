@@ -17,6 +17,20 @@ export type EntityKind =
   | 'UI_MENU'
   | 'UI_SCREEN'
   | 'DANGLING_REF'
+  // 化工安全应用（见 src/apps/safety/pack.ts）；一律不参与 APQC 映射
+  | 'SAFETY_REGULATION'
+  | 'SAFETY_CLAUSE'
+  | 'SAFETY_CHECK_ITEM'
+  | 'SAFETY_AREA'
+  | 'SAFETY_UNIT'
+  | 'SAFETY_EQUIPMENT'
+  | 'SAFETY_MATERIAL'
+  | 'SAFETY_OPERATION'
+  | 'SAFETY_PERMIT'
+  | 'SAFETY_HAZARD'
+  | 'SAFETY_CONTROL'
+  | 'SAFETY_EVENT'
+  | 'SAFETY_CAUSE'
 
 // ──────────────────────────────────────────────────────────────────────
 // APQC 映射按 kind 分流（名词层 vs 动词层）
@@ -67,6 +81,24 @@ export type RelationType =
   | 'MENU_CONTAINS_MENU'
   | 'MENU_SCREEN'
   | 'CUSTOM'
+  // 化工安全应用关系
+  | 'SAFETY_REG_CONTAINS_CLAUSE'
+  | 'SAFETY_CLAUSE_APPLIES_TO'
+  | 'SAFETY_CLAUSE_REQUIRES_CONTROL'
+  | 'SAFETY_AREA_CONTAINS_UNIT'
+  | 'SAFETY_UNIT_CONTAINS_EQUIPMENT'
+  | 'SAFETY_EQUIPMENT_HANDLES_MATERIAL'
+  | 'SAFETY_OPERATION_IN_AREA'
+  | 'SAFETY_OPERATION_ON_EQUIPMENT'
+  | 'SAFETY_OPERATION_REQUIRES_PERMIT'
+  | 'SAFETY_OPERATION_HAS_HAZARD'
+  | 'SAFETY_EQUIPMENT_HAS_HAZARD'
+  | 'SAFETY_CONTROL_MITIGATES_HAZARD'
+  | 'SAFETY_CHECK_VERIFIES_CLAUSE'
+  | 'SAFETY_EVENT_OCCURS_AT'
+  | 'SAFETY_EVENT_INVOLVES'
+  | 'SAFETY_EVENT_CAUSED_BY'
+  | 'SAFETY_RISK_PROPAGATES_TO'
 
 export interface OntologyEntity {
   id: string
@@ -100,16 +132,33 @@ export interface OntologySuiteMeta {
   sourceFileCount: number
   entityCount: number
   relationCount: number
-  /** 项目级锁定的流程框架（缺省 'apqc-process'，旧套件零迁移）；切换 = 重新锚定实体 */
+  /** 已关联的流程框架清单（多套并行，缺省 ['apqc-process']） */
+  frameworks?: string[]
+  /** 当前激活的框架（frameworks 列表中的某一项，缺省取 frameworks[0]） */
+  activeFrameworkId?: string
+  /** 旧单框架锁定字段：若存在而 frameworks[] 为空，启动时自动迁移到 frameworks + activeFrameworkId（零破坏） */
   frameworkId?: string
+  /** 应用归属（缺省 'pcf'，旧套件零迁移）；见 src/kernel/app-registry.ts */
+  appId?: string
 }
 
-export interface FrameMapping {
+/* 实体→框架映射条目（新格式：entityId → frameworkId → Entry，frameworkId 在外层 key，Entry 自身不含 frameworkId） */
+export interface FrameMappingEntry {
+  apqcCode?: string
+  domainCode?: string
+  levelCode?: string
+  note?: string
+  mappedAt?: number
+}
+
+/* 旧格式（每条带 frameworkId，用于兼容迁移，不建议新代码使用） */
+export interface FrameMappingOld {
   frameworkId: string
   apqcCode?: string
   domainCode?: string
   levelCode?: string
   note?: string
+  mappedAt?: number
 }
 
 export type CoverageStatus = 'covered' | 'partial' | 'gap' | 'unset'
@@ -121,7 +170,8 @@ export interface CoverageMark {
 }
 
 export interface OntologyAnnotations {
-  entityFrameMapping: Record<string, FrameMapping>
+  /** 新格式：entityId → frameworkId → Entry。迁移层同时接受旧格式 Record<entityId, FrameMappingOld> */
+  entityFrameMapping: Record<string, Record<string, FrameMappingEntry>> | Record<string, FrameMappingOld>
   coverageMarks: Record<string, CoverageMark>
   customRelations: OntologyRelation[]
 }

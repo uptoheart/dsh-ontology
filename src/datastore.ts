@@ -8,7 +8,7 @@ import type {
   GraphData, GraphNode, GraphEdge, CoverageMatrix, CoverageCell, CoverageNodeInfo,
   DatastorageConfig, FrameworkDefinition, FrameworkNode, FrameworkDomain, FrameworkLevel,
   FlowchartData, FlowchartMeta, ViolatedMapping, EntityKind, ProcessCoverageMatrix,
-  InterviewRecord, CrudMatrix, FlowOp,
+  InterviewRecord, CrudMatrix, FlowOp, FrameMappingEntry, FrameMappingOld,
 } from './shared-types.js'
 import { mappingAxisOfKind, levelNumOfCode } from './shared-types.js'
 import { discoverSuites, parseSuite, resolveDatasourceRoot as resolveDatasourceRootAsync } from './ontology-parser.js'
@@ -16,6 +16,14 @@ import {
   getBuiltinFramework, parseApqcCode, listBuiltinFrameworks, DEFAULT_NEW_SUITE_FW,
   registerFramework, validateFrameworkDefinition,
 } from './builtin-frameworks.js'
+
+/* FrameworkNode 运行时会挂 path（祖先链）和 node（父引用），类型声明补齐 */
+declare module './shared-types.js' {
+  interface FrameworkNode {
+    path?: FrameworkNode[]
+    node?: FrameworkNode | null
+  }
+}
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
@@ -54,6 +62,12 @@ export function resolveDatastorageRoot(cfg: DatastorageConfig): string {
   }
   if (existsSync(join(root, 'src', 'datastorage'))) return join(root, 'src', 'datastorage')
   return join(homedir(), '.dsh-ontology', 'data')
+}
+
+/** 供其他应用复用同一存储根（安全域规则/评级/事件） */
+export async function getStorageRoot(): Promise<string> {
+  const cfg = await getConfig()
+  return resolveDatastorageRoot(cfg)
 }
 
 let _configCache: DatastorageConfig | null = null
@@ -99,7 +113,7 @@ function suiteDir(storageRoot: string, suiteId: string): string {
 
 // ─────────────── 套件级读写 ───────────────
 
-export async function listImportedSuites(): Promise<OntologySuiteMeta[]> {
+export async function listImportedSuites(appId?: string): Promise<OntologySuiteMeta[]> {
   const cfg = await getConfig()
   const storageRoot = resolveDatastorageRoot(cfg)
   const suitesDir = join(storageRoot, 'ontologies')
@@ -110,9 +124,142 @@ export async function listImportedSuites(): Promise<OntologySuiteMeta[]> {
   for (const e of entries) {
     const metaPath = join(suitesDir, e, 'meta.json')
     const meta = await readJsonSafe<OntologySuiteMeta | null>(metaPath, null)
-    if (meta) metas.push(meta)
+    if (!meta) continue
+    if (appId && (meta.appId ?? 'pcf') !== appId) continue
+    metas.push(meta)
   }
   return metas.sort((a, b) => b.importTime - a.importTime)
+}
+
+/**
+ * 实体→框架映射 旧格式 → 新格式 迁移
+ *
+ * 旧：entityId → { frameworkId, apqcCode, note, mappedAt }  单条，框架信息在 value 里
+ * 新：entityId → { frameworkId: { apqcCode, note, mappedAt } }  多条，frameworkId 在 key 里
+ *
+ * 自动迁移策略：
+ *   1) 每条旧记录原样塞进新结构的旧 frameworkId 下
+ *   2) 对每个已挂载的 apqcCode，遍历当前所有已注册框架（listBuiltinFrameworks）
+ *      若 code 在另一个框架里也有效（findNodeByCode != null），则视为「编号同形、框架不同」的
+ *      多框架共享位置，自动复制一份进去（note 追加提示）——这是**语义级**迁移，不是盲目复制
+ *   3) 迁移后触发 saveSuite 写回磁盘（幂等，启动时跑一次）
+ *
+ * 返回值：迁移完成的 annotations，以及一个 warnings 列表（可用于前端弹窗提示人工确认的部分）
+ */
+function findNodeByCode(fw: FrameworkDefinition, code: string): FrameworkNode | null {
+  if (!fw || !code) return null
+  // 复用 builtin-frameworks 导出的同函数（避免 import 声明在文件中间），这里用 inline walk
+  const walk = (list: FrameworkNode[] | undefined): FrameworkNode | null => {
+    if (!list) return null
+    for (const n of list) {
+      if (n.code === code) return n
+      const r = walk(n.children)
+      if (r) return r
+    }
+    return null
+  }
+  for (const d of fw.domains || []) {
+    const r = walk(d.children)
+    if (r) return r
+  }
+  return null
+}
+
+interface MigrationResult {
+  annotations: OntologyAnnotations
+  migrated: number       // 旧记录数
+  propagated: number     // 跨框架同形 code 自动复制的条目数
+  warnings: string[]     // 需要人工关注的模糊或缺失项（当前仅输出）
+}
+
+export function detectAndMigrateEntityFrameMapping(
+  annotations: OntologyAnnotations,
+): MigrationResult {
+  const mapping = annotations.entityFrameMapping
+  if (!mapping) return { annotations, migrated: 0, propagated: 0, warnings: [] }
+
+  const first = Object.values(mapping).find(v => v)
+  if (!first) return { annotations, migrated: 0, propagated: 0, warnings: [] }
+
+  // 旧格式检测：首条 value 有 frameworkId 字段
+  const isOld = Object.prototype.hasOwnProperty.call(first, 'frameworkId')
+
+  // 新格式检测：首条 value 是 Object，但无 frameworkId，且 value 里 value 也是 Object
+  const isNew = !isOld && typeof first === 'object' &&
+    Object.values(first as object).some(v => v && typeof v === 'object' && !('frameworkId' in v))
+
+  if (isNew) return { annotations, migrated: 0, propagated: 0, warnings: [] }
+
+  // 迁移
+  const result: Record<string, Record<string, FrameMappingEntry>> = {}
+  let migrated = 0
+  const warnings: string[] = []
+
+  for (const [entityId, oldRec] of Object.entries(mapping)) {
+    const rec = oldRec as FrameMappingOld
+    if (!rec || !rec.frameworkId) { warnings.push(`${entityId} 缺少 frameworkId，跳过`); continue }
+    migrated++
+    const entry: FrameMappingEntry = { apqcCode: rec.apqcCode, domainCode: rec.domainCode, levelCode: rec.levelCode, note: rec.note, mappedAt: (rec as any).mappedAt }
+    if (!result[entityId]) result[entityId] = {}
+    result[entityId][rec.frameworkId] = entry
+  }
+
+  // 跨框架同形 code 语义级复制
+  let propagated = 0
+  const allFwIds = listBuiltinFrameworks().map(f => f.frameworkId)
+  for (const [entityId, fwMap] of Object.entries(result)) {
+    for (const [fwId, entry] of Object.entries(fwMap)) {
+      if (!entry.apqcCode) continue
+      const thisFw = getBuiltinFramework(fwId)
+      if (!thisFw) continue
+      for (const otherId of allFwIds) {
+        if (otherId === fwId) continue
+        if (result[entityId]?.[otherId]) continue // 已经挂过了，尊重原数据
+        const otherFw = getBuiltinFramework(otherId)
+        if (!otherFw) continue
+        if (findNodeByCode(otherFw, entry.apqcCode)) {
+          result[entityId][otherId] = {
+            apqcCode: entry.apqcCode,
+            note: (entry.note ? entry.note + ' · ' : '') + `语义迁移：与 ${fwId} 编号同形（自动）`,
+            mappedAt: Date.now(),
+          }
+          propagated++
+        }
+      }
+    }
+  }
+
+  annotations.entityFrameMapping = result
+  return { annotations, migrated, propagated, warnings }
+}
+
+/** 从 entityFrameMapping（旧/新双格式）取指定框架的映射条目，统一入口 */
+function fwEntryOf(
+  mapping: OntologyAnnotations['entityFrameMapping'] | undefined,
+  entityId: string,
+  fwId: string,
+): FrameMappingEntry | null {
+  if (!mapping) return null
+  const v = (mapping as any)[entityId]
+  if (!v) return null
+  // 旧格式：{ frameworkId, apqcCode, ... }
+  if (typeof v === 'object' && 'frameworkId' in v) {
+    return v.frameworkId === fwId ? { apqcCode: v.apqcCode, domainCode: v.domainCode, levelCode: v.levelCode, note: v.note, mappedAt: (v as any).mappedAt } : null
+  }
+  // 新格式：{ [fwId]: Entry }
+  const entry = (v as Record<string, FrameMappingEntry>)[fwId]
+  return entry || null
+}
+
+/** 列出 entityFrameMapping 里某实体在所有框架下的映射（新格式），旧格式只返回单条 */
+function allFwEntries(mapping: OntologyAnnotations['entityFrameMapping'] | undefined, entityId: string): Array<[string, FrameMappingEntry]> {
+  if (!mapping) return []
+  const v = (mapping as any)[entityId]
+  if (!v) return []
+  if (typeof v === 'object' && 'frameworkId' in v) {
+    return [[(v as FrameMappingOld).frameworkId, { apqcCode: (v as FrameMappingOld).apqcCode, note: (v as FrameMappingOld).note, mappedAt: (v as any).mappedAt }]]
+  }
+  return Object.entries(v as Record<string, FrameMappingEntry>)
 }
 
 export async function loadSuite(suiteId: string): Promise<SuiteData | null> {
@@ -120,14 +267,38 @@ export async function loadSuite(suiteId: string): Promise<SuiteData | null> {
   const storageRoot = resolveDatastorageRoot(cfg)
   const dir = suiteDir(storageRoot, suiteId)
 
-  const meta = await readJsonSafe<OntologySuiteMeta | null>(join(dir, 'meta.json'), null)
+  let meta = await readJsonSafe<OntologySuiteMeta | null>(join(dir, 'meta.json'), null)
   if (!meta) return null
+
+  // meta 迁移层：旧单框架 → 多框架清单（零破坏，迁移后回写）
+  let metaMigrated = false
+  if (!meta.frameworks || !meta.frameworks.length) {
+    const old = meta.frameworkId || 'apqc-process'
+    // 只有在旧 frameworkId 有效且存在时才保留；否则用默认
+    meta.frameworks = [old]
+    meta.activeFrameworkId = old
+    metaMigrated = true
+  }
+  if (!meta.activeFrameworkId || !meta.frameworks.includes(meta.activeFrameworkId)) {
+    meta.activeFrameworkId = meta.frameworks[0]
+    metaMigrated = true
+  }
+  if (metaMigrated) {
+    try { await writeJson(join(dir, 'meta.json'), meta) } catch { /* ignore */ }
+  }
 
   const entities = await readJsonSafe<OntologyEntity[]>(join(dir, 'entities.json'), [])
   const relations = await readJsonSafe<OntologyRelation[]>(join(dir, 'relations.json'), [])
-  const annotations = await readJsonSafe<OntologyAnnotations>(join(dir, 'annotations.json'), {
+  let annotations = await readJsonSafe<OntologyAnnotations>(join(dir, 'annotations.json'), {
     entityFrameMapping: {}, coverageMarks: {}, customRelations: [],
   })
+
+  // 迁移层：旧格式 → 新格式，并尝试跨框架同形 code 语义级复制；迁移后自动回写磁盘
+  const migration = detectAndMigrateEntityFrameMapping(annotations)
+  annotations = migration.annotations
+  if (migration.migrated > 0 || migration.propagated > 0) {
+    try { await saveAnnotations(suiteId, annotations as OntologyAnnotations) } catch { /* ignore 磁盘写失败，内存里已经是新格式了 */ }
+  }
 
   return { entities, relations, meta, annotations }
 }
@@ -148,16 +319,30 @@ export async function saveAnnotations(suiteId: string, annotations: OntologyAnno
   await writeJson(join(suiteDir(storageRoot, suiteId), 'annotations.json'), annotations)
 }
 
-/** 设置套件锁定的框架（写入 meta.json；切换框架 = 实体需重新锚定，调用方负责提示） */
-export async function setSuiteFramework(suiteId: string, frameworkId: string): Promise<OntologySuiteMeta | null> {
+/** 设置套件多框架清单 + 当前激活框架（写入 meta.json；frameworks 可空，空则 activeFrameworkId 被设为唯一框架） */
+export async function setSuiteFrameworks(
+  suiteId: string,
+  frameworks: string[],
+  activeFrameworkId?: string,
+): Promise<OntologySuiteMeta | null> {
   const cfg = await getConfig()
   const storageRoot = resolveDatastorageRoot(cfg)
   const metaPath = join(suiteDir(storageRoot, suiteId), 'meta.json')
   const meta = await readJsonSafe<OntologySuiteMeta | null>(metaPath, null)
   if (!meta) return null
-  meta.frameworkId = frameworkId
+
+  const list = frameworks && frameworks.length ? [...new Set(frameworks)] : (meta.frameworks?.length ? meta.frameworks : [meta.frameworkId || 'apqc-process'])
+  meta.frameworks = list
+  meta.activeFrameworkId = activeFrameworkId && list.includes(activeFrameworkId) ? activeFrameworkId : list[0]
+  // 同步写回旧字段（保持向后兼容，读取代码迟早全部切 activeFrameworkId）
+  meta.frameworkId = meta.activeFrameworkId
   await writeJson(metaPath, meta)
   return meta
+}
+
+/** 旧接口：单框架锁定 → 内部转调 setSuiteFrameworks 作为唯一框架 */
+export async function setSuiteFramework(suiteId: string, frameworkId: string): Promise<OntologySuiteMeta | null> {
+  return setSuiteFrameworks(suiteId, [frameworkId], frameworkId)
 }
 
 // ─────────────── Import (datasource → datastorage) ───────────────
@@ -221,8 +406,7 @@ export function assembleGraph(suite: SuiteData): GraphData {
 }
 
 // ─────────────── 覆盖度计算 ───────────────
-
-import { findNodeByCode } from './builtin-frameworks.js'
+// 注：findNodeByCode 在顶部已定义（迁移函数用的 inline walk），不再二次 import
 
 function calcRollupStatus(counts: { covered: number; partial: number; gap: number; unset: number; total: number }): import('./shared-types.js').CoverageStatus {
   if (counts.covered === counts.total && counts.total > 0) return 'covered'
@@ -256,51 +440,55 @@ export function computeCoverage(suite: SuiteData, frameworkId: string): Coverage
   const violatedMappings: ViolatedMapping[] = []
   const domainEntityIds = new Set<string>()
 
-  for (const [entityId, frameMapping] of Object.entries(suite.annotations.entityFrameMapping)) {
-    if (frameMapping.frameworkId !== frameworkId || !frameMapping.apqcCode) continue
-    const entity = suite.entities.find(e => e.id === entityId)
-    if (!entity) continue
-    const mark = suite.annotations.coverageMarks[entityId]
-    const status = mark?.status ?? 'unset'
-    const axis = mappingAxisOfKind(entity.kind)
-    const lvl = levelNumOfCode(frameMapping.apqcCode)
-    const levelId = `L${Math.min(Math.max(lvl, 1), 5)}`
+  // 遍历所有实体，每个实体在所有框架下的映射条目中，只处理当前 frameworkId 匹配的那一条
+  for (const entityId of Object.keys(suite.annotations.entityFrameMapping || {})) {
+    const pairs = allFwEntries(suite.annotations.entityFrameMapping, entityId)
+    for (const [fwId, frameMapping] of pairs) {
+      if (fwId !== frameworkId || !frameMapping.apqcCode) continue
+      const entity = suite.entities.find(e => e.id === entityId)
+      if (!entity) continue
+      const mark = suite.annotations.coverageMarks[entityId]
+      const status = mark?.status ?? 'unset'
+      const axis = mappingAxisOfKind(entity.kind)
+      const lvl = levelNumOfCode(frameMapping.apqcCode)
+      const levelId = `L${Math.min(Math.max(lvl, 1), 5)}`
 
-    if (axis === 'none') {
-      violatedMappings.push({
-        entityId, entityName: entity.name, kind: entity.kind,
-        apqcCode: frameMapping.apqcCode, levelId,
-        reason: `${entity.kind} 类型暂不参与 APQC 映射`,
-      })
-      continue
-    }
-    if (axis === 'domain' && lvl > 2) {
-      violatedMappings.push({
-        entityId, entityName: entity.name, kind: entity.kind,
-        apqcCode: frameMapping.apqcCode, levelId,
-        reason: '实体类（名词轴）仅允许映射到 L1/L2，L3+ 属流程轴',
-      })
-      continue
-    }
-    if (axis === 'process' && lvl < 3) {
-      violatedMappings.push({
-        entityId, entityName: entity.name, kind: entity.kind,
-        apqcCode: frameMapping.apqcCode, levelId,
-        reason: '流程类（动词轴）仅允许映射到 L3-L5',
-      })
-      continue
-    }
+      if (axis === 'none') {
+        violatedMappings.push({
+          entityId, entityName: entity.name, kind: entity.kind,
+          apqcCode: frameMapping.apqcCode, levelId,
+          reason: `${entity.kind} 类型暂不参与框架映射`,
+        })
+        continue
+      }
+      if (axis === 'domain' && lvl > 2) {
+        violatedMappings.push({
+          entityId, entityName: entity.name, kind: entity.kind,
+          apqcCode: frameMapping.apqcCode, levelId,
+          reason: '实体类（名词轴）仅允许映射到 L1/L2，L3+ 属流程轴',
+        })
+        continue
+      }
+      if (axis === 'process' && lvl < 3) {
+        violatedMappings.push({
+          entityId, entityName: entity.name, kind: entity.kind,
+          apqcCode: frameMapping.apqcCode, levelId,
+          reason: '流程类（动词轴）仅允许映射到 L3-L5',
+        })
+        continue
+      }
 
-    // 只登记到同轴层级的祖先节点：域轴仅 L1/L2，流程轴仅 L3+
-    const target = axis === 'domain' ? domainNodeMap : processNodeMap
-    if (axis === 'domain') domainEntityIds.add(entityId)
-    for (const code of collectAncestorCodes(fw, frameMapping.apqcCode)) {
-      const ancestorLvl = levelNumOfCode(code)
-      if (axis === 'domain' && ancestorLvl > 2) continue
-      if (axis === 'process' && ancestorLvl < 3) continue
-      const list = target.get(code) ?? []
-      list.push({ entityId, status })
-      target.set(code, list)
+      // 只登记到同轴层级的祖先节点：域轴仅 L1/L2，流程轴仅 L3+
+      const target = axis === 'domain' ? domainNodeMap : processNodeMap
+      if (axis === 'domain') domainEntityIds.add(entityId)
+      for (const code of collectAncestorCodes(fw, frameMapping.apqcCode)) {
+        const ancestorLvl = levelNumOfCode(code)
+        if (axis === 'domain' && ancestorLvl > 2) continue
+        if (axis === 'process' && ancestorLvl < 3) continue
+        const list = target.get(code) ?? []
+        list.push({ entityId, status })
+        target.set(code, list)
+      }
     }
   }
 
@@ -436,7 +624,7 @@ function collectAncestorCodes(fw: ReturnType<typeof getBuiltinFramework> & {}, c
   }
   const info = findNodeByCode(fw as any, codeOrPath)
   if (!info) return result
-  for (const anc of info.path) {
+  for (const anc of info.path || []) {
     if (!result.includes(anc.code)) result.push(anc.code)
   }
   return result
@@ -655,13 +843,16 @@ export async function listFlowchartsForSuite(suiteId: string): Promise<Flowchart
 export function deriveFlowRelations(suite: SuiteData, flows: FlowchartData[]): OntologyRelation[] {
   const kindOf = new Map(suite.entities.map(e => [e.id, e.kind]))
   const activityByCode = new Map<string, string[]>()
-  for (const [entityId, fm] of Object.entries(suite.annotations.entityFrameMapping)) {
-    if (!fm.apqcCode) continue
+  // 遍历所有实体×所有框架的映射条目，累积「编号 → 流程类实体」索引（跨框架同形编号自然合并）
+  for (const entityId of Object.keys(suite.annotations.entityFrameMapping || {})) {
     const kind = kindOf.get(entityId)
     if (!kind || mappingAxisOfKind(kind) !== 'process') continue
-    const list = activityByCode.get(fm.apqcCode) ?? []
-    list.push(entityId)
-    activityByCode.set(fm.apqcCode, list)
+    for (const [, entry] of allFwEntries(suite.annotations.entityFrameMapping, entityId)) {
+      if (!entry.apqcCode) continue
+      const list = activityByCode.get(entry.apqcCode) ?? []
+      list.push(entityId)
+      activityByCode.set(entry.apqcCode, list)
+    }
   }
 
   const out: OntologyRelation[] = []
@@ -745,15 +936,17 @@ export function computeProcessCoverage(
 
   // ACTIVITY 实体映射回退：L4+ 编号 → 实体标注状态
   const entityMarkByCode = new Map<string, import('./shared-types.js').CoverageStatus[]>()
-  for (const [entityId, fm] of Object.entries(suite.annotations.entityFrameMapping)) {
-    if (!fm.apqcCode || levelNumOfCode(fm.apqcCode) < 4) continue
+  for (const entityId of Object.keys(suite.annotations.entityFrameMapping || {})) {
     const e = suite.entities.find(x => x.id === entityId)
     if (!e || mappingAxisOfKind(e.kind) !== 'process') continue
     const mark = suite.annotations.coverageMarks[entityId]
     const status = mark?.status ?? 'unset'
-    const list = entityMarkByCode.get(fm.apqcCode) ?? []
-    list.push(status)
-    entityMarkByCode.set(fm.apqcCode, list)
+    for (const [, entry] of allFwEntries(suite.annotations.entityFrameMapping, entityId)) {
+      if (!entry.apqcCode || levelNumOfCode(entry.apqcCode) < 4) continue
+      const list = entityMarkByCode.get(entry.apqcCode) ?? []
+      list.push(status)
+      entityMarkByCode.set(entry.apqcCode, list)
+    }
   }
 
   // 访谈记录：L4/L5 编号 → 四问信号（有对象=op，有角色=role）
@@ -910,7 +1103,7 @@ function pathOf(fw: FrameworkDefinition, code: string): string[] {
   for (let i = 1; i <= parts.length; i++) {
     const c = parts.slice(0, i).join('.')
     const hit = findNodeByCode(fw, c)
-    if (hit) out.push(hit.node.label)
+    if (hit) out.push(hit?.node?.label ?? '')
   }
   return out
 }
@@ -982,13 +1175,15 @@ export async function deleteInterview(suiteId: string, id: string): Promise<bool
 export function deriveInterviewRelations(suite: SuiteData, interviews: InterviewRecord[]): OntologyRelation[] {
   const kindOf = new Map(suite.entities.map(e => [e.id, e.kind]))
   const activityByCode = new Map<string, string[]>()
-  for (const [entityId, fm] of Object.entries(suite.annotations.entityFrameMapping)) {
-    if (!fm.apqcCode) continue
+  for (const entityId of Object.keys(suite.annotations.entityFrameMapping || {})) {
     const kind = kindOf.get(entityId)
     if (!kind || mappingAxisOfKind(kind) !== 'process') continue
-    const list = activityByCode.get(fm.apqcCode) ?? []
-    list.push(entityId)
-    activityByCode.set(fm.apqcCode, list)
+    for (const [, entry] of allFwEntries(suite.annotations.entityFrameMapping, entityId)) {
+      if (!entry.apqcCode) continue
+      const list = activityByCode.get(entry.apqcCode) ?? []
+      list.push(entityId)
+      activityByCode.set(entry.apqcCode, list)
+    }
   }
 
   const out: OntologyRelation[] = []
@@ -1121,9 +1316,12 @@ export async function createEntitiesBatch(
       const hit = findNodeByCode(fw, domain)
       const lvl = hit ? levelNumOfCode(domain) : 0
       if (hit && lvl >= 1 && lvl <= 2) {
-        suite.annotations.entityFrameMapping[id] = {
-          frameworkId, apqcCode: domain, note: '批量导入自动锚定',
-        }
+        // 新格式：entityId → { [fwId]: Entry }，保留已有其他框架的条目
+        const cur = suite.annotations.entityFrameMapping[id]
+        const isNewFmt = cur && typeof cur === 'object' && !('frameworkId' in cur)
+        const base = isNewFmt ? cur as Record<string, FrameMappingEntry> : {}
+        base[frameworkId] = { apqcCode: domain, note: '批量导入自动锚定', mappedAt: Date.now() }
+        suite.annotations.entityFrameMapping[id] = base
         anchored++
       }
     }
@@ -1176,7 +1374,7 @@ export async function buildFlowDraftFromInterviews(
     const nodeId = `n-${code.replace(/\./g, '-')}`
     nodes.push({
       id: nodeId, type: 'task', code,
-      label: hit?.node.label ?? code,
+      label: hit?.node?.label ?? code,
       x: 220, y: 80 + nodes.length * 96,
     })
     const a = itv.answers ?? {}
@@ -1315,7 +1513,7 @@ export async function buildExport(suiteId: string, kind: ExportKind, frameworkId
       const pathStr = (hit?.path ?? []).map(p => p.label).join(' › ')
       const a = itv.answers ?? {}
       const lines = [
-        `## ${itv.apqcCode} ${hit?.node.label ?? ''}`,
+        `## ${itv.apqcCode} ${hit?.node?.label ?? ''}`,
         pathStr ? `> 路径：${pathStr} · 记录时间：${fmtTs(itv.updatedAt)}` : `> 记录时间：${fmtTs(itv.updatedAt)}`,
         '',
         `- ① 谁做：${answerLine(a.hasRole, 'roleRef')}`,
@@ -1390,14 +1588,15 @@ export async function buildExport(suiteId: string, kind: ExportKind, frameworkId
   const rows: unknown[][] = [['实体名称', '类型', '锚定编号', '锚定节点', '覆盖状态', '备注']]
   const ents = suite.entities.filter(e => domainKinds.has(e.kind)).sort((a, b) => a.name.localeCompare(b.name, 'zh'))
   for (const e of ents) {
-    const fm = suite.annotations.entityFrameMapping[e.id]
-    const code = fm && fm.frameworkId === frameworkId ? fm.apqcCode : undefined
+    const fm = suite.annotations.entityFrameMapping[e.id] as Record<string, FrameMappingEntry> | FrameMappingOld
+    const entry = fm && !('frameworkId' in fm) ? (fm as Record<string, FrameMappingEntry>)[frameworkId] : (fm as FrameMappingOld)?.frameworkId === frameworkId ? (fm as FrameMappingOld) : undefined
+    const code = entry?.apqcCode
     const mark = suite.annotations.coverageMarks[e.id]
     const hit = code && fw ? findNodeByCode(fw, code) : null
     rows.push([
-      e.name, e.kind, code ?? '', hit?.node.label ?? (code ? '（编号不在框架中）' : ''),
+      e.name, e.kind, code ?? '', hit?.label ?? (code ? '（编号不在框架中）' : ''),
       mark?.status ?? 'unset',
-      fm?.note ?? mark?.note ?? '',
+      entry?.note ?? mark?.note ?? '',
     ])
   }
   return {

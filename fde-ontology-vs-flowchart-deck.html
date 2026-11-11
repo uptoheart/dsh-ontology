@@ -1,0 +1,1099 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="paper-ink">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>流程图 与 本体 · FDE 客户演示方案</title>
+<meta name="x-content-type" content="presentation" />
+<meta name="x-presentation-version" content="1.0" />
+<meta name="x-presentation-indicator" content="deck-stage .slide" />
+<style>
+/* ============================================================
+   BASE（内联，等价于 html-deck base.css 的必需子集）
+   ============================================================ */
+*,*::before,*::after{box-sizing:border-box}
+html,body{margin:0;padding:0;height:100%;background:#0F2A44;overflow:hidden}
+img,svg{max-width:100%;display:block}
+deck-stage{display:block;position:relative;width:100vw;height:100vh;overflow:hidden;background:var(--bg)}
+.slide{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;
+  padding:50px 64px 58px;opacity:0;pointer-events:none;transition:opacity .45s cubic-bezier(.4,0,.2,1),transform .45s cubic-bezier(.4,0,.2,1);
+  transform:translateX(26px);overflow:hidden;background:var(--bg-texture,none),var(--bg);
+  color:var(--text-1);font-family:var(--font-sans);font-size:18px;line-height:1.6;letter-spacing:-.005em;
+  -webkit-font-smoothing:antialiased}
+.slide.active{opacity:1;pointer-events:auto;transform:translateX(0);z-index:2}
+.slide.prev{transform:translateX(-26px)}
+.notes{display:none!important}
+@media print{
+  @page{size:1280px 720px;margin:0}
+  html,body{overflow:visible;background:#fff;height:auto}
+  body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  deck-stage{height:auto!important;overflow:visible!important}
+  .slide{position:relative;inset:auto;opacity:1!important;transform:none!important;pointer-events:auto;
+    page-break-after:always;break-after:page;width:1280px;height:720px;overflow:hidden}
+  .slide:last-of-type{page-break-after:auto;break-after:auto}
+  .progress,.overview,.ft-center{display:none!important}
+}
+
+/* ============================================================
+   THEME · paper-ink（纸白 + 墨蓝 + 琥珀）
+   ============================================================ */
+:root{
+  --bg:#F7F5F0;--bg-soft:#EFEBE2;--surface:#FFFCF6;--surface-2:#EBE6DB;
+  --border:rgba(15,42,68,.13);--border-strong:rgba(15,42,68,.30);
+  --text-1:#0F2A44;--text-2:#3C5265;--text-3:#7C8B96;
+  --accent:#0F2A44;--accent-2:#A96A18;--accent-3:#4F7486;
+  --good:#2F7A5B;--warn:#BF8329;--bad:#B4483C;
+  --grad:linear-gradient(135deg,#0F2A44,#4F7486);
+  --radius:12px;--radius-sm:8px;
+  --font-sans:"PingFang SC","HarmonyOS Sans SC","Microsoft YaHei",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --font-display:var(--font-sans);
+  --font-serif:Georgia,"Songti SC","Noto Serif SC",serif;
+  --font-mono:"SFMono-Regular",Consolas,"JetBrains Mono",Menlo,monospace;
+  --amber:#E8A33D;--flow:#C9873A;--onto:#4F7486;
+}
+.slide{
+  --bg-texture:
+    radial-gradient(120% 90% at 102% -10%,rgba(232,163,61,.10),transparent 58%),
+    radial-gradient(90% 80% at -10% 108%,rgba(79,116,134,.09),transparent 60%),
+    repeating-linear-gradient(90deg,rgba(15,42,68,.022) 0 1px,transparent 1px 96px);
+}
+.slide.dark{
+  --bg:#0F2A44;--surface:rgba(247,245,240,.055);--surface-2:rgba(247,245,240,.09);
+  --border:rgba(247,245,240,.16);--border-strong:rgba(247,245,240,.34);
+  --text-1:#F7F5F0;--text-2:rgba(247,245,240,.76);--text-3:rgba(247,245,240,.5);
+  --accent:#E8A33D;--accent-2:#E8A33D;--accent-3:#9BB6C4;
+  --bg-texture:
+    radial-gradient(90% 70% at 88% 4%,rgba(232,163,61,.16),transparent 60%),
+    radial-gradient(80% 60% at 6% 96%,rgba(79,116,134,.22),transparent 62%),
+    repeating-linear-gradient(0deg,rgba(247,245,240,.03) 0 1px,transparent 1px 3px);
+  background:var(--bg-texture),var(--bg);
+}
+
+/* ============================================================
+   TYPE
+   ============================================================ */
+.k{font-size:clamp(12px,.78vw,15px);font-weight:700;letter-spacing:.2em;color:var(--accent-2);margin:0 0 12px;text-transform:uppercase}
+.ttl{font-size:clamp(28px,2.75vw,54px);line-height:1.18;font-weight:750;letter-spacing:-.02em;margin:0 0 8px;color:var(--text-1)}
+.ttl .em{color:var(--accent-2)}
+.sub{font-size:clamp(18px,1.22vw,23.5px);line-height:1.6;color:var(--text-2);margin:0;max-width:78ch;font-weight:400}
+.mini{font-size:clamp(14.5px,1vw,19px);line-height:1.52;color:var(--text-2)}
+.mini-s{font-size:clamp(13px,.9vw,17px);line-height:1.48;color:var(--text-3)}
+.num{font-family:var(--font-serif);font-variant-numeric:tabular-nums}
+b,strong{font-weight:700;color:var(--text-1)}
+.amber{color:var(--accent-2)}
+.onto{color:var(--accent-3)}
+.rule-line{height:1px;background:var(--border);margin:18px 0}
+.rule-acc{width:56px;height:3px;background:var(--accent-2);border-radius:2px;margin:0 0 18px}
+
+/* chrome */
+.ft{position:absolute;left:64px;right:64px;bottom:20px;display:flex;justify-content:space-between;align-items:center;
+  font-size:11.5px;letter-spacing:.14em;color:var(--text-3);text-transform:uppercase;z-index:5}
+.ft .pg{font-family:var(--font-mono);letter-spacing:.06em}
+.hd{position:absolute;left:64px;right:64px;top:24px;display:flex;justify-content:space-between;font-size:11.5px;letter-spacing:.16em;color:var(--text-3);text-transform:uppercase}
+.progress{position:fixed;left:0;right:0;bottom:0;height:2px;z-index:60;background:transparent}
+.progress>span{display:block;height:100%;width:0;background:var(--amber);transition:width .3s}
+
+/* ============================================================
+   COMPONENTS
+   ============================================================ */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.g5{display:grid;grid-template-columns:repeat(5,1fr);gap:14px}
+.c{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px}
+.c.tp{border-top:3px solid var(--accent-2)}
+.c.tp-o{border-top:3px solid var(--accent-3)}
+.c.flat{box-shadow:none}
+.ch{font-size:clamp(16.5px,1.1vw,21px);font-weight:700;margin:0 0 8px;line-height:1.32}
+.pill{display:inline-block;padding:3px 10px;border-radius:999px;font-size:clamp(12px,.8vw,14px);font-weight:600;background:var(--surface-2);color:var(--text-2);border:1px solid var(--border)}
+.pill.am{background:rgba(232,163,61,.16);color:#8A5410;border-color:rgba(232,163,61,.35)}
+.dark .pill.am{color:#F0C07A;border-color:rgba(232,163,61,.4)}
+.pill.oc{background:rgba(79,116,134,.14);color:#35576A;border-color:rgba(79,116,134,.3)}
+.dark .pill.oc{color:#A9C4D2}
+ul.b{list-style:none;padding:0;margin:0}
+ul.b li{position:relative;padding-left:16px;font-size:clamp(15.5px,1.03vw,19.5px);line-height:1.52;color:var(--text-2);margin-bottom:7px}
+ul.b li::before{content:"";position:absolute;left:0;top:9px;width:5px;height:5px;border-radius:50%;background:var(--accent-3);opacity:.65}
+ul.b li.bad::before{background:var(--bad)}
+ul.b li.ok::before{background:var(--good)}
+
+table.m{width:100%;border-collapse:collapse;font-size:clamp(15.5px,1.02vw,19.5px)}
+table.m th,table.m td{padding:9px 12px;text-align:left;border-bottom:1px solid var(--border);vertical-align:middle}
+table.m th{font-size:clamp(11.5px,.72vw,13.5px);letter-spacing:.12em;text-transform:uppercase;color:var(--text-3);font-weight:700;border-bottom:1px solid var(--border-strong)}
+table.m td.f{font-weight:700;color:var(--text-1);white-space:nowrap}
+table.m tr:last-child td{border-bottom:none}
+table.m .fl{color:var(--flow);font-weight:600}
+table.m .to{color:var(--onto);font-weight:600}
+
+.steps{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:6px}
+.step{position:relative;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:38px 14px 14px;min-height:150px}
+.step .n{position:absolute;top:-15px;left:14px;width:30px;height:30px;border-radius:50%;background:var(--accent);color:#F7F5F0;display:flex;align-items:center;justify-content:center;font-family:var(--font-serif);font-size:14px;font-weight:700}
+.step h5{margin:0 0 4px;font-size:clamp(15px,1vw,18px);line-height:1.3}
+.step p{margin:0;font-size:clamp(12.5px,.87vw,16px);line-height:1.5;color:var(--text-3)}
+.step .tk{display:block;margin-top:8px;font-size:clamp(11.5px,.8vw,14px);color:var(--accent-2);font-weight:600}
+
+/* ============================================================
+   SLIDE-SPECIFIC
+   ============================================================ */
+/* cover */
+.cover{justify-content:flex-start;padding:0}
+.cover-in{position:relative;z-index:2;height:100%;display:flex;flex-direction:column;justify-content:space-between;padding:52px 64px 74px}
+.cover h1{font-size:clamp(40px,3.9vw,74px);line-height:1.08;font-weight:800;letter-spacing:-.035em;margin:0;color:#F7F5F0}
+.cover h1 .thin{font-weight:300;color:rgba(247,245,240,.62)}
+.cover .lede{margin-top:20px;font-size:clamp(17px,1.15vw,21px);color:rgba(247,245,240,.74);max-width:60ch;line-height:1.6}
+.cover .meta{display:flex;gap:26px;flex-wrap:wrap;font-size:12.5px;letter-spacing:.1em;color:rgba(247,245,240,.55);text-transform:uppercase}
+.cover .glyphs{position:absolute;right:-40px;top:50%;transform:translateY(-50%);opacity:.5;z-index:1;width:46vw;max-width:820px}
+
+/* statement */
+.stmt{justify-content:center}
+.stmt .big{font-size:clamp(28px,2.85vw,52px);line-height:1.28;font-weight:750;letter-spacing:-.02em;margin:0;max-width:36ch}
+.stmt .big .dim{color:rgba(247,245,240,.42)}
+.trio{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:30px;max-width:1100px}
+.trio div{border-top:1px solid rgba(247,245,240,.28);padding-top:12px;font-size:15.5px;color:rgba(247,245,240,.82)}
+.trio b{display:block;font-size:19px;color:#F7F5F0;margin-bottom:2px}
+
+/* two-col with side art */
+.split{display:grid;grid-template-columns:1.02fr .98fr;gap:36px;align-items:center}
+.art{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:10px}
+.def{font-size:clamp(16.5px,1.1vw,21px);line-height:1.58;color:var(--text-2);margin:0 0 12px}
+.def b{color:var(--text-1)}
+.tagrow{display:flex;flex-wrap:wrap;gap:7px;margin-top:4px}
+
+/* relationship diagram */
+.rel{display:flex;flex-direction:column;gap:0;margin-top:14px}
+.band{position:relative;border-radius:var(--radius);padding:14px 18px}
+.band .lab{position:absolute;left:14px;top:-9px;background:var(--bg);padding:0 8px;font-size:11px;letter-spacing:.16em;text-transform:uppercase;font-weight:700}
+.band.flow{background:rgba(232,163,61,.10);border:1px dashed rgba(201,135,58,.55)}
+.band.flow .lab{color:var(--flow)}
+.band.onto{background:rgba(79,116,134,.09);border:1px dashed rgba(79,116,134,.48)}
+.band.onto .lab{color:var(--onto)}
+.band .rowx{display:flex;align-items:center;gap:8px;flex-wrap:nowrap}
+.anode{flex:1;background:var(--surface);border:1px solid rgba(201,135,58,.45);border-radius:8px;padding:9px 6px;text-align:center;font-size:clamp(13.5px,.95vw,17px);font-weight:600;color:var(--text-1);min-width:0}
+.anode.ghost{background:transparent;border-style:dashed;color:var(--flow)}
+.arw{color:rgba(201,135,58,.8);font-size:14px;flex:none}
+.anchors{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:10px 0}
+.anchors .a{position:relative;text-align:center;font-size:clamp(11.5px,.85vw,15px);line-height:1.35;color:var(--text-2);padding:14px 4px;border-left:1px dashed rgba(15,42,68,.22);border-right:1px dashed rgba(15,42,68,.22)}
+.anchors .a b{display:block;font-family:var(--font-serif);font-size:clamp(15px,1.1vw,20px);color:var(--accent-2);margin-bottom:2px}
+.anchors .a span{display:block;font-weight:700;color:var(--text-1);font-size:clamp(12px,.9vw,15.5px)}
+.objs{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
+.o{background:var(--surface);border:1px solid rgba(79,116,134,.42);border-radius:8px;padding:8px 4px;text-align:center;font-size:clamp(12.5px,.9vw,16.5px);font-weight:600}
+.o small{display:block;font-weight:400;font-size:clamp(10.5px,.76vw,13px);color:var(--text-3);letter-spacing:.06em}
+
+/* three assets */
+.asset{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.asset .col{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px;display:flex;flex-direction:column}
+.asset .col .ico{font-family:var(--mono);font-size:11.5px;letter-spacing:.14em;color:var(--text-3);margin-bottom:9px}
+.asset .col h4{margin:0 0 2px;font-size:clamp(17px,1.05vw,20.5px)}
+.asset .col .q{font-size:clamp(13.5px,.86vw,16.5px);color:var(--accent-2);font-weight:600;margin:0 0 10px}
+.asset .col dl{display:grid;grid-template-columns:56px 1fr;gap:5px 8px;margin:0;font-size:clamp(13px,.83vw,16px);color:var(--text-2)}
+.asset .col dt{color:var(--text-3)}
+.asset .col dd{margin:0}
+.life{margin-top:14px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;font-size:clamp(12px,.78vw,15px);color:var(--text-3)}
+.life div{border-top:2px solid var(--border-strong);padding-top:7px}
+.life div:nth-child(1){border-top-color:rgba(15,42,68,.3)}
+.life div:nth-child(2){border-top-color:rgba(232,163,61,.7)}
+.life div:nth-child(3){border-top-color:rgba(79,116,134,.8)}
+
+/* five questions card */
+.qcard{background:var(--surface);border:1px solid var(--border-strong);border-radius:14px;padding:4px 0;overflow:hidden}
+.qcard .top{padding:14px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:baseline}
+.qcard .top b{font-size:18px}
+.qcard .top span{font-size:11.5px;letter-spacing:.14em;color:var(--text-3);text-transform:uppercase}
+.qrow{display:grid;grid-template-columns:74px 1fr;gap:10px;padding:10px 20px;border-bottom:1px solid var(--border);align-items:baseline}
+.qrow:last-child{border-bottom:none}
+.qrow .lb{font-size:12px;color:var(--text-3);letter-spacing:.08em}
+.qrow .vv{font-size:15px;color:var(--text-1);line-height:1.4}
+.qrow .vv em{font-style:normal;color:var(--accent-2);font-weight:700}
+
+/* heatmap */
+.hm-wrap{display:grid;grid-template-columns:1fr 260px;gap:28px;align-items:start}
+.hm{display:grid;grid-template-columns:86px repeat(8,1fr);gap:4px;font-size:11.5px}
+.hm .hh{color:var(--text-3);text-align:center;padding-bottom:4px;font-size:10.5px;line-height:1.25}
+.hm .rh{color:var(--text-2);display:flex;align-items:center;font-weight:600;font-size:12px}
+.cell{height:26px;border-radius:4px;background:var(--surface-2);border:1px solid var(--border)}
+.cell.ok{background:rgba(47,122,91,.78);border-color:transparent}
+.cell.wr{background:rgba(232,163,61,.62);border-color:transparent}
+.cell.gp{background:repeating-linear-gradient(45deg,var(--surface-2) 0 4px,rgba(180,72,60,.18) 4px 8px);border-color:rgba(180,72,60,.28)}
+.legend{display:flex;gap:14px;font-size:11.5px;color:var(--text-3);margin-top:10px;align-items:center}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:5px;vertical-align:-2px}
+
+/* decision */
+.dec{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.dec .d{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px}
+.dec .d .if{font-size:11.5px;letter-spacing:.1em;color:var(--text-3);text-transform:uppercase;margin-bottom:6px}
+.dec .d h5{margin:0 0 6px;font-size:16px;color:var(--accent-2)}
+.dec .d p{margin:0;font-size:13px;color:var(--text-2);line-height:1.5}
+
+/* layers */
+.layers{display:flex;flex-direction:column;gap:8px}
+.layer{display:grid;grid-template-columns:48px 150px 1fr 240px;gap:14px;align-items:center;background:var(--surface);
+  border:1px solid var(--border);border-radius:10px;padding:10px 16px}
+.layer .lv{font-family:var(--font-mono);font-size:13.5px;color:var(--accent-2);font-weight:700;letter-spacing:.02em}
+.layer .nm{font-weight:700;font-size:clamp(15px,1vw,18px)}
+.layer .ds{font-size:clamp(13px,.87vw,16px);color:var(--text-2);line-height:1.45}
+.layer .ac{font-size:clamp(12.5px,.84vw,15.5px);color:var(--text-1);border-left:2px solid var(--amber);padding-left:10px;line-height:1.4}
+
+/* gates */
+.gates{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:6px}
+.gate{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px}
+.gate .gd{font-size:clamp(11px,.74vw,13.5px);letter-spacing:.12em;color:var(--text-3);text-transform:uppercase}
+.gate .gt{font-size:clamp(15px,1vw,18.5px);font-weight:700;margin:4px 0 8px}
+.gate .gv{font-size:clamp(13px,.88vw,16.5px);color:var(--text-2);line-height:1.45}
+.gate .sign{margin-top:8px;font-size:clamp(11.5px,.8vw,14px);color:var(--accent-2);border-top:1px dashed var(--border-strong);padding-top:6px}
+
+/* day schedule */
+.day{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.act{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px}
+.act .tm{font-family:var(--font-serif);font-size:clamp(13px,.88vw,16px);color:var(--accent-2);letter-spacing:.04em}
+.act h5{margin:4px 0 6px;font-size:clamp(17px,1.12vw,21px)}
+.act p{margin:0;font-size:clamp(13px,.88vw,16px);color:var(--text-2);line-height:1.5}
+.act .who{margin-top:9px;font-size:clamp(11.5px,.8vw,14px);color:var(--text-3);letter-spacing:.06em}
+
+/* script */
+.script{display:grid;grid-template-columns:1.15fr .85fr;gap:26px;align-items:start}
+.beat{display:grid;grid-template-columns:56px 1fr;gap:12px;padding:8px 0;border-bottom:1px solid var(--border)}
+.beat:last-child{border-bottom:none}
+.beat .t{font-family:var(--font-mono);font-size:clamp(12.5px,.83vw,15px);color:var(--accent-2);padding-top:2px}
+.beat .x{font-size:clamp(14.5px,1vw,18.5px);line-height:1.5}
+.beat .x b{display:block;font-size:clamp(15px,1.04vw,19px);margin-bottom:1px}
+.beat .x span{color:var(--text-2);font-size:clamp(13px,.9vw,16.5px)}
+.why{background:rgba(79,116,134,.09);border-left:3px solid var(--accent-3);padding:12px 14px;border-radius:0 8px 8px 0;font-size:clamp(13px,.9vw,16.5px);line-height:1.55;color:var(--text-2)}
+
+/* closing metrics */
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.metric{border-top:2px solid var(--accent-2);padding-top:10px}
+.metric b{display:block;font-size:clamp(15.5px,1.04vw,19px);margin-bottom:4px}
+.metric span{font-size:clamp(12.5px,.86vw,15.5px);color:var(--text-3);line-height:1.45;display:block}
+
+/* overview */
+.overview{position:fixed;inset:0;background:rgba(9,20,32,.975);z-index:80;display:none;padding:34px;overflow:auto}
+.overview.open{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;align-content:start}
+.thumb{position:relative;background:#F7F5F0;border-radius:8px;overflow:hidden;cursor:pointer;border:1px solid rgba(247,245,240,.2)}
+.thumb .ph{position:relative;width:100%;padding-top:56.25%;overflow:hidden}
+.thumb .mini{position:absolute;top:0;left:0;width:1920px;height:1080px;transform-origin:top left;pointer-events:none}
+.thumb .cap{position:absolute;left:0;right:0;bottom:0;background:linear-gradient(transparent,rgba(9,20,32,.92));color:#F7F5F0;font-size:12px;padding:16px 10px 7px;display:flex;gap:8px}
+.thumb .cap i{font-family:var(--font-mono);font-style:normal;opacity:.6}
+
+/* animation */
+@keyframes kf-up{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
+.anim-fade-up{animation:kf-up .6s cubic-bezier(.4,0,.2,1) both}
+.anim-stagger-list>*{opacity:0;animation:kf-up .55s cubic-bezier(.4,0,.2,1) both}
+.anim-stagger-list>*:nth-child(1){animation-delay:.04s}
+.anim-stagger-list>*:nth-child(2){animation-delay:.10s}
+.anim-stagger-list>*:nth-child(3){animation-delay:.16s}
+.anim-stagger-list>*:nth-child(4){animation-delay:.22s}
+.anim-stagger-list>*:nth-child(5){animation-delay:.28s}
+.anim-stagger-list>*:nth-child(6){animation-delay:.34s}
+@media (prefers-reduced-motion:reduce){[class*="anim-"]{animation:none!important}}
+</style>
+</head>
+<body>
+<deck-stage width="1920" height="1080">
+
+<!-- ============ 01 封面 ============ -->
+<section class="slide dark cover active" data-deck-label="封面">
+  <div class="cover-in">
+    <div class="hd"><span>FDE · 交付方法</span><span>2026</span></div>
+    <div>
+      <p class="k" style="color:rgba(232,163,61,.9)">流程图 × 本体 · 关系、区别与工具选型</p>
+      <h1>流程图与本体<br><span class="thin">两种语言，一套交付</span></h1>
+      <p class="lede">从「画清楚」到「算得准」，再到「点得到」。<br>面向业务高管、流程 Owner 与 IT 架构的同一套资产、三种讲法。</p>
+    </div>
+    <div class="meta">
+      <span>业务决策者</span><span>流程 Owner</span><span>IT / 架构</span><span style="opacity:.5">—</span><span>Forward Deployed Engineer</span>
+    </div>
+  </div>
+  <svg class="glyphs" viewBox="0 0 640 470" fill="none" aria-hidden="true">
+    <!-- 上层：流程 -->
+    <g stroke="#E8A33D" stroke-width="1.2" opacity=".6">
+      <rect x="30" y="56" width="128" height="48" rx="7"/>
+      <rect x="212" y="56" width="128" height="48" rx="7"/>
+      <rect x="394" y="56" width="128" height="48" rx="7"/>
+      <path d="M158 80h44" stroke-dasharray="3 4"/><path d="M198 76l6 4-6 4"/>
+      <path d="M340 80h44" stroke-dasharray="3 4"/><path d="M380 76l6 4-6 4"/>
+    </g>
+    <g fill="#F7F5F0" font-family="Georgia,serif" font-size="13" opacity=".7">
+      <text x="86" y="85">活动</text><text x="268" y="85">判定</text><text x="450" y="85">活动</text>
+    </g>
+    <!-- 竖向锚点 -->
+    <g stroke="#E8A33D" stroke-width="1" stroke-dasharray="2 5" opacity=".55">
+      <path d="M94 104v178"/><path d="M276 104v190"/><path d="M458 104v186"/>
+    </g>
+    <!-- 下层：本体 -->
+    <g stroke="#9BB6C4" stroke-width="1.1" opacity=".85">
+      <circle cx="94" cy="330" r="44"/><circle cx="276" cy="330" r="32"/><circle cx="458" cy="330" r="36"/>
+      <path d="M138 330h106"/><path d="M308 330h114" stroke-dasharray="4 4"/><path d="M126 292C240 268 350 268 444 292" stroke-dasharray="4 4" opacity=".6"/>
+    </g>
+    <g fill="#F7F5F0" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="12" text-anchor="middle" opacity=".8">
+      <text x="94" y="335">对象</text><text x="276" y="335">规则</text><text x="458" y="335">角色</text>
+    </g>
+  </svg>
+  <div class="ft"><span>策略与方法</span><span class="pg">01 / 22</span></div>
+</section>
+
+<!-- ============ 02 反例 ============ -->
+<section class="slide" data-deck-label="一个真实的反例">
+  <div class="hd"><span>开场 · 反例</span><span>02</span></div>
+  <p class="k">两种常见的「交付完成」</p>
+  <h2 class="ttl">图很漂亮，模型很漂亮，<span class="em">业务还是没变</span></h2>
+  <p class="sub">下面两个场景都不是极端案例，而是最常见的失败姿势。</p>
+  <div class="g2 anim-stagger-list" data-anim-target style="margin-top:20px">
+    <div class="c tp">
+      <p class="pill am" style="margin-bottom:10px">只交付流程图</p>
+      <ul class="b">
+        <li>三条业务线各画一套图，客户、合同、设备三种叫法</li>
+        <li>系统上线时各自建表，汇总靠 Excel 手工拼</li>
+        <li>规则写在图下方的备注里，新人靠师傅带</li>
+        <li>一年后，没有一个人再打开这些图</li>
+      </ul>
+      <p class="mini-s" style="margin-top:10px">失效点：图只描述顺序，不承载定义。</p>
+    </div>
+    <div class="c tp-o">
+      <p class="pill oc" style="margin-bottom:10px">只交付本体</p>
+      <ul class="b">
+        <li>知识图谱关系很完整，业务第一句问「我明天先干哪一步」</li>
+        <li>没有编排，审批顺序依然在微信群里传递</li>
+        <li>规则存在，但界面上没有触发点，等于不存在</li>
+        <li>最后成了「顾问的模型」，不是「业务的东西」</li>
+      </ul>
+      <p class="mini-s" style="margin-top:10px">失效点：模型只定义结构，不组织动作。</p>
+    </div>
+  </div>
+  <p class="sub" style="margin-top:22px;font-size:clamp(18px,1.25vw,24px);color:var(--text-1)">图和模型都不是交付物；<b>客户能拿去干活的那部分，才是。</b></p>
+  <div class="ft"><span>流程图 × 本体 · FDE 交付方法</span><span class="pg">02 / 22</span></div>
+  <div class="notes">开场不要先讲定义。先让客户认领其中一种失败——通常他们会同时认领两种。这一页的作用是把"交付物"和"图"分开。</div>
+</section>
+
+<!-- ============ 03 一句话结论 ============ -->
+<section class="slide dark stmt" data-deck-label="一句话结论">
+  <div class="hd"><span>结论</span><span>03</span></div>
+  <p class="k">先说结论</p>
+  <h2 class="big">流程图讲「怎么走」，<br>本体讲「是什么、受什么约束」。<br><span class="dim">两句话都不能省。</span></h2>
+  <div class="trio anim-stagger-list" data-anim-target>
+    <div><b>能走的图</b>谁在什么时候、按什么顺序做哪一步</div>
+    <div><b>能算的模型</b>对象、关系、规则、权限被明确定义</div>
+    <div><b>能点的应用</b>客户自己能操作、能验收、能带走</div>
+  </div>
+  <p class="mini-s" style="margin-top:26px;color:rgba(247,245,240,.45);letter-spacing:.1em">本册结构 · 概念 04–05 ｜ 关联与区别 06–13 ｜ 工具 14–17 ｜ 演示 18–22</p>
+  <div class="ft"><span>流程图 × 本体 · FDE 交付方法</span><span class="pg">03 / 22</span></div>
+</section>
+
+<!-- ============ 04 流程图 ============ -->
+<section class="slide" data-deck-label="流程图是什么">
+  <div class="hd"><span>第一章 · 概念</span><span>04</span></div>
+  <p class="k">概念 A</p>
+  <h2 class="ttl">流程图：把「怎么做」画成先后顺序</h2>
+  <div class="split">
+    <div>
+      <p class="def"><b>一句话解释：</b>把一件工作拆成若干个活动，用连线和分支说明谁先做、谁后做、条件不满足时走哪条路。载体通常是泳道图、BPMN、或节点—连线的画板。</p>
+      <div class="tagrow" style="margin-bottom:14px">
+        <span class="pill">泳道</span><span class="pill">BPMN</span><span class="pill">判定分支</span><span class="pill">审批链</span><span class="pill">活动编号</span>
+      </div>
+      <p class="mini" style="margin:0 0 4px;font-weight:700;color:var(--text-1)">它擅长的三件事</p>
+      <ul class="b">
+        <li class="ok">跨部门对齐：谁交什么、卡在谁那里，一眼可见</li>
+        <li class="ok">责任到岗：每个活动都能指到一个岗位</li>
+        <li class="ok">培训与交接：新人拿着图就能问对问题</li>
+      </ul>
+      <p class="mini" style="margin:10px 0 4px;font-weight:700;color:var(--text-1)">它的盲区</p>
+      <ul class="b">
+        <li class="bad">同一个对象在多条流程里被反复定义，口径分裂</li>
+        <li class="bad">规则写在图的备注里，无法执行、无法测试</li>
+        <li class="bad">回答不了「改一条规则，会影响哪些流程」</li>
+      </ul>
+    </div>
+    <div class="art">
+      <svg viewBox="0 0 560 372" fill="none">
+        <g font-family="'PingFang SC','Microsoft YaHei',sans-serif">
+          <text x="0" y="52" font-size="10.5" fill="#7C8B96" letter-spacing="1.4">商务</text>
+          <text x="0" y="176" font-size="10.5" fill="#7C8B96" letter-spacing="1.4">法务</text>
+          <text x="0" y="300" font-size="10.5" fill="#7C8B96" letter-spacing="1.4">财务</text>
+          <g stroke="#0F2A44" stroke-opacity=".10">
+            <path d="M0 66h560"/><path d="M0 190h560"/>
+          </g>
+          <!-- 商务泳道 -->
+          <rect x="90" y="88" width="110" height="44" rx="7" fill="#FFFCF6" stroke="#C9873A" stroke-width="1.4"/>
+          <text x="145" y="115" font-size="12" fill="#0F2A44" text-anchor="middle">提交申请</text>
+          <path d="M280 76l52 34-52 34-52-34z" fill="#FFFCF6" stroke="#C9873A" stroke-width="1.4"/>
+          <text x="280" y="114" font-size="10.5" fill="#0F2A44" text-anchor="middle">金额&gt;50万</text>
+          <rect x="392" y="88" width="110" height="44" rx="7" fill="#FFFCF6" stroke="#C9873A" stroke-width="1.4"/>
+          <text x="447" y="115" font-size="12" fill="#0F2A44" text-anchor="middle">直接签署</text>
+          <path d="M200 110h22" stroke="#C9873A" stroke-width="1.4"/>
+          <path d="M217 106l5 4-5 4" stroke="#C9873A" stroke-width="1.4"/>
+          <path d="M332 110h53" stroke="#C9873A" stroke-width="1.4" stroke-dasharray="5 4"/>
+          <path d="M380 106l5 4-5 4" stroke="#C9873A" stroke-width="1.4"/>
+          <text x="336" y="101" font-size="10" fill="#A96A18">否</text>
+          <!-- 法务泳道 -->
+          <rect x="246" y="206" width="110" height="44" rx="7" fill="#FFFCF6" stroke="#C9873A" stroke-width="1.4"/>
+          <text x="301" y="233" font-size="12" fill="#0F2A44" text-anchor="middle">合同评审</text>
+          <path d="M280 144v55" stroke="#C9873A" stroke-width="1.4"/>
+          <path d="M276 194l4 6 4-6" stroke="#C9873A" stroke-width="1.4"/>
+          <text x="288" y="166" font-size="10" fill="#A96A18">是</text>
+          <!-- 财务泳道 -->
+          <rect x="246" y="300" width="110" height="44" rx="7" fill="#FFFCF6" stroke="#C9873A" stroke-width="1.4"/>
+          <text x="301" y="327" font-size="12" fill="#0F2A44" text-anchor="middle">开票回款</text>
+          <path d="M301 250v44" stroke="#C9873A" stroke-width="1.4"/>
+          <path d="M297 289l4 6 4-6" stroke="#C9873A" stroke-width="1.4"/>
+          <!-- 备注 -->
+          <rect x="392" y="196" width="160" height="70" rx="6" fill="rgba(232,163,61,.13)" stroke="#C9873A" stroke-dasharray="3 3"/>
+          <text x="404" y="216" font-size="10.5" fill="#8A5410">备注：合同金额以</text>
+          <text x="404" y="232" font-size="10.5" fill="#8A5410">「含税总价」为准 ——</text>
+          <text x="404" y="248" font-size="10.5" fill="#8A5410">规则靠人记，即盲区</text>
+          <text x="90" y="362" font-size="10.5" fill="#7C8B96">顺序清楚 · 责任可见 · 但对象与规则不在图里</text>
+        </g>
+      </svg>
+    </div>
+  </div>
+  <div class="ft"><span>流程图 × 本体 · FDE 交付方法</span><span class="pg">04 / 22</span></div>
+  <div class="notes">讲这页时强调"不贬低流程图"：流程图是唯一的跨部门共识工具。它的盲区在于它只能承载"顺序"，承载不了"定义"。</div>
+</section>
+
+<!-- ============ 05 本体 ============ -->
+<section class="slide" data-deck-label="本体是什么">
+  <div class="hd"><span>第一章 · 概念</span><span>05</span></div>
+  <p class="k">概念 B</p>
+  <h2 class="ttl">本体：把「是什么、凭什么」定义成机器能读的网络</h2>
+  <div class="split">
+    <div>
+      <p class="def"><b>一句话解释：</b>把业务里的名词（对象）、它们之间的关系、约束规则、以及谁能对谁做什么，写成一张语义网络；人和系统读的是同一份定义。</p>
+      <div class="tagrow" style="margin-bottom:14px">
+        <span class="pill oc">对象</span><span class="pill oc">属性与关系</span><span class="pill oc">规则</span><span class="pill oc">角色与权限</span><span class="pill oc">行为</span>
+      </div>
+      <p class="mini" style="margin:0 0 4px;font-weight:700;color:var(--text-1)">它擅长的三件事</p>
+      <ul class="b">
+        <li class="ok">统一口径：客户、合同、设备在全公司同名同义</li>
+        <li class="ok">规则可执行：写一次，在流程、界面、报表同时生效</li>
+        <li class="ok">跨流程复用：一个对象被十条流程引用，仍然只有一份定义</li>
+      </ul>
+      <p class="mini" style="margin:10px 0 4px;font-weight:700;color:var(--text-1)">它的盲区</p>
+      <ul class="b">
+        <li class="bad">不说明先后顺序；没有编排就没有「下一步」</li>
+        <li class="bad">只建模不落地，就变成无人使用的孤儿模型</li>
+        <li class="bad">对业务不可见时，会被当成 IT 的内部资产</li>
+      </ul>
+    </div>
+    <div class="art">
+      <svg viewBox="0 0 560 372" fill="none">
+        <g font-family="'PingFang SC','Microsoft YaHei',sans-serif">
+          <!-- 对象层 -->
+          <rect x="40" y="46" width="112" height="58" rx="8" fill="#FFFCF6" stroke="#4F7486" stroke-width="1.5"/>
+          <text x="96" y="72" font-size="13" fill="#0F2A44" text-anchor="middle" font-weight="600">客户</text>
+          <text x="96" y="90" font-size="9.5" fill="#7C8B96" text-anchor="middle">主体</text>
+          <rect x="224" y="46" width="112" height="58" rx="8" fill="#FFFCF6" stroke="#4F7486" stroke-width="1.5"/>
+          <text x="280" y="72" font-size="13" fill="#0F2A44" text-anchor="middle" font-weight="600">合同</text>
+          <text x="280" y="90" font-size="9.5" fill="#7C8B96" text-anchor="middle">聚合根</text>
+          <rect x="408" y="46" width="112" height="58" rx="8" fill="#FFFCF6" stroke="#4F7486" stroke-width="1.5"/>
+          <text x="464" y="72" font-size="13" fill="#0F2A44" text-anchor="middle" font-weight="600">回款</text>
+          <text x="464" y="90" font-size="9.5" fill="#7C8B96" text-anchor="middle">单据</text>
+          <path d="M152 75h66" stroke="#4F7486" stroke-width="1.4"/>
+          <path d="M213 71l5 4-5 4" stroke="#4F7486" stroke-width="1.4"/>
+          <text x="185" y="66" font-size="9.5" fill="#35576A" text-anchor="middle">属于</text>
+          <path d="M336 75h66" stroke="#4F7486" stroke-width="1.4"/>
+          <path d="M397 71l5 4-5 4" stroke="#4F7486" stroke-width="1.4"/>
+          <text x="369" y="66" font-size="9.5" fill="#35576A" text-anchor="middle">产生</text>
+
+          <!-- 定义层 -->
+          <rect x="40" y="158" width="480" height="92" rx="8" fill="rgba(232,163,61,.10)" stroke="#C9873A" stroke-dasharray="4 3"/>
+          <text x="56" y="178" font-size="9.5" fill="#8A5410" letter-spacing="1.2">规则与权限 / 谁能对谁做什么</text>
+          <text x="56" y="200" font-size="10.5" fill="#0F2A44">规则：金额 &gt; 50 万必须法务复核</text>
+          <text x="56" y="218" font-size="10.5" fill="#0F2A44">规则：逾期未回款超 30 天预警</text>
+          <text x="56" y="236" font-size="10.5" fill="#0F2A44">规则：缺附件不可提交评审</text>
+          <path d="M330 176v58" stroke="#C9873A" stroke-opacity=".5"/>
+          <text x="344" y="200" font-size="10.5" fill="#0F2A44">角色：商务 / 法务 / 财务</text>
+          <text x="344" y="218" font-size="10.5" fill="#0F2A44">权限：法务仅可审批，不可改价</text>
+          <text x="344" y="236" font-size="10.5" fill="#0F2A44">审计：每次修改留痕到人</text>
+
+          <g stroke="#C9873A" stroke-dasharray="3 4" stroke-opacity=".8">
+            <path d="M96 104v54"/><path d="M280 104v54"/><path d="M464 104v54"/>
+          </g>
+
+          <!-- 复用说明 -->
+          <rect x="40" y="278" width="480" height="58" rx="8" fill="rgba(79,116,134,.10)" stroke="#4F7486" stroke-dasharray="4 3"/>
+          <text x="56" y="300" font-size="11.5" fill="#35576A" font-weight="600">同一份定义被四条流程复用</text>
+          <text x="56" y="318" font-size="10.5" fill="#3C5265">合同在「销售—交付—开票—回款」里是同一个对象，字段只定义一次。</text>
+        </g>
+      </svg>
+    </div>
+  </div>
+  <div class="ft"><span>流程图 × 本体 · FDE 交付方法</span><span class="pg">05 / 22</span></div>
+</section>
+
+<!-- ============ 06 关系大图 ============ -->
+<section class="slide" data-deck-label="核心关系大图">
+  <div class="hd"><span>第二章 · 关联</span><span>06</span></div>
+  <p class="k">核心关系</p>
+  <h2 class="ttl">流程是投影，本体是地基</h2>
+  <p class="sub" style="margin-bottom:6px">上层每走一步，都在下层读一个对象、验一条规则、查一次权限。</p>
+
+  <div class="rel">
+    <div class="band flow">
+      <span class="lab">流程层 · 动词</span>
+      <div class="rowx">
+        <div class="anode">提交申请</div><span class="arw">→</span>
+        <div class="anode">合同评审</div><span class="arw">→</span>
+        <div class="anode ghost">金额&gt;50万?</div><span class="arw">→</span>
+        <div class="anode">法务复核</div><span class="arw">→</span>
+        <div class="anode">签署归档</div>
+      </div>
+    </div>
+
+    <div class="anchors">
+      <div class="a"><b>①</b><span>活动 → 行为</span>改什么，可执行</div>
+      <div class="a"><b>②</b><span>泳道 → 角色</span>谁能做，可授权</div>
+      <div class="a"><b>③</b><span>分支 → 规则</span>为什么，可解释</div>
+      <div class="a"><b>④</b><span>表单 → 对象</span>字段从哪来</div>
+      <div class="a"><b>⑤</b><span>产出 → 报表</span>结果给谁看</div>
+    </div>
+
+    <div class="band onto">
+      <span class="lab">本体层 · 名词与约束</span>
+      <div class="objs" style="margin-bottom:8px">
+        <div class="o">合同<small>聚合根</small></div>
+        <div class="o">客户<small>主体</small></div>
+        <div class="o">评审单<small>子实体</small></div>
+        <div class="o">金额条件<small>规则</small></div>
+        <div class="o">法务<small>角色</small></div>
+        <div class="o">回款看板<small>报表</small></div>
+      </div>
+      <div class="objs">
+        <div class="o" style="grid-column:span 2">关系：合同 —属于→ 客户</div>
+        <div class="o" style="grid-column:span 2">关系：合同 —产生→ 评审单</div>
+        <div class="o" style="grid-column:span 2">状态机：草稿 → 评审 → 生效 → 关闭</div>
+      </div>
+    </div>
+  </div>
+
+  <p class="sub" style="margin-top:14px;color:var(--text-3);font-size:14.5px">五条竖线就是全部耦合点。它们打通，图与模型双向可追溯；打不通，就是两套互不相干的东西。</p>
+  <div class="ft"><span>流程图 × 本体 · FDE 交付方法</span><span class="pg">06 / 22</span></div>
+  <div class="notes">这页是整册的锚。先指上层说"这是客户看得懂的"，再指下层说"这是系统需要的"，最后用手指点五条线："FDE 的全部工作，就是把它们连起来。"</div>
+</section>
+
+<!-- ============ 07 三级流程资产 ============ -->
+<section class="slide" data-deck-label="三级流程资产">
+  <div class="hd"><span>第二章 · 关联</span><span>07</span></div>
+  <p class="k">最容易混淆的地方</p>
+  <h2 class="ttl">「流程」是三个东西，必须分开讲</h2>
+  <p class="sub" style="margin-bottom:14px">它们回答的问题、看的人、更新节奏、能否执行，全都不一样。</p>
+  <div class="asset anim-stagger-list" data-anim-target>
+    <div class="col">
+      <div class="ico">01 / 索引层</div>
+      <h4>流程框架地图</h4>
+      <p class="q">业务里有哪些事？</p>
+      <dl>
+        <dt>形态</dt><dd>L1–L5 分类树</dd>
+        <dt>谁看</dt><dd>管理层 / 顾问</dd>
+        <dt>用途</dt><dd>盘点、覆盖度、访谈导航</dd>
+        <dt>可执行</dt><dd>否，是索引</dd>
+      </dl>
+    </div>
+    <div class="col" style="border-top:3px solid rgba(232,163,61,.75)">
+      <div class="ico">02 / 沟通层</div>
+      <h4>流程图</h4>
+      <p class="q">这件事怎么走？</p>
+      <dl>
+        <dt>形态</dt><dd>泳道 / 节点连线</dd>
+        <dt>谁看</dt><dd>流程 Owner 与岗位</dd>
+        <dt>用途</dt><dd>对齐、纠错、培训</dd>
+        <dt>可执行</dt><dd>否，是人读的</dd>
+      </dl>
+    </div>
+    <div class="col" style="border-top:3px solid rgba(79,116,134,.8)">
+      <div class="ico">03 / 执行层</div>
+      <h4>流程模型</h4>
+      <p class="q">系统怎么跑？</p>
+      <dl>
+        <dt>形态</dt><dd>节点图 + 角色 + 规则引用</dd>
+        <dt>谁看</dt><dd>系统与 IT</dd>
+        <dt>用途</dt><dd>驱动审批、状态、通知</dd>
+        <dt>可执行</dt><dd>是，可运行</dd>
+      </dl>
+    </div>
+  </div>
+  <div class="life">
+    <div>框架地图 · 年级更新，变动要立项</div>
+    <div>流程图 · 月级迭代，跟着共识走</div>
+    <div>流程模型 · 随业务变更同步，改一处必重建</div>
+  </div>
+  <p class="sub" style="margin-top:14px;color:var(--text-1)">把三者混成一个词，就会用「画图」去承诺「系统」。</p>
+  <div class="ft"><span>流程图 × 本体 · FDE 交付方法</span><span class="pg">07 / 22</span></div>
+</section>
+
+<!-- ============ 08 混淆的代价 ============ -->
+<section class="slide" data-deck-label="混淆的代价">
+  <div class="hd"><span>第二章 · 关联</span><span>08</span></div>
+  <p class="k">失败模式</p>
+  <h2 class="ttl">混淆之后，通常以这三种方式失败</h2>
+  <div class="g3 anim-stagger-list" data-anim-target style="margin-top:18px">
+    <div class="c tp">
+      <p class="pill am">现象 01</p>
+      <h3 class="ch" style="margin-top:10px">图库化</h3>
+      <p class="mini">有人建了两百张流程图，半年后没有任何一张被再次打开。</p>
+      <div class="rule-line"></div>
+      <p class="mini-s">根因｜图与工作脱钩，画完即归档</p>
+      <p class="mini-s" style="margin-top:6px">修复｜每个节点必须挂满五问，缺一项就不算完成</p>
+    </div>
+    <div class="c tp">
+      <p class="pill am">现象 02</p>
+      <h3 class="ch" style="margin-top:10px">演示即巅峰</h3>
+      <p class="mini">客户大会上效果极好，三个月后没人登录，因为只能看不能做。</p>
+      <div class="rule-line"></div>
+      <p class="mini-s">根因｜没有可点物，价值停在观感</p>
+      <p class="mini-s" style="margin-top:6px">修复｜每个阶段留一个客户能自己操作的产物</p>
+    </div>
+    <div class="c tp">
+      <p class="pill am">现象 03</p>
+      <h3 class="ch" style="margin-top:10px">口径分裂</h3>
+      <p class="mini">三个系统三个「客户」定义，月度会议先花四十分钟对数。</p>
+      <div class="rule-line"></div>
+      <p class="mini-s">根因｜没有裁决机制，模型靠默认值生长</p>
+      <p class="mini-s" style="margin-top:6px">修复｜一次口径裁决会，一人拍板，写进模型并留痕</p>
+    </div>
+  </div>
+  <p class="sub" style="margin-top:20px">这三种失败有一个共同点：<b>客户的角色是观众，不是作者。</b></p>
+  <div class="ft"><span>流程图 × 本体 · FDE 交付方法</span><span class="pg">08 / 22</span></div>
+</section>
+
+<!-- ============ 09 五个锚点 ============ -->
+<section class="slide" data-deck-label="关联的五个锚点">
+  <div class="hd"><span>第二章 · 关联</span><span>09</span></div>
+  <p class="k">怎么关联</p>
+  <h2 class="ttl">只要连五条线，图和模型就不再是两套东西</h2>
+  <table class="m" style="margin-top:14px">
+    <thead><tr><th style="width:64px">锚点</th><th style="width:230px">从流程图</th><th style="width:230px">连到本体</th><th>打通之后你得到什么</th></tr></thead>
+    <tbody>
+      <tr><td class="f"><span class="num">①</span></td><td class="fl">活动（做什么）</td><td class="to">行为（对哪个对象做什么）</td><td>动作可被执行，不再停留在图上的一个方框</td></tr>
+      <tr><td class="f"><span class="num">②</span></td><td class="fl">泳道 / 承担岗位</td><td class="to">角色与权限</td><td>权限自动生成，越权在界面上直接被拦住</td></tr>
+      <tr><td class="f"><span class="num">③</span></td><td class="fl">分支条件</td><td class="to">规则</td><td>为什么走这条路可解释、可测试、可一键改</td></tr>
+      <tr><td class="f"><span class="num">④</span></td><td class="fl">表单 / 单据字段</td><td class="to">对象与属性</td><td>字段只有一处定义，系统之间不再重复建表</td></tr>
+      <tr><td class="f"><span class="num">⑤</span></td><td class="fl">流程产出</td><td class="to">查询与报表</td><td>指标口径一致，同一个数字在全公司只有一个来源</td></tr>
+    </tbody>
+  </table>
+  <p class="sub" style="margin-top:16px">判断标准很简单：<b>拿起一个流程节点，能不能直接说出它的对象、规则、角色和产出。</b>说不出来，就是还没连上。</p>
+  <div class="ft"><span>流程图 × 本体 · FDE 交付方法</span><span class="pg">09 / 22</span></div>
+</section>
+
+<!-- ============ 10 五问卡片 ============ -->
+<section class="slide" data-deck-label="流程五问卡片">
+  <div class="hd"><span>第二章 · 关联</span><span>10</span></div>
+  <p class="k">关联的最小结构</p>
+  <h2 class="ttl">一个活动，五问填满，就成了可建模单元</h2>
+  <div class="split" style="grid-template-columns:1fr 1fr;gap:30px;margin-top:6px">
+    <div class="qcard">
+      <div class="top"><b>合同评审</b><span>活动 A-03</span></div>
+      <div class="qrow"><div class="lb">谁做</div><div class="vv">法务（<em>角色</em>），可代办人：法务主管</div></div>
+      <div class="qrow"><div class="lb">对什么</div><div class="vv">合同（<em>对象</em>）／更新状态、写入评审结论</div></div>
+      <div class="qrow"><div class="lb">受什么约束</div><div class="vv">金额 &gt; 50 万必须法务复核；缺附件不可提交（<em>规则</em>）</div></div>
+      <div class="qrow"><div class="lb">产出什么</div><div class="vv">评审意见单（<em>子实体</em>），自动归入合同档案</div></div>
+      <div class="qrow"><div class="lb">下一步</div><div class="vv">通过 → 签署；驳回 → 修订（<em>连线</em>）</div></div>
+    </div>
+    <div>
+      <p class="def"><b>为什么是这五问：</b>它刚好把一个流程节点，翻译成本体里的一个行为加三类引用。填满五格，图和模型就自动对齐了。</p>
+      <div class="c" style="padding:14px 16px;margin-top:12px">
+        <p class="mini" style="margin:0 0 6px"><b>现场用法</b></p>
+        <ul class="b" style="margin:0">
+          <li>图上每画完一个方框，当场问这五句</li>
+          <li>答不上来的那一格，就是下一轮要访谈的对象</li>
+          <li>五问填满的活动占比，就是流程的「可落地率」</li>
+        </ul>
+      </div>
+      <p class="mini-s" style="margin-top:12px">注意：五问不是问卷，是<strong>建模检查表</strong>。它决定了这张图能不能变成系统，而不只是能不能看懂。</p>
+    </div>
+  </div>
+  <div class="ft"><span>流程图 × 本体 · FDE 交付方法</span><span class="pg">10 / 22</span></div>
+  <div class="notes">这页可以在工作坊上直接当模板发给客户。建议现场用客户自己的一个活动填一遍，效果远好于讲概念。</div>
+</section>
+
+<!-- ============ 11 覆盖度 ============ -->
+<section class="slide" data-deck-label="关联怎么度量">
+  <div class="hd"><span>第二章 · 关联</span><span>11</span></div>
+  <p class="k">怎么度量关联</p>
+  <h2 class="ttl">一张热力图，把「讲不清」变成「排得动」</h2>
+  <div class="hm-wrap" style="margin-top:10px">
+    <div>
+      <div class="hm">
+        <div></div>
+        <div class="hh">受理</div><div class="hh">评审</div><div class="hh">审批</div><div class="hh">签署</div><div class="hh">发货</div><div class="hh">验收</div><div class="hh">开票</div><div class="hh">回款</div>
+        <div class="rh">客户</div><div class="cell ok"></div><div class="cell"></div><div class="cell ok"></div><div class="cell wr"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell ok"></div>
+        <div class="rh">合同</div><div class="cell ok"></div><div class="cell ok"></div><div class="cell ok"></div><div class="cell ok"></div><div class="cell"></div><div class="cell"></div><div class="cell wr"></div><div class="cell"></div>
+        <div class="rh">订单</div><div class="cell ok"></div><div class="cell"></div><div class="cell"></div><div class="cell ok"></div><div class="cell ok"></div><div class="cell wr"></div><div class="cell"></div><div class="cell"></div>
+        <div class="rh">设备</div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell ok"></div><div class="cell ok"></div><div class="cell"></div><div class="cell"></div>
+        <div class="rh">工单</div><div class="cell gp"></div><div class="cell gp"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell wr"></div><div class="cell"></div><div class="cell"></div>
+        <div class="rh">评审单</div><div class="cell"></div><div class="cell ok"></div><div class="cell ok"></div><div class="cell wr"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div>
+        <div class="rh">发票</div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell wr"></div><div class="cell"></div><div class="cell"></div><div class="cell ok"></div><div class="cell ok"></div>
+        <div class="rh">附件</div><div class="cell wr"></div><div class="cell wr"></div><div class="cell gp"></div><div class="cell wr"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div>
+      </div>
+      <div class="legend">
+        <span><i style="background:rgba(47,122,91,.78)"></i>完整（对象 + 角色 + 规则）</span>
+        <span><i style="background:rgba(232,163,61,.62)"></i>不完整（缺一项）</span>
+        <span><i style="background:repeating-linear-gradient(45deg,#EBE6DB 0 4px,rgba(180,72,60,.3) 4px 8px)"></i>缺口（未关联）</span>
+      </div>
+    </div>
+    <div>
+      <p class="mini" style="margin:0 0 8px;font-weight:700;color:var(--text-1)">缺口 Top 3（直接排访谈）</p>
+      <div class="c" style="padding:12px 14px;margin-bottom:8px">
+        <p class="mini-s" style="margin:0">① 工单在「受理 / 评审」两列完全没有对象定义 —— 先问工单从哪来。</p>
+      </div>
+      <div class="c" style="padding:12px 14px;margin-bottom:8px">
+        <p class="mini-s" style="margin:0">② 附件在四个活动里被引用，却没有归属对象 —— 先定归属再谈上传。</p>
+      </div>
+      <div class="c" style="padding:12px 14px">
+        <p class="mini-s" style="margin:0">③ 回款与合同之间缺一条关系，导致账龄报表口径不一致。</p>
+      </div>
+      <p class="mini-s" style="margin-top:12px;line-height:1.55">用法：<b>用它排访谈题，不要用它排会议。</b>每个红格对应一个问题，比开十次推进会有效。</p>
+    </div>
+  </div>
+  <div class="ft"><span>流程图 × 本体 · FDE 交付方法</span><span class="pg">11 / 22</span></div>
+</section>
+
+<!-- ============ 12 区别对照 ============ -->
+<section class="slide" data-deck-label="区别对照表">
+  <div class="hd"><span>第二章 · 关联</span><span>12</span></div>
+  <p class="k">区别</p>
+  <h2 class="ttl">十个维度，一眼看清该用哪个</h2>
+  <table class="m" style="margin-top:8px;font-size:15px">
+    <thead><tr><th style="width:190px">维度</th><th style="width:44%">流程图</th><th>本体</th></tr></thead>
+    <tbody>
+      <tr><td class="f">回答的问题</td><td>这件事按什么顺序发生</td><td>这里面有什么、彼此什么关系</td></tr>
+      <tr><td class="f">中心单位</td><td>活动（动词）</td><td>对象（名词）</td></tr>
+      <tr><td class="f">拓扑</td><td>有向、可分支、通常一条主线</td><td>网状、多对多、可复用</td></tr>
+      <tr><td class="f">时间性</td><td>强：先后、超时、回退</td><td>弱：只描述状态与合法迁移</td></tr>
+      <tr><td class="f">复用单位</td><td>整条流程或子流程</td><td>单个对象 / 规则 / 角色</td></tr>
+      <tr><td class="f">变更频率</td><td>月级，一次调整一条</td><td>周级，改一处影响全局</td></tr>
+      <tr><td class="f">失效方式</td><td>过时、没人看、与实际脱节</td><td>口径错、规则漏、变成孤儿模型</td></tr>
+      <tr><td class="f">怎么验证</td><td>走查：请岗位照着讲一遍</td><td>断言：拿真实数据跑一遍规则</td></tr>
+      <tr><td class="f">主要受众</td><td>业务与管理者</td><td>系统、数据、AI 与架构</td></tr>
+      <tr><td class="f">典型载体</td><td>泳道图、BPMN、画板</td><td>实体关系图、规则表、语义模型</td></tr>
+    </tbody>
+  </table>
+  <p class="sub" style="margin-top:12px;font-size:15px;color:var(--text-3)">最后一行是判断依据：<b>给人看的，优先流程图；给机器用的，必须有本体。</b></p>
+  <div class="ft"><span>流程图 × 本体 · FDE 交付方法</span><span class="pg">12 / 22</span></div>
+</section>
+
+<!-- ============ 13 什么时候用哪个 ============ -->
+<section class="slide" data-deck-label="什么时候用哪个">
+  <div class="hd"><span>第二章 · 关联</span><span>13</span></div>
+  <p class="k">选择</p>
+  <h2 class="ttl">不要争论哪个更好，先看你要解决哪个问题</h2>
+  <div class="dec anim-stagger-list" data-anim-target style="margin-top:18px">
+    <div class="d"><p class="if">如果问题是</p><h5>「大家理解不一致」</h5><p>用流程图。把人拉到一张图前，比开三次会有效。</p></div>
+    <div class="d"><p class="if">如果问题是</p><h5>「同一个词三种意思」</h5><p>用本体。先做口径裁决，再谈流程优化。</p></div>
+    <div class="d"><p class="if">如果问题是</p><h5>「规则靠人守」</h5><p>用本体。规则写进模型，界面和审批同时生效。</p></div>
+    <div class="d"><p class="if">如果问题是</p><h5>「要真正跑起来」</h5><p>两者都要。流程编排动作，本体提供对象与约束。</p></div>
+  </div>
+  <div class="c" style="margin-top:20px;background:rgba(15,42,68,.045);border-left:3px solid var(--accent-2)">
+    <p class="mini" style="margin:0"><b>顺序建议：</b>先用流程图建立共识，再用五问把共识转成结构，最后用本体固化并交给系统。反过来做，通常会在第一次评审就卡住——因为业务还没同意「用哪个词」。</p>
+  </div>
+  <p class="sub" style="margin-top:16px;color:var(--text-3);font-size:15px">补一句：如果只做一次演示、不打算落地，流程图就够了。这句话要说在前面。</p>
+  <div class="ft"><span>流程图 × 本体 · FDE 交付方法</span><span class="pg">13 / 22</span></div>
+</section>
+
+<!-- ============ 14 工具链五层 ============ -->
+<section class="slide" data-deck-label="FDE工具链五层">
+  <div class="hd"><span>第三章 · 工具</span><span>14</span></div>
+  <p class="k">工具链</p>
+  <h2 class="ttl">五层工具，五种「客户能自己动一下」的东西</h2>
+  <div class="layers" style="margin-top:12px">
+    <div class="layer"><div class="lv">L0</div><div class="nm">白板 / 便签</div><div class="ds">做什么：让客户自己把现状摆出来，不打断、不纠正</div><div class="ac">客户动一下：亲手贴、亲手排序</div></div>
+    <div class="layer"><div class="lv">L1</div><div class="nm">流程图 / 泳道</div><div class="ds">做什么：把口头描述固化成可指认的顺序与责任</div><div class="ac">客户动一下：在图上改一个方框</div></div>
+    <div class="layer"><div class="lv">L2</div><div class="nm">本体 / 规则表</div><div class="ds">做什么：统一口径、定义对象与约束，交给系统</div><div class="ac">客户动一下：裁决一个词的定义</div></div>
+    <div class="layer"><div class="lv">L3</div><div class="nm">应用原型 / 低代码</div><div class="ds">做什么：用真实数据跑通一条端到端，验证可行性</div><div class="ac">客户动一下：亲手提交一单</div></div>
+    <div class="layer"><div class="lv">L4</div><div class="nm">看板 / 情景推演</div><div class="ds">做什么：把结果变成可比较的数字与情景</div><div class="ac">客户动一下：改一个假设看结果</div></div>
+  </div>
+  <p class="sub" style="margin-top:16px">层次不是流程阶段，而是<b>抽象高度</b>：越往上越接近客户的日常语言，越往下越接近系统的执行语言。</p>
+  <div class="ft"><span>流程图 × 本体 · FDE 交付方法</span><span class="pg">14 / 22</span></div>
+  <div class="notes">如果时间紧，这一页只讲一句话：每层都必须产出一个"客户能自己动一下"的东西，否则这一层就是自娱自乐。</div>
+</section>
+
+<!-- ============ 15 交付物矩阵 ============ -->
+<section class="slide" data-deck-label="交付物矩阵">
+  <div class="hd"><span>第三章 · 工具</span><span>15</span></div>
+  <p class="k">交付物矩阵</p>
+  <h2 class="ttl">工具 → 产出 → 客户怎么用 → 谁签字</h2>
+  <table class="m" style="margin-top:10px;font-size:14.5px">
+    <thead><tr><th style="width:150px">工具</th><th style="width:26%">产出物</th><th style="width:30%">客户怎么用</th><th style="width:140px">谁签字</th><th>阶段</th></tr></thead>
+    <tbody>
+      <tr><td class="f">白板 / 便签</td><td>现状地图 + 痛点清单</td><td>自己指认并排序，选出第一条要动的流程</td><td>业务负责人</td><td>诊断</td></tr>
+      <tr><td class="f">流程图</td><td>泳道图 + 活动清单</td><td>逐格纠错，确认「这就是我们干的活」</td><td>流程 Owner</td><td>显影</td></tr>
+      <tr><td class="f">本体 / 规则表</td><td>对象字典 + 规则清单</td><td>裁决口径，指定唯一责任人</td><td>数据 / 业务双签</td><td>固化</td></tr>
+      <tr><td class="f">应用原型</td><td>可点的端到端场景</td><td>用真实数据走一遍，提出修改</td><td>一线主管</td><td>验证</td></tr>
+      <tr><td class="f">看板 / 推演</td><td>指标口径 + 情景结果</td><td>拿去自己的汇报里使用</td><td>分管领导</td><td>价值</td></tr>
+    </tbody>
+  </table>
+  <p class="sub" style="margin-top:16px;font-size:15px">矩阵的用法：<b>任何一格空着，就说明这一层的交付没有闭环。</b>常见空缺是「谁签字」——没有签字，就没有共识资产。</p>
+  <div class="ft"><span>流程图 × 本体 · FDE 交付方法</span><span class="pg">15 / 22</span></div>
+</section>
+
+<!-- ============ 16 五阶段工作流 ============ -->
+<section class="slide" data-deck-label="FDE五阶段工作流">
+  <div class="hd"><span>第三章 · 工具</span><span>16</span></div>
+  <p class="k">工作流</p>
+  <h2 class="ttl">五个阶段，每个阶段都有输入、输出和门禁</h2>
+  <div class="steps" style="margin-top:22px">
+    <div class="step"><span class="n">1</span><h5>诊断对齐</h5><p>输入：业务目标与痛点<br>输出：优先级清单</p><span class="tk">3–5 天</span></div>
+    <div class="step"><span class="n">2</span><h5>流程显影</h5><p>输入：选定的流程<br>输出：泳道图 + 五问卡片</p><span class="tk">1–2 周</span></div>
+    <div class="step"><span class="n">3</span><h5>语义固化</h5><p>输入：五问卡片<br>输出：对象字典 + 规则</p><span class="tk">1–2 周</span></div>
+    <div class="step"><span class="n">4</span><h5>应用验证</h5><p>输入：模型 + 真实数据<br>输出：可点场景</p><span class="tk">1 周</span></div>
+    <div class="step"><span class="n">5</span><h5>价值演示</h5><p>输入：验证结果<br>输出：指标与情景</p><span class="tk">持续</span></div>
+  </div>
+  <div class="c" style="margin-top:22px;background:rgba(79,116,134,.08)">
+    <p class="mini" style="margin:0"><b>两个反直觉的规则：</b>① 阶段 3 之前不许写代码，否则会把误解固化进系统；② 阶段 4 必须用客户自己的真实数据，演示数据会让所有问题延后暴露。</p>
+  </div>
+  <div class="ft"><span>流程图 × 本体 · FDE 交付方法</span><span class="pg">16 / 22</span></div>
+</section>
+
+<!-- ============ 17 交付门禁 ============ -->
+<section class="slide" data-deck-label="交付门禁">
+  <div class="hd"><span>第三章 · 工具</span><span>17</span></div>
+  <p class="k">门禁</p>
+  <h2 class="ttl">每个阶段只认一件东西：客户签字的那张纸</h2>
+  <div class="gates" style="margin-top:18px">
+    <div class="gate"><div class="gd">阶段 1</div><div class="gt">痛点排序表</div><div class="gv">客户自己排的顺序，不是顾问推荐的顺序</div><div class="sign">签｜业务负责人</div></div>
+    <div class="gate"><div class="gd">阶段 2</div><div class="gt">流程卡片集</div><div class="gv">每个活动五问填满，缺项列在背面</div><div class="sign">签｜流程 Owner</div></div>
+    <div class="gate"><div class="gd">阶段 3</div><div class="gt">口径裁决纪要</div><div class="gv">每个争议词一条结论 + 一个责任人</div><div class="sign">签｜数据 + 业务</div></div>
+    <div class="gate"><div class="gd">阶段 4</div><div class="gt">跑通的场景清单</div><div class="gv">客户亲手点过的，才算跑通</div><div class="sign">签｜一线主管</div></div>
+    <div class="gate"><div class="gd">阶段 5</div><div class="gt">数字承诺书</div><div class="gv">只写口径与计算方式，不写虚的百分比</div><div class="sign">签｜分管领导</div></div>
+  </div>
+  <p class="sub" style="margin-top:20px">门禁的作用不是卡流程，而是<b>把「我们以为的共识」变成「写下来的共识」</b>。没有签字物，下一阶段一定返工。</p>
+  <div class="ft"><span>流程图 × 本体 · FDE 交付方法</span><span class="pg">17 / 22</span></div>
+</section>
+
+<!-- ============ 18 三幕式客户日 ============ -->
+<section class="slide" data-deck-label="三幕式客户日">
+  <div class="hd"><span>第四章 · 演示</span><span>18</span></div>
+  <p class="k">场景编排</p>
+  <h2 class="ttl">一场客户日：同一套资产，三种切片</h2>
+  <div class="day" style="margin-top:16px">
+    <div class="act"><div class="tm">09:00 — 20 分钟</div><h5>第一幕 · 高管</h5><p>只讲结论：痛点、一张地图、一条流程、一个可点的东西、下一步要什么。</p><div class="who">听的人：决策者 / 分管领导</div></div>
+    <div class="act"><div class="tm">13:30 — 90 分钟</div><h5>第二幕 · 流程 Owner</h5><p>工作坊：客户执笔，现场画一条流程并填满五问，散会带走自己的卡片。</p><div class="who">听的人：业务骨干 / 岗位代表</div></div>
+    <div class="act"><div class="tm">16:30 — 45 分钟</div><h5>第三幕 · IT / 架构</h5><p>评审：对象与主数据、规则可执行性、集成边界、权限审计、变更影响面。</p><div class="who">听的人：架构 / 数据 / 安全</div></div>
+  </div>
+  <div class="c" style="margin-top:18px;padding:16px 20px">
+    <p class="mini" style="margin:0 0 8px"><b>同一套资产，怎么切</b></p>
+    <table class="m" style="font-size:13.5px">
+      <thead><tr><th style="width:170px">资产</th><th>高管看到的</th><th>Owner 看到的</th><th>IT 看到的</th></tr></thead>
+      <tbody>
+        <tr><td class="f">流程框架地图</td><td>覆盖范围与投入规模</td><td>我负责哪几块</td><td>影响哪些系统</td></tr>
+        <tr><td class="f">泳道流程图</td><td>卡点在哪</td><td>我要改哪一步</td><td>接口与人工环节</td></tr>
+        <tr><td class="f">对象与规则</td><td>为什么口径能统一</td><td>我的判断依据</td><td>表结构、权限、审计</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="ft"><span>流程图 × 本体 · FDE 交付方法</span><span class="pg">18 / 22</span></div>
+  <div class="notes">一天三场比三周三次会有效，因为客户内部会互相引用同一套图。注意：三场之间不要换素材版本，否则会立刻暴露不一致。</div>
+</section>
+
+<!-- ============ 19 脚本 A 高管 ============ -->
+<section class="slide" data-deck-label="演示脚本A高管15分钟">
+  <div class="hd"><span>第四章 · 演示</span><span>19</span></div>
+  <p class="k">脚本 A · 15 分钟</p>
+  <h2 class="ttl">对高管：只讲三件事，其余都是附件</h2>
+  <div class="script" style="margin-top:8px">
+    <div>
+      <div class="beat"><div class="t">0–2′</div><div class="x"><b>说一个具体场景</b><span>「上个月因为合同金额口径不一致，多付了一笔款。」用客户自己的事，不要用行业案例。</span></div></div>
+      <div class="beat"><div class="t">2–5′</div><div class="x"><b>一张地图</b><span>指出这次只动其中两块，其余不动。范围越小，越容易点头。</span></div></div>
+      <div class="beat"><div class="t">5–9′</div><div class="x"><b>一条流程走一遍</b><span>从提交到签署，只讲卡点，不讲字段。中间停一次，问「这一步是不是这样」。</span></div></div>
+      <div class="beat"><div class="t">9–12′</div><div class="x"><b>一个能点的东西</b><span>让客户自己点提交，看规则怎么拦住。这是全场唯一需要动手的环节。</span></div></div>
+      <div class="beat"><div class="t">12–15′</div><div class="x"><b>下一步与要什么</b><span>要三样：一个 Owner、每周一次一小时、允许我们先改一条流程。</span></div></div>
+    </div>
+    <div>
+      <div class="why"><b>为什么这么排：</b>高管的时间预算只有「一个故事 + 一个证明 + 一个请求」。任何定义、术语、架构图都会消耗注意力而不产生决策。</div>
+      <div class="c" style="margin-top:12px;padding:14px 16px">
+        <p class="mini" style="margin:0 0 6px"><b>三个不要</b></p>
+        <ul class="b" style="margin:0">
+          <li class="bad">不要展示完整图谱，会变成技术答疑</li>
+          <li class="bad">不要承诺百分比，会被追问测算依据</li>
+          <li class="bad">不要一次要预算，先要人和时间</li>
+        </ul>
+      </div>
+      <p class="mini-s" style="margin-top:12px">结束语建议：「今天不需要您做决定，只需要您指定一个人，跟我们走两周。」</p>
+    </div>
+  </div>
+  <div class="ft"><span>流程图 × 本体 · FDE 交付方法</span><span class="pg">19 / 22</span></div>
+</section>
+
+<!-- ============ 20 脚本 B Owner ============ -->
+<section class="slide" data-deck-label="演示脚本B流程Owner90分钟">
+  <div class="hd"><span>第四章 · 演示</span><span>20</span></div>
+  <p class="k">脚本 B · 90 分钟</p>
+  <h2 class="ttl">对流程 Owner：让他们画，你只负责提问</h2>
+  <div class="script" style="margin-top:8px">
+    <div>
+      <div class="beat"><div class="t">0–10′</div><div class="x"><b>定规则</b><span>「今天画的是你们真实在干的事，不是制度上写的事。画错没关系，改了就行。」</span></div></div>
+      <div class="beat"><div class="t">10–40′</div><div class="x"><b>现场画一条</b><span>客户执笔，你只在三个地方打断：谁做、产出什么、什么情况下走另一条路。</span></div></div>
+      <div class="beat"><div class="t">40–70′</div><div class="x"><b>五问补齐</b><span>每个方框问五句，答不上来的写在便签上贴旁边，当场不追。</span></div></div>
+      <div class="beat"><div class="t">70–85′</div><div class="x"><b>现场成图</b><span>把便签转成结构化卡片，投影给全场看，让他们确认「这就是我们说的」。</span></div></div>
+      <div class="beat"><div class="t">85–90′</div><div class="x"><b>交回</b><span>把图和卡片留给客户，约定下一次只补未填满的三格。</span></div></div>
+    </div>
+    <div>
+      <div class="why"><b>为什么客户执笔：</b>你画的图，客户只会「评价」；他们自己画的图，才会「捍卫」。这是流程资产能在会后活下来的唯一原因。</div>
+      <div class="c" style="margin-top:12px;padding:14px 16px">
+        <p class="mini" style="margin:0 0 6px"><b>三条现场纪律</b></p>
+        <ul class="b" style="margin:0">
+          <li>客户执笔，FDE 只问不画</li>
+          <li>一次只处理一条流程，禁止横向扩题</li>
+          <li>散会必须有带走物（图 + 卡片）</li>
+        </ul>
+      </div>
+      <p class="mini-s" style="margin-top:12px">常见陷阱：有人开始讨论「制度应该怎么改」。回答一句「这条先记下，属于下一阶段」并贴到 Parking Lot。</p>
+    </div>
+  </div>
+  <div class="ft"><span>流程图 × 本体 · FDE 交付方法</span><span class="pg">20 / 22</span></div>
+</section>
+
+<!-- ============ 21 脚本 C IT ============ -->
+<section class="slide" data-deck-label="演示脚本C IT评审45分钟">
+  <div class="hd"><span>第四章 · 演示</span><span>21</span></div>
+  <p class="k">脚本 C · 45 分钟</p>
+  <h2 class="ttl">对 IT：只谈可验证项，不谈愿景</h2>
+  <div class="script" style="margin-top:8px">
+    <div>
+      <div class="beat"><div class="t">0–10′</div><div class="x"><b>对象与主数据</b><span>哪些对象由我们定义、哪些必须挂到已有主数据；唯一编码从哪来。</span></div></div>
+      <div class="beat"><div class="t">10–20′</div><div class="x"><b>规则可执行性</b><span>哪些规则是确定性判断，哪些需要人工裁量。后者不进引擎。</span></div></div>
+      <div class="beat"><div class="t">20–30′</div><div class="x"><b>集成边界</b><span>同步还是异步、谁调谁、失败怎么办；人工环节明确标出来。</span></div></div>
+      <div class="beat"><div class="t">30–38′</div><div class="x"><b>权限与审计</b><span>角色到权限的映射、越权拦截点、操作留痕粒度。</span></div></div>
+      <div class="beat"><div class="t">38–45′</div><div class="x"><b>变更影响面</b><span>改一条规则或一个字段，会影响哪些流程与报表——现场演示追溯。</span></div></div>
+    </div>
+    <div>
+      <div class="why"><b>为什么先讲主数据：</b>IT 最担心的不是图画得好不好，而是「又建一套主数据」。先把边界划清，后面全部讨论都会变短。</div>
+      <div class="c" style="margin-top:12px;padding:14px 16px">
+        <p class="mini" style="margin:0 0 6px"><b>必须当场回答的三个问题</b></p>
+        <ul class="b" style="margin:0">
+          <li>这套模型和现有系统谁是权威源？</li>
+          <li>规则改动的审批与回滚怎么走？</li>
+          <li>不上线的时候，资产放在谁的仓库里？</li>
+        </ul>
+      </div>
+      <p class="mini-s" style="margin-top:12px">如果三个问题答不上来，不要继续演示功能；先把这三个问题谈完，否则会在安全评审被一次性推翻。</p>
+    </div>
+  </div>
+  <div class="ft"><span>流程图 × 本体 · FDE 交付方法</span><span class="pg">21 / 22</span></div>
+</section>
+
+<!-- ============ 22 度量与下一步 ============ -->
+<section class="slide" data-deck-label="度量与下一步">
+  <div class="hd"><span>第四章 · 演示</span><span>22</span></div>
+  <p class="k">怎么证明有效</p>
+  <h2 class="ttl">四个指标，都指向同一件事：客户少绕了一圈</h2>
+  <div class="metrics" style="margin-top:14px">
+    <div class="metric"><b>流程覆盖率</b><span>被五问填满的活动 ÷ 目标活动。衡量「图能不能落地」。</span></div>
+    <div class="metric"><b>口径统一项数</b><span>完成裁决的对象与字段数。衡量「有没有唯一说法」。</span></div>
+    <div class="metric"><b>规则自动化率</b><span>由系统自动判断的规则 ÷ 可确定性判断的规则。</span></div>
+    <div class="metric"><b>访谈转化率</b><span>访谈中被采纳并进入模型的条目占比。衡量「谁在提供内容」。</span></div>
+  </div>
+  <div class="rule-line" style="margin:20px 0 14px"></div>
+  <p class="mini" style="margin:0 0 10px;font-weight:700;color:var(--text-1)">接下来 30 天</p>
+  <div class="g5">
+    <div class="c" style="padding:12px 14px"><p class="mini-s" style="margin:0 0 4px;color:var(--accent-2);font-weight:700">W1</p><p class="mini" style="margin:0">诊断与排序，定第一条流程</p></div>
+    <div class="c" style="padding:12px 14px"><p class="mini-s" style="margin:0 0 4px;color:var(--accent-2);font-weight:700">W2</p><p class="mini" style="margin:0">工作坊出图，填满五问</p></div>
+    <div class="c" style="padding:12px 14px"><p class="mini-s" style="margin:0 0 4px;color:var(--accent-2);font-weight:700">W3</p><p class="mini" style="margin:0">口径裁决会，固化对象与规则</p></div>
+    <div class="c" style="padding:12px 14px"><p class="mini-s" style="margin:0 0 4px;color:var(--accent-2);font-weight:700">W4</p><p class="mini" style="margin:0">真实数据跑通一条端到端</p></div>
+    <div class="c" style="padding:12px 14px"><p class="mini-s" style="margin:0 0 4px;color:var(--accent-2);font-weight:700">W5</p><p class="mini" style="margin:0">三幕式客户日，交付与续约</p></div>
+  </div>
+  <p class="sub" style="margin-top:18px;font-size:clamp(17px,1.1vw,21px);color:var(--text-1)">交付的终点不是文档，是<b>客户能自己往下走</b>。</p>
+  <div class="ft"><span>流程图 × 本体 · FDE 交付方法</span><span class="pg">22 / 22</span></div>
+</section>
+
+</deck-stage>
+
+<div class="progress"><span id="pbar"></span></div>
+<div class="overview" id="overview"></div>
+<script>
+(function(){
+  var deck=document.querySelector('deck-stage');
+  var slides=[].slice.call(deck.querySelectorAll('.slide'));
+  var total=slides.length, idx=0;
+  var bar=document.getElementById('pbar');
+  var ov=document.getElementById('overview');
+  var built=false;
+
+  function show(n,noHash){
+    idx=Math.max(0,Math.min(total-1,n));
+    slides.forEach(function(s,k){
+      s.classList.toggle('active',k===idx);
+      s.classList.toggle('prev',k<idx);
+    });
+    bar.style.width=((idx+1)/total*100)+'%';
+    var cur=slides[idx];
+    cur.querySelectorAll('[data-anim]').forEach(function(el){
+      var a=el.getAttribute('data-anim');
+      el.classList.remove('anim-'+a); void el.offsetWidth; el.classList.add('anim-'+a);
+    });
+    cur.querySelectorAll('.anim-stagger-list').forEach(function(el){
+      el.classList.remove('anim-stagger-list'); void el.offsetWidth; el.classList.add('anim-stagger-list');
+    });
+    if(!noHash){ try{history.replaceState(null,'','#'+(idx+1));}catch(e){} }
+  }
+
+  function buildOverview(){
+    slides.forEach(function(s,i){
+      var t=document.createElement('div'); t.className='thumb';
+      var ph=document.createElement('div'); ph.className='ph';
+      var mini=document.createElement('div'); mini.className='mini';
+      var clone=s.cloneNode(true);
+      clone.classList.add('active');
+      clone.style.position='absolute'; clone.style.inset='0';
+      clone.style.opacity='1'; clone.style.transform='none';
+      mini.appendChild(clone); ph.appendChild(mini);
+      var cap=document.createElement('div'); cap.className='cap';
+      cap.innerHTML='<i>'+String(i+1).padStart(2,'0')+'</i><span>'+(s.getAttribute('data-deck-label')||'')+'</span>';
+      t.appendChild(ph); t.appendChild(cap);
+      t.addEventListener('click',function(){ toggleOverview(false); show(i); });
+      ov.appendChild(t);
+    });
+    built=true;
+  }
+  function toggleOverview(force){
+    var open=(force===undefined)?!ov.classList.contains('open'):force;
+    if(open&&!built) buildOverview();
+    ov.classList.toggle('open',open);
+    if(open){
+      requestAnimationFrame(function(){
+        var th=ov.querySelector('.thumb');
+        if(!th) return;
+        var sw=deck.clientWidth, sh=deck.clientHeight;
+        var sc=th.clientWidth/sw;
+        ov.querySelectorAll('.mini').forEach(function(m){
+          m.style.width=sw+'px'; m.style.height=sh+'px';
+          m.style.transform='scale('+sc+')';
+        });
+      });
+    }
+  }
+  function fs(){
+    if(!document.fullscreenElement){ if(document.documentElement.requestFullscreen) document.documentElement.requestFullscreen(); }
+    else if(document.exitFullscreen) document.exitFullscreen();
+  }
+
+  document.addEventListener('keydown',function(e){
+    if(e.metaKey||e.ctrlKey||e.altKey) return;
+    switch(e.key){
+      case 'ArrowRight': case ' ': case 'PageDown': case 'Enter': e.preventDefault(); show(idx+1); break;
+      case 'ArrowLeft': case 'PageUp': case 'Backspace': e.preventDefault(); show(idx-1); break;
+      case 'ArrowDown': e.preventDefault(); show(idx+1); break;
+      case 'ArrowUp': e.preventDefault(); show(idx-1); break;
+      case 'Home': show(0); break;
+      case 'End': show(total-1); break;
+      case 'f': case 'F': fs(); break;
+      case 'o': case 'O': toggleOverview(); break;
+      case 'Escape': toggleOverview(false); break;
+    }
+  });
+
+  var lock=false;
+  window.addEventListener('wheel',function(e){
+    if(ov.classList.contains('open')) return;
+    if(lock) return;
+    if(Math.abs(e.deltaY)<12) return;
+    lock=true; setTimeout(function(){lock=false;},520);
+    show(idx+(e.deltaY>0?1:-1));
+  },{passive:true});
+
+  window.addEventListener('hashchange',function(){
+    var m=/#(\d+)/.exec(location.hash);
+    if(m) show(parseInt(m[1],10)-1,true);
+  });
+
+  var m0=/#(\d+)/.exec(location.hash);
+  show(m0?parseInt(m0[1],10)-1:0,true);
+})();
+</script>
+</body>
+</html>

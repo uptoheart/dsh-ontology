@@ -1,0 +1,1705 @@
+{
+  "id": "AS-1794204865051",
+  "suiteId": "chemical-safety-demo",
+  "createdAt": 1794204865046,
+  "modelVersion": "1.0.0",
+  "plant": {
+    "entityId": "plant",
+    "entityName": "样例厂区",
+    "kind": "PLANT",
+    "score": 59,
+    "grade": "red",
+    "components": [
+      {
+        "id": "compliance",
+        "label": "管控有效性（双重预防）",
+        "score": 100,
+        "weight": 0.3,
+        "applicable": true,
+        "penalties": []
+      },
+      {
+        "id": "propagation",
+        "label": "结构传播（D）",
+        "score": 59,
+        "weight": 0.4,
+        "applicable": true,
+        "penalties": [
+          {
+            "layer": "D",
+            "refType": "child",
+            "refId": "area:AREA-A",
+            "delta": 5.206730769230774,
+            "message": "子节点「罐区」为红级，父级封顶 59"
+          }
+        ]
+      }
+    ],
+    "penalties": [
+      {
+        "layer": "D",
+        "refType": "child",
+        "refId": "area:AREA-A",
+        "delta": 5.206730769230774,
+        "message": "子节点「罐区」为红级，父级封顶 59"
+      },
+      {
+        "layer": "D",
+        "refType": "child",
+        "refId": "area:AREA-A",
+        "delta": 17.571428571428584,
+        "message": "子节点「罐区」为红级，父级封顶 59"
+      }
+    ],
+    "evidences": [],
+    "modelVersion": "1.0.0"
+  },
+  "areas": [
+    {
+      "entityId": "area:AREA-A",
+      "entityName": "罐区",
+      "kind": "SAFETY_AREA",
+      "score": 59,
+      "grade": "red",
+      "components": [
+        {
+          "id": "compliance",
+          "label": "管控有效性（双重预防）",
+          "score": 100,
+          "weight": 0.3,
+          "applicable": true,
+          "penalties": []
+        },
+        {
+          "id": "propagation",
+          "label": "结构传播（D）",
+          "score": 59,
+          "weight": 0.4,
+          "applicable": true,
+          "penalties": [
+            {
+              "layer": "D",
+              "refType": "child",
+              "refId": "unit:UNIT-A1",
+              "delta": 2.823529411764703,
+              "message": "子节点「常压储罐区」为红级，父级封顶 59"
+            }
+          ]
+        }
+      ],
+      "penalties": [
+        {
+          "layer": "D",
+          "refType": "child",
+          "refId": "unit:UNIT-A1",
+          "delta": 2.823529411764703,
+          "message": "子节点「常压储罐区」为红级，父级封顶 59"
+        },
+        {
+          "layer": "D",
+          "refType": "child",
+          "refId": "unit:UNIT-A1",
+          "delta": 17.571428571428584,
+          "message": "子节点「常压储罐区」为红级，父级封顶 59"
+        }
+      ],
+      "evidences": [],
+      "modelVersion": "1.0.0"
+    },
+    {
+      "entityId": "area:AREA-B",
+      "entityName": "生产车间",
+      "kind": "SAFETY_AREA",
+      "score": 74,
+      "grade": "orange",
+      "components": [
+        {
+          "id": "compliance",
+          "label": "管控有效性（双重预防）",
+          "score": 100,
+          "weight": 0.3,
+          "applicable": true,
+          "penalties": []
+        },
+        {
+          "id": "propagation",
+          "label": "结构传播（D）",
+          "score": 74,
+          "weight": 0.4,
+          "applicable": true,
+          "penalties": [
+            {
+              "layer": "D",
+              "refType": "child",
+              "refId": "unit:UNIT-B1",
+              "delta": 4.626086956521746,
+              "message": "子节点「反应装置」为橙级，父级封顶 74"
+            }
+          ]
+        }
+      ],
+      "penalties": [
+        {
+          "layer": "D",
+          "refType": "child",
+          "refId": "unit:UNIT-B1",
+          "delta": 4.626086956521746,
+          "message": "子节点「反应装置」为橙级，父级封顶 74"
+        },
+        {
+          "layer": "D",
+          "refType": "child",
+          "refId": "unit:UNIT-B1",
+          "delta": 11.142857142857153,
+          "message": "子节点「反应装置」为橙级，父级封顶 74"
+        }
+      ],
+      "evidences": [],
+      "modelVersion": "1.0.0"
+    },
+    {
+      "entityId": "area:AREA-C",
+      "entityName": "公用工程",
+      "kind": "SAFETY_AREA",
+      "score": 95.3,
+      "grade": "blue",
+      "components": [
+        {
+          "id": "compliance",
+          "label": "管控有效性（双重预防）",
+          "score": 100,
+          "weight": 0.3,
+          "applicable": true,
+          "penalties": []
+        },
+        {
+          "id": "propagation",
+          "label": "结构传播（D）",
+          "score": 91.7,
+          "weight": 0.4,
+          "applicable": true,
+          "penalties": []
+        }
+      ],
+      "penalties": [],
+      "evidences": [],
+      "modelVersion": "1.0.0"
+    }
+  ],
+  "units": [
+    {
+      "entityId": "unit:UNIT-A1",
+      "entityName": "常压储罐区",
+      "kind": "SAFETY_UNIT",
+      "score": 59,
+      "grade": "red",
+      "components": [
+        {
+          "id": "hazard",
+          "label": "危险源规模（GB18218）",
+          "score": 78,
+          "weight": 0.25,
+          "applicable": true,
+          "penalties": [
+            {
+              "layer": "B",
+              "refType": "clause",
+              "refId": "GB18218:4.1",
+              "delta": 17,
+              "message": "Q=1.60，判定为四级重大危险源"
+            }
+          ]
+        },
+        {
+          "id": "compliance",
+          "label": "管控有效性（双重预防）",
+          "score": 100,
+          "weight": 0.3,
+          "applicable": true,
+          "penalties": []
+        },
+        {
+          "id": "propagation",
+          "label": "结构传播（D）",
+          "score": 41.57959183673469,
+          "weight": 0.4,
+          "applicable": true,
+          "penalties": []
+        }
+      ],
+      "penalties": [
+        {
+          "layer": "B",
+          "refType": "clause",
+          "refId": "GB18218:4.1",
+          "delta": 17,
+          "message": "Q=1.60，判定为四级重大危险源"
+        },
+        {
+          "layer": "D",
+          "refType": "child",
+          "refId": "op:OP-BLIND-01",
+          "delta": 10.612459720730385,
+          "message": "子节点「储罐盲板抽堵」为红级，父级封顶 59"
+        }
+      ],
+      "evidences": [
+        {
+          "clauseId": "GB18218:4.1"
+        }
+      ],
+      "modelVersion": "1.0.0"
+    },
+    {
+      "entityId": "unit:UNIT-A2",
+      "entityName": "装卸车区",
+      "kind": "SAFETY_UNIT",
+      "score": 74,
+      "grade": "orange",
+      "components": [
+        {
+          "id": "hazard",
+          "label": "危险源规模（GB18218）",
+          "score": 95,
+          "weight": 0.25,
+          "applicable": true,
+          "penalties": []
+        },
+        {
+          "id": "propagation",
+          "label": "结构传播（D）",
+          "score": 67.51290322580644,
+          "weight": 0.4,
+          "applicable": true,
+          "penalties": []
+        }
+      ],
+      "penalties": [
+        {
+          "layer": "D",
+          "refType": "child",
+          "refId": "eq:EQ-A2-L01",
+          "delta": 4.0848635235731905,
+          "message": "子节点「装车鹤管」为橙级，父级封顶 74"
+        }
+      ],
+      "evidences": [],
+      "modelVersion": "1.0.0"
+    },
+    {
+      "entityId": "unit:UNIT-B1",
+      "entityName": "反应装置",
+      "kind": "SAFETY_UNIT",
+      "score": 74,
+      "grade": "orange",
+      "components": [
+        {
+          "id": "hazard",
+          "label": "危险源规模（GB18218）",
+          "score": 95,
+          "weight": 0.25,
+          "applicable": true,
+          "penalties": []
+        },
+        {
+          "id": "propagation",
+          "label": "结构传播（D）",
+          "score": 67.5625,
+          "weight": 0.4,
+          "applicable": true,
+          "penalties": []
+        }
+      ],
+      "penalties": [
+        {
+          "layer": "D",
+          "refType": "child",
+          "refId": "eq:EQ-B1-R01",
+          "delta": 4.115384615384627,
+          "message": "子节点「反应釜」为橙级，父级封顶 74"
+        }
+      ],
+      "evidences": [],
+      "modelVersion": "1.0.0"
+    },
+    {
+      "entityId": "unit:UNIT-B2",
+      "entityName": "精馏装置",
+      "kind": "SAFETY_UNIT",
+      "score": 87.3,
+      "grade": "yellow",
+      "components": [
+        {
+          "id": "hazard",
+          "label": "危险源规模（GB18218）",
+          "score": 95,
+          "weight": 0.25,
+          "applicable": true,
+          "penalties": []
+        },
+        {
+          "id": "propagation",
+          "label": "结构传播（D）",
+          "score": 82.45,
+          "weight": 0.4,
+          "applicable": true,
+          "penalties": []
+        }
+      ],
+      "penalties": [],
+      "evidences": [],
+      "modelVersion": "1.0.0"
+    },
+    {
+      "entityId": "unit:UNIT-C1",
+      "entityName": "公用工程站",
+      "kind": "SAFETY_UNIT",
+      "score": 91.7,
+      "grade": "blue",
+      "components": [
+        {
+          "id": "hazard",
+          "label": "危险源规模（GB18218）",
+          "score": 95,
+          "weight": 0.25,
+          "applicable": true,
+          "penalties": []
+        },
+        {
+          "id": "propagation",
+          "label": "结构传播（D）",
+          "score": 89.7,
+          "weight": 0.4,
+          "applicable": true,
+          "penalties": []
+        }
+      ],
+      "penalties": [],
+      "evidences": [],
+      "modelVersion": "1.0.0"
+    }
+  ],
+  "equipments": [
+    {
+      "entityId": "eq:EQ-A1-T01",
+      "entityName": "1#储罐",
+      "kind": "SAFETY_EQUIPMENT",
+      "score": 39.7,
+      "grade": "red",
+      "components": [
+        {
+          "id": "lec",
+          "label": "固有风险（LEC）",
+          "score": 46.25,
+          "weight": 0.35,
+          "applicable": true,
+          "penalties": []
+        },
+        {
+          "id": "hazard",
+          "label": "危险源规模（GB18218）",
+          "score": 78,
+          "weight": 0.25,
+          "applicable": true,
+          "penalties": [
+            {
+              "layer": "B",
+              "refType": "clause",
+              "refId": "GB18218:4.1",
+              "delta": 17,
+              "message": "Q=1.00，判定为四级重大危险源"
+            }
+          ]
+        },
+        {
+          "id": "compliance",
+          "label": "管控有效性（双重预防）",
+          "score": 0,
+          "weight": 0.3,
+          "applicable": true,
+          "penalties": [
+            {
+              "layer": "C",
+              "refType": "clause",
+              "refId": "clause:GB30871:6.2",
+              "delta": 10,
+              "message": "clause:GB30871:6.2 要求的管控措施未落实：CT-GAS-TEST"
+            }
+          ]
+        }
+      ],
+      "penalties": [
+        {
+          "layer": "B",
+          "refType": "clause",
+          "refId": "GB18218:4.1",
+          "delta": 17,
+          "message": "Q=1.00，判定为四级重大危险源"
+        },
+        {
+          "layer": "C",
+          "refType": "clause",
+          "refId": "clause:GB30871:6.2",
+          "delta": 10,
+          "message": "clause:GB30871:6.2 要求的管控措施未落实：CT-GAS-TEST"
+        }
+      ],
+      "evidences": [
+        {
+          "clauseId": "GB18218:4.1"
+        },
+        {
+          "clauseId": "clause:GB30871:6.2"
+        }
+      ],
+      "modelVersion": "1.0.0"
+    },
+    {
+      "entityId": "eq:EQ-A1-T02",
+      "entityName": "2#储罐",
+      "kind": "SAFETY_EQUIPMENT",
+      "score": 44.4,
+      "grade": "red",
+      "components": [
+        {
+          "id": "lec",
+          "label": "固有风险（LEC）",
+          "score": 46.25,
+          "weight": 0.35,
+          "applicable": true,
+          "penalties": []
+        },
+        {
+          "id": "hazard",
+          "label": "危险源规模（GB18218）",
+          "score": 95,
+          "weight": 0.25,
+          "applicable": true,
+          "penalties": []
+        },
+        {
+          "id": "compliance",
+          "label": "管控有效性（双重预防）",
+          "score": 0,
+          "weight": 0.3,
+          "applicable": true,
+          "penalties": [
+            {
+              "layer": "C",
+              "refType": "clause",
+              "refId": "clause:GB30871:8.2",
+              "delta": 10,
+              "message": "clause:GB30871:8.2 要求的管控措施未落实：CT-ISOLATE"
+            },
+            {
+              "layer": "C",
+              "refType": "rule",
+              "refId": "R-12",
+              "delta": 25,
+              "message": "设备检验有效期已过期"
+            }
+          ]
+        }
+      ],
+      "penalties": [
+        {
+          "layer": "C",
+          "refType": "clause",
+          "refId": "clause:GB30871:8.2",
+          "delta": 10,
+          "message": "clause:GB30871:8.2 要求的管控措施未落实：CT-ISOLATE"
+        },
+        {
+          "layer": "C",
+          "refType": "rule",
+          "refId": "R-12",
+          "delta": 25,
+          "message": "设备检验有效期已过期"
+        }
+      ],
+      "evidences": [
+        {
+          "clauseId": "clause:GB30871:8.2"
+        },
+        {
+          "ruleId": "R-12"
+        }
+      ],
+      "modelVersion": "1.0.0"
+    },
+    {
+      "entityId": "eq:EQ-A1-P01",
+      "entityName": "输送泵",
+      "kind": "SAFETY_EQUIPMENT",
+      "score": 79,
+      "grade": "yellow",
+      "components": [
+        {
+          "id": "lec",
+          "label": "固有风险（LEC）",
+          "score": 67.55555555555556,
+          "weight": 0.35,
+          "applicable": true,
+          "penalties": []
+        },
+        {
+          "id": "hazard",
+          "label": "危险源规模（GB18218）",
+          "score": 95,
+          "weight": 0.25,
+          "applicable": true,
+          "penalties": []
+        }
+      ],
+      "penalties": [],
+      "evidences": [],
+      "modelVersion": "1.0.0"
+    },
+    {
+      "entityId": "eq:EQ-A2-L01",
+      "entityName": "装车鹤管",
+      "kind": "SAFETY_EQUIPMENT",
+      "score": 66.6,
+      "grade": "orange",
+      "components": [
+        {
+          "id": "lec",
+          "label": "固有风险（LEC）",
+          "score": 46.25,
+          "weight": 0.35,
+          "applicable": true,
+          "penalties": []
+        },
+        {
+          "id": "hazard",
+          "label": "危险源规模（GB18218）",
+          "score": 95,
+          "weight": 0.25,
+          "applicable": true,
+          "penalties": []
+        }
+      ],
+      "penalties": [],
+      "evidences": [],
+      "modelVersion": "1.0.0"
+    },
+    {
+      "entityId": "eq:EQ-B1-R01",
+      "entityName": "反应釜",
+      "kind": "SAFETY_EQUIPMENT",
+      "score": 66.6,
+      "grade": "orange",
+      "components": [
+        {
+          "id": "lec",
+          "label": "固有风险（LEC）",
+          "score": 46.25,
+          "weight": 0.35,
+          "applicable": true,
+          "penalties": []
+        },
+        {
+          "id": "hazard",
+          "label": "危险源规模（GB18218）",
+          "score": 95,
+          "weight": 0.25,
+          "applicable": true,
+          "penalties": []
+        }
+      ],
+      "penalties": [],
+      "evidences": [],
+      "modelVersion": "1.0.0"
+    },
+    {
+      "entityId": "eq:EQ-B2-C01",
+      "entityName": "精馏塔",
+      "kind": "SAFETY_EQUIPMENT",
+      "score": 79,
+      "grade": "yellow",
+      "components": [
+        {
+          "id": "lec",
+          "label": "固有风险（LEC）",
+          "score": 67.55555555555556,
+          "weight": 0.35,
+          "applicable": true,
+          "penalties": []
+        },
+        {
+          "id": "hazard",
+          "label": "危险源规模（GB18218）",
+          "score": 95,
+          "weight": 0.25,
+          "applicable": true,
+          "penalties": []
+        }
+      ],
+      "penalties": [],
+      "evidences": [],
+      "modelVersion": "1.0.0"
+    },
+    {
+      "entityId": "eq:EQ-C1-U01",
+      "entityName": "空压机",
+      "kind": "SAFETY_EQUIPMENT",
+      "score": 94.9,
+      "grade": "blue",
+      "components": [
+        {
+          "id": "lec",
+          "label": "固有风险（LEC）",
+          "score": 94.85714285714286,
+          "weight": 0.35,
+          "applicable": true,
+          "penalties": []
+        },
+        {
+          "id": "hazard",
+          "label": "危险源规模（GB18218）",
+          "score": 95,
+          "weight": 0.25,
+          "applicable": true,
+          "penalties": []
+        }
+      ],
+      "penalties": [],
+      "evidences": [],
+      "modelVersion": "1.0.0"
+    }
+  ],
+  "operations": [
+    {
+      "entityId": "op:OP-HOT-01",
+      "entityName": "罐区动火作业",
+      "kind": "SAFETY_OPERATION",
+      "score": 44.2,
+      "grade": "red",
+      "components": [
+        {
+          "id": "lec",
+          "label": "固有风险（LEC）",
+          "score": 46.25,
+          "weight": 0.35,
+          "applicable": true,
+          "penalties": []
+        },
+        {
+          "id": "compliance",
+          "label": "管控有效性（双重预防）",
+          "score": 41.875,
+          "weight": 0.3,
+          "applicable": true,
+          "penalties": [
+            {
+              "layer": "C",
+              "refType": "clause",
+              "refId": "clause:GB30871:6.2",
+              "delta": 10,
+              "message": "clause:GB30871:6.2 要求的管控措施未落实：CT-GAS-TEST"
+            },
+            {
+              "layer": "C",
+              "refType": "clause",
+              "refId": "clause:GB30871:6.4",
+              "delta": 10,
+              "message": "clause:GB30871:6.4 要求的管控措施未落实：CT-GUARD"
+            },
+            {
+              "layer": "C",
+              "refType": "clause",
+              "refId": "clause:SAFETY-LAW:40",
+              "delta": 10,
+              "message": "clause:SAFETY-LAW:40 要求的管控措施未落实：CT-TRAIN"
+            },
+            {
+              "layer": "C",
+              "refType": "rule",
+              "refId": "R-01",
+              "delta": 30,
+              "message": "动火作业前未完成可燃气体检测"
+            },
+            {
+              "layer": "C",
+              "refType": "rule",
+              "refId": "R-02",
+              "delta": 15,
+              "message": "动火作业未设置专人监护"
+            },
+            {
+              "layer": "C",
+              "refType": "rule",
+              "refId": "R-10",
+              "delta": 10,
+              "message": "作业人员缺少有效安全培训记录"
+            }
+          ]
+        }
+      ],
+      "penalties": [
+        {
+          "layer": "C",
+          "refType": "clause",
+          "refId": "clause:GB30871:6.2",
+          "delta": 10,
+          "message": "clause:GB30871:6.2 要求的管控措施未落实：CT-GAS-TEST"
+        },
+        {
+          "layer": "C",
+          "refType": "clause",
+          "refId": "clause:GB30871:6.4",
+          "delta": 10,
+          "message": "clause:GB30871:6.4 要求的管控措施未落实：CT-GUARD"
+        },
+        {
+          "layer": "C",
+          "refType": "clause",
+          "refId": "clause:SAFETY-LAW:40",
+          "delta": 10,
+          "message": "clause:SAFETY-LAW:40 要求的管控措施未落实：CT-TRAIN"
+        },
+        {
+          "layer": "C",
+          "refType": "rule",
+          "refId": "R-01",
+          "delta": 30,
+          "message": "动火作业前未完成可燃气体检测"
+        },
+        {
+          "layer": "C",
+          "refType": "rule",
+          "refId": "R-02",
+          "delta": 15,
+          "message": "动火作业未设置专人监护"
+        },
+        {
+          "layer": "C",
+          "refType": "rule",
+          "refId": "R-10",
+          "delta": 10,
+          "message": "作业人员缺少有效安全培训记录"
+        }
+      ],
+      "evidences": [
+        {
+          "clauseId": "clause:GB30871:6.2"
+        },
+        {
+          "clauseId": "clause:GB30871:6.4"
+        },
+        {
+          "clauseId": "clause:SAFETY-LAW:40"
+        },
+        {
+          "ruleId": "R-01"
+        },
+        {
+          "ruleId": "R-02"
+        },
+        {
+          "ruleId": "R-10"
+        }
+      ],
+      "modelVersion": "1.0.0"
+    },
+    {
+      "entityId": "op:OP-CS-01",
+      "entityName": "储罐受限空间清理",
+      "kind": "SAFETY_OPERATION",
+      "score": 41.1,
+      "grade": "red",
+      "components": [
+        {
+          "id": "lec",
+          "label": "固有风险（LEC）",
+          "score": 46.25,
+          "weight": 0.35,
+          "applicable": true,
+          "penalties": []
+        },
+        {
+          "id": "compliance",
+          "label": "管控有效性（双重预防）",
+          "score": 35,
+          "weight": 0.3,
+          "applicable": true,
+          "penalties": [
+            {
+              "layer": "C",
+              "refType": "clause",
+              "refId": "clause:GB30871:8.2",
+              "delta": 10,
+              "message": "clause:GB30871:8.2 要求的管控措施未落实：CT-ISOLATE"
+            },
+            {
+              "layer": "C",
+              "refType": "clause",
+              "refId": "clause:GB30871:8.3",
+              "delta": 10,
+              "message": "clause:GB30871:8.3 要求的管控措施未落实：CT-GAS-TEST"
+            },
+            {
+              "layer": "C",
+              "refType": "clause",
+              "refId": "clause:SAFETY-LAW:40",
+              "delta": 10,
+              "message": "clause:SAFETY-LAW:40 要求的管控措施未落实：CT-TRAIN"
+            },
+            {
+              "layer": "C",
+              "refType": "clause",
+              "refId": "GB30871:6.3",
+              "delta": 20,
+              "message": "作业票已过期或未审批"
+            },
+            {
+              "layer": "C",
+              "refType": "rule",
+              "refId": "R-03",
+              "delta": 30,
+              "message": "受限空间作业前未完成隔离置换"
+            },
+            {
+              "layer": "C",
+              "refType": "rule",
+              "refId": "R-04",
+              "delta": 30,
+              "message": "受限空间作业前未检测氧含量与有毒气体"
+            },
+            {
+              "layer": "C",
+              "refType": "rule",
+              "refId": "R-11",
+              "delta": 20,
+              "message": "作业票缺失、过期或未审批"
+            }
+          ]
+        }
+      ],
+      "penalties": [
+        {
+          "layer": "C",
+          "refType": "clause",
+          "refId": "clause:GB30871:8.2",
+          "delta": 10,
+          "message": "clause:GB30871:8.2 要求的管控措施未落实：CT-ISOLATE"
+        },
+        {
+          "layer": "C",
+          "refType": "clause",
+          "refId": "clause:GB30871:8.3",
+          "delta": 10,
+          "message": "clause:GB30871:8.3 要求的管控措施未落实：CT-GAS-TEST"
+        },
+        {
+          "layer": "C",
+          "refType": "clause",
+          "refId": "clause:SAFETY-LAW:40",
+          "delta": 10,
+          "message": "clause:SAFETY-LAW:40 要求的管控措施未落实：CT-TRAIN"
+        },
+        {
+          "layer": "C",
+          "refType": "clause",
+          "refId": "GB30871:6.3",
+          "delta": 20,
+          "message": "作业票已过期或未审批"
+        },
+        {
+          "layer": "C",
+          "refType": "rule",
+          "refId": "R-03",
+          "delta": 30,
+          "message": "受限空间作业前未完成隔离置换"
+        },
+        {
+          "layer": "C",
+          "refType": "rule",
+          "refId": "R-04",
+          "delta": 30,
+          "message": "受限空间作业前未检测氧含量与有毒气体"
+        },
+        {
+          "layer": "C",
+          "refType": "rule",
+          "refId": "R-11",
+          "delta": 20,
+          "message": "作业票缺失、过期或未审批"
+        }
+      ],
+      "evidences": [
+        {
+          "clauseId": "clause:GB30871:8.2"
+        },
+        {
+          "clauseId": "clause:GB30871:8.3"
+        },
+        {
+          "clauseId": "clause:SAFETY-LAW:40"
+        },
+        {
+          "clauseId": "GB30871:6.3"
+        },
+        {
+          "ruleId": "R-03"
+        },
+        {
+          "ruleId": "R-04"
+        },
+        {
+          "ruleId": "R-11"
+        }
+      ],
+      "modelVersion": "1.0.0"
+    },
+    {
+      "entityId": "op:OP-HW-01",
+      "entityName": "反应釜高处检维修",
+      "kind": "SAFETY_OPERATION",
+      "score": 69.1,
+      "grade": "orange",
+      "components": [
+        {
+          "id": "lec",
+          "label": "固有风险（LEC）",
+          "score": 67.55555555555556,
+          "weight": 0.35,
+          "applicable": true,
+          "penalties": []
+        },
+        {
+          "id": "compliance",
+          "label": "管控有效性（双重预防）",
+          "score": 70.83333333333333,
+          "weight": 0.3,
+          "applicable": true,
+          "penalties": [
+            {
+              "layer": "C",
+              "refType": "clause",
+              "refId": "clause:SAFETY-LAW:40",
+              "delta": 10,
+              "message": "clause:SAFETY-LAW:40 要求的管控措施未落实：CT-TRAIN"
+            }
+          ]
+        }
+      ],
+      "penalties": [
+        {
+          "layer": "C",
+          "refType": "clause",
+          "refId": "clause:SAFETY-LAW:40",
+          "delta": 10,
+          "message": "clause:SAFETY-LAW:40 要求的管控措施未落实：CT-TRAIN"
+        }
+      ],
+      "evidences": [
+        {
+          "clauseId": "clause:SAFETY-LAW:40"
+        }
+      ],
+      "modelVersion": "1.0.0"
+    },
+    {
+      "entityId": "op:OP-LIFT-01",
+      "entityName": "空压机吊装作业",
+      "kind": "SAFETY_OPERATION",
+      "score": 84.5,
+      "grade": "yellow",
+      "components": [
+        {
+          "id": "lec",
+          "label": "固有风险（LEC）",
+          "score": 82,
+          "weight": 0.35,
+          "applicable": true,
+          "penalties": []
+        },
+        {
+          "id": "compliance",
+          "label": "管控有效性（双重预防）",
+          "score": 87.50000000000001,
+          "weight": 0.3,
+          "applicable": true,
+          "penalties": [
+            {
+              "layer": "C",
+              "refType": "clause",
+              "refId": "GB30871:6.3",
+              "delta": 20,
+              "message": "缺少作业票"
+            },
+            {
+              "layer": "C",
+              "refType": "rule",
+              "refId": "R-11",
+              "delta": 20,
+              "message": "作业票缺失、过期或未审批"
+            }
+          ]
+        }
+      ],
+      "penalties": [
+        {
+          "layer": "C",
+          "refType": "clause",
+          "refId": "GB30871:6.3",
+          "delta": 20,
+          "message": "缺少作业票"
+        },
+        {
+          "layer": "C",
+          "refType": "rule",
+          "refId": "R-11",
+          "delta": 20,
+          "message": "作业票缺失、过期或未审批"
+        }
+      ],
+      "evidences": [
+        {
+          "clauseId": "GB30871:6.3"
+        },
+        {
+          "ruleId": "R-11"
+        }
+      ],
+      "modelVersion": "1.0.0"
+    },
+    {
+      "entityId": "op:OP-POWER-01",
+      "entityName": "精馏塔临时用电",
+      "kind": "SAFETY_OPERATION",
+      "score": 85.9,
+      "grade": "yellow",
+      "components": [
+        {
+          "id": "lec",
+          "label": "固有风险（LEC）",
+          "score": 84.57142857142857,
+          "weight": 0.35,
+          "applicable": true,
+          "penalties": []
+        },
+        {
+          "id": "compliance",
+          "label": "管控有效性（双重预防）",
+          "score": 87.50000000000001,
+          "weight": 0.3,
+          "applicable": true,
+          "penalties": [
+            {
+              "layer": "C",
+              "refType": "clause",
+              "refId": "GB30871:6.3",
+              "delta": 20,
+              "message": "缺少作业票"
+            },
+            {
+              "layer": "C",
+              "refType": "rule",
+              "refId": "R-11",
+              "delta": 20,
+              "message": "作业票缺失、过期或未审批"
+            }
+          ]
+        }
+      ],
+      "penalties": [
+        {
+          "layer": "C",
+          "refType": "clause",
+          "refId": "GB30871:6.3",
+          "delta": 20,
+          "message": "缺少作业票"
+        },
+        {
+          "layer": "C",
+          "refType": "rule",
+          "refId": "R-11",
+          "delta": 20,
+          "message": "作业票缺失、过期或未审批"
+        }
+      ],
+      "evidences": [
+        {
+          "clauseId": "GB30871:6.3"
+        },
+        {
+          "ruleId": "R-11"
+        }
+      ],
+      "modelVersion": "1.0.0"
+    },
+    {
+      "entityId": "op:OP-BLIND-01",
+      "entityName": "储罐盲板抽堵",
+      "kind": "SAFETY_OPERATION",
+      "score": 35.3,
+      "grade": "red",
+      "components": [
+        {
+          "id": "lec",
+          "label": "固有风险（LEC）",
+          "score": 65.55555555555556,
+          "weight": 0.35,
+          "applicable": true,
+          "penalties": []
+        },
+        {
+          "id": "compliance",
+          "label": "管控有效性（双重预防）",
+          "score": 0,
+          "weight": 0.3,
+          "applicable": true,
+          "penalties": [
+            {
+              "layer": "C",
+              "refType": "clause",
+              "refId": "clause:GB30871:12.2",
+              "delta": 10,
+              "message": "clause:GB30871:12.2 要求的管控措施未落实：CT-ISOLATE"
+            },
+            {
+              "layer": "C",
+              "refType": "clause",
+              "refId": "GB30871:6.3",
+              "delta": 20,
+              "message": "缺少作业票"
+            },
+            {
+              "layer": "C",
+              "refType": "rule",
+              "refId": "R-08",
+              "delta": 30,
+              "message": "盲板抽堵作业未完成有效隔离"
+            },
+            {
+              "layer": "C",
+              "refType": "rule",
+              "refId": "R-11",
+              "delta": 20,
+              "message": "作业票缺失、过期或未审批"
+            }
+          ]
+        }
+      ],
+      "penalties": [
+        {
+          "layer": "C",
+          "refType": "clause",
+          "refId": "clause:GB30871:12.2",
+          "delta": 10,
+          "message": "clause:GB30871:12.2 要求的管控措施未落实：CT-ISOLATE"
+        },
+        {
+          "layer": "C",
+          "refType": "clause",
+          "refId": "GB30871:6.3",
+          "delta": 20,
+          "message": "缺少作业票"
+        },
+        {
+          "layer": "C",
+          "refType": "rule",
+          "refId": "R-08",
+          "delta": 30,
+          "message": "盲板抽堵作业未完成有效隔离"
+        },
+        {
+          "layer": "C",
+          "refType": "rule",
+          "refId": "R-11",
+          "delta": 20,
+          "message": "作业票缺失、过期或未审批"
+        }
+      ],
+      "evidences": [
+        {
+          "clauseId": "clause:GB30871:12.2"
+        },
+        {
+          "clauseId": "GB30871:6.3"
+        },
+        {
+          "ruleId": "R-08"
+        },
+        {
+          "ruleId": "R-11"
+        }
+      ],
+      "modelVersion": "1.0.0"
+    },
+    {
+      "entityId": "op:OP-ROAD-01",
+      "entityName": "厂区断路作业",
+      "kind": "SAFETY_OPERATION",
+      "score": 88,
+      "grade": "yellow",
+      "components": [
+        {
+          "id": "lec",
+          "label": "固有风险（LEC）",
+          "score": 88,
+          "weight": 0.35,
+          "applicable": true,
+          "penalties": []
+        }
+      ],
+      "penalties": [],
+      "evidences": [],
+      "modelVersion": "1.0.0"
+    },
+    {
+      "entityId": "op:OP-MAINT-01",
+      "entityName": "1#储罐检维修",
+      "kind": "SAFETY_OPERATION",
+      "score": 36.4,
+      "grade": "red",
+      "components": [
+        {
+          "id": "lec",
+          "label": "固有风险（LEC）",
+          "score": 67.55555555555556,
+          "weight": 0.35,
+          "applicable": true,
+          "penalties": []
+        },
+        {
+          "id": "compliance",
+          "label": "管控有效性（双重预防）",
+          "score": 0,
+          "weight": 0.3,
+          "applicable": true,
+          "penalties": [
+            {
+              "layer": "C",
+              "refType": "clause",
+              "refId": "clause:GB30871:5.2",
+              "delta": 10,
+              "message": "clause:GB30871:5.2 要求的管控措施未落实：CT-JSA"
+            },
+            {
+              "layer": "C",
+              "refType": "clause",
+              "refId": "GB30871:6.3",
+              "delta": 20,
+              "message": "缺少作业票"
+            },
+            {
+              "layer": "C",
+              "refType": "rule",
+              "refId": "R-09",
+              "delta": 20,
+              "message": "检维修作业前未开展 JSA 风险分析"
+            },
+            {
+              "layer": "C",
+              "refType": "rule",
+              "refId": "R-11",
+              "delta": 20,
+              "message": "作业票缺失、过期或未审批"
+            }
+          ]
+        }
+      ],
+      "penalties": [
+        {
+          "layer": "C",
+          "refType": "clause",
+          "refId": "clause:GB30871:5.2",
+          "delta": 10,
+          "message": "clause:GB30871:5.2 要求的管控措施未落实：CT-JSA"
+        },
+        {
+          "layer": "C",
+          "refType": "clause",
+          "refId": "GB30871:6.3",
+          "delta": 20,
+          "message": "缺少作业票"
+        },
+        {
+          "layer": "C",
+          "refType": "rule",
+          "refId": "R-09",
+          "delta": 20,
+          "message": "检维修作业前未开展 JSA 风险分析"
+        },
+        {
+          "layer": "C",
+          "refType": "rule",
+          "refId": "R-11",
+          "delta": 20,
+          "message": "作业票缺失、过期或未审批"
+        }
+      ],
+      "evidences": [
+        {
+          "clauseId": "clause:GB30871:5.2"
+        },
+        {
+          "clauseId": "GB30871:6.3"
+        },
+        {
+          "ruleId": "R-09"
+        },
+        {
+          "ruleId": "R-11"
+        }
+      ],
+      "modelVersion": "1.0.0"
+    },
+    {
+      "entityId": "op:OP-LOAD-01",
+      "entityName": "装卸车作业",
+      "kind": "SAFETY_OPERATION",
+      "score": 94.9,
+      "grade": "blue",
+      "components": [
+        {
+          "id": "lec",
+          "label": "固有风险（LEC）",
+          "score": 94.85714285714286,
+          "weight": 0.35,
+          "applicable": true,
+          "penalties": []
+        }
+      ],
+      "penalties": [],
+      "evidences": [],
+      "modelVersion": "1.0.0"
+    },
+    {
+      "entityId": "op:OP-FEED-01",
+      "entityName": "反应釜投料",
+      "kind": "SAFETY_OPERATION",
+      "score": 94.9,
+      "grade": "blue",
+      "components": [
+        {
+          "id": "lec",
+          "label": "固有风险（LEC）",
+          "score": 94.85714285714286,
+          "weight": 0.35,
+          "applicable": true,
+          "penalties": []
+        }
+      ],
+      "penalties": [],
+      "evidences": [],
+      "modelVersion": "1.0.0"
+    }
+  ],
+  "ruleHits": [
+    {
+      "ruleId": "R-12",
+      "ruleName": "设备检验过期",
+      "entityId": "eq:EQ-A1-T02",
+      "severity": "major",
+      "effectKind": "violation",
+      "riskDelta": 25,
+      "message": "设备检验有效期已过期",
+      "evidences": {
+        "clauseIds": [
+          "GB18218:4.1"
+        ],
+        "relationIds": [
+          "clause:clause:GB30871:8.2"
+        ]
+      }
+    },
+    {
+      "ruleId": "R-12",
+      "ruleName": "设备检验过期",
+      "entityId": "eq:EQ-A2-L01",
+      "severity": "major",
+      "effectKind": "violation",
+      "riskDelta": 25,
+      "message": "设备检验有效期已过期",
+      "evidences": {
+        "clauseIds": [
+          "GB18218:4.1"
+        ],
+        "relationIds": []
+      }
+    },
+    {
+      "ruleId": "R-12",
+      "ruleName": "设备检验过期",
+      "entityId": "eq:EQ-B1-R01",
+      "severity": "major",
+      "effectKind": "violation",
+      "riskDelta": 25,
+      "message": "设备检验有效期已过期",
+      "evidences": {
+        "clauseIds": [
+          "GB18218:4.1"
+        ],
+        "relationIds": []
+      }
+    },
+    {
+      "ruleId": "R-01",
+      "ruleName": "动火前未进行气体检测",
+      "entityId": "op:OP-HOT-01",
+      "severity": "fatal",
+      "effectKind": "violation",
+      "riskDelta": 30,
+      "message": "动火作业前未完成可燃气体检测",
+      "evidences": {
+        "clauseIds": [
+          "GB30871:6.2"
+        ],
+        "relationIds": [
+          "clause:clause:GB30871:6.2",
+          "clause:clause:GB30871:6.4",
+          "clause:clause:SAFETY-LAW:40"
+        ]
+      }
+    },
+    {
+      "ruleId": "R-02",
+      "ruleName": "动火作业无专人监护",
+      "entityId": "op:OP-HOT-01",
+      "severity": "major",
+      "effectKind": "violation",
+      "riskDelta": 15,
+      "message": "动火作业未设置专人监护",
+      "evidences": {
+        "clauseIds": [
+          "GB30871:6.4"
+        ],
+        "relationIds": [
+          "clause:clause:GB30871:6.2",
+          "clause:clause:GB30871:6.4",
+          "clause:clause:SAFETY-LAW:40"
+        ]
+      }
+    },
+    {
+      "ruleId": "R-10",
+      "ruleName": "作业人员未接受安全培训",
+      "entityId": "op:OP-HOT-01",
+      "severity": "general",
+      "effectKind": "violation",
+      "riskDelta": 10,
+      "message": "作业人员缺少有效安全培训记录",
+      "evidences": {
+        "clauseIds": [
+          "SAFETY-LAW:40"
+        ],
+        "relationIds": [
+          "clause:clause:GB30871:6.2",
+          "clause:clause:GB30871:6.4",
+          "clause:clause:SAFETY-LAW:40"
+        ]
+      }
+    },
+    {
+      "ruleId": "R-03",
+      "ruleName": "受限空间未隔离置换",
+      "entityId": "op:OP-CS-01",
+      "severity": "fatal",
+      "effectKind": "violation",
+      "riskDelta": 30,
+      "message": "受限空间作业前未完成隔离置换",
+      "evidences": {
+        "clauseIds": [
+          "GB30871:8.2"
+        ],
+        "relationIds": [
+          "clause:clause:GB30871:8.2",
+          "clause:clause:GB30871:8.3",
+          "clause:clause:SAFETY-LAW:40"
+        ]
+      }
+    },
+    {
+      "ruleId": "R-04",
+      "ruleName": "受限空间未检测氧含量",
+      "entityId": "op:OP-CS-01",
+      "severity": "fatal",
+      "effectKind": "violation",
+      "riskDelta": 30,
+      "message": "受限空间作业前未检测氧含量与有毒气体",
+      "evidences": {
+        "clauseIds": [
+          "GB30871:8.3"
+        ],
+        "relationIds": [
+          "clause:clause:GB30871:8.2",
+          "clause:clause:GB30871:8.3",
+          "clause:clause:SAFETY-LAW:40"
+        ]
+      }
+    },
+    {
+      "ruleId": "R-11",
+      "ruleName": "作业票缺失或过期",
+      "entityId": "op:OP-CS-01",
+      "severity": "major",
+      "effectKind": "violation",
+      "riskDelta": 20,
+      "message": "作业票缺失、过期或未审批",
+      "evidences": {
+        "clauseIds": [
+          "GB30871:6.3"
+        ],
+        "relationIds": [
+          "clause:clause:GB30871:8.2",
+          "clause:clause:GB30871:8.3",
+          "clause:clause:SAFETY-LAW:40"
+        ]
+      }
+    },
+    {
+      "ruleId": "R-11",
+      "ruleName": "作业票缺失或过期",
+      "entityId": "op:OP-LIFT-01",
+      "severity": "major",
+      "effectKind": "violation",
+      "riskDelta": 20,
+      "message": "作业票缺失、过期或未审批",
+      "evidences": {
+        "clauseIds": [
+          "GB30871:6.3"
+        ],
+        "relationIds": []
+      }
+    },
+    {
+      "ruleId": "R-11",
+      "ruleName": "作业票缺失或过期",
+      "entityId": "op:OP-POWER-01",
+      "severity": "major",
+      "effectKind": "violation",
+      "riskDelta": 20,
+      "message": "作业票缺失、过期或未审批",
+      "evidences": {
+        "clauseIds": [
+          "GB30871:6.3"
+        ],
+        "relationIds": []
+      }
+    },
+    {
+      "ruleId": "R-08",
+      "ruleName": "盲板抽堵未隔离",
+      "entityId": "op:OP-BLIND-01",
+      "severity": "fatal",
+      "effectKind": "violation",
+      "riskDelta": 30,
+      "message": "盲板抽堵作业未完成有效隔离",
+      "evidences": {
+        "clauseIds": [
+          "GB30871:12.2"
+        ],
+        "relationIds": [
+          "clause:clause:GB30871:12.2"
+        ]
+      }
+    },
+    {
+      "ruleId": "R-11",
+      "ruleName": "作业票缺失或过期",
+      "entityId": "op:OP-BLIND-01",
+      "severity": "major",
+      "effectKind": "violation",
+      "riskDelta": 20,
+      "message": "作业票缺失、过期或未审批",
+      "evidences": {
+        "clauseIds": [
+          "GB30871:6.3"
+        ],
+        "relationIds": [
+          "clause:clause:GB30871:12.2"
+        ]
+      }
+    },
+    {
+      "ruleId": "R-11",
+      "ruleName": "作业票缺失或过期",
+      "entityId": "op:OP-ROAD-01",
+      "severity": "major",
+      "effectKind": "violation",
+      "riskDelta": 20,
+      "message": "作业票缺失、过期或未审批",
+      "evidences": {
+        "clauseIds": [
+          "GB30871:6.3"
+        ],
+        "relationIds": []
+      }
+    },
+    {
+      "ruleId": "R-09",
+      "ruleName": "检维修未做风险分析",
+      "entityId": "op:OP-MAINT-01",
+      "severity": "major",
+      "effectKind": "violation",
+      "riskDelta": 20,
+      "message": "检维修作业前未开展 JSA 风险分析",
+      "evidences": {
+        "clauseIds": [
+          "GB30871:5.2"
+        ],
+        "relationIds": [
+          "clause:clause:GB30871:5.2"
+        ]
+      }
+    },
+    {
+      "ruleId": "R-11",
+      "ruleName": "作业票缺失或过期",
+      "entityId": "op:OP-MAINT-01",
+      "severity": "major",
+      "effectKind": "violation",
+      "riskDelta": 20,
+      "message": "作业票缺失、过期或未审批",
+      "evidences": {
+        "clauseIds": [
+          "GB30871:6.3"
+        ],
+        "relationIds": [
+          "clause:clause:GB30871:5.2"
+        ]
+      }
+    },
+    {
+      "ruleId": "R-11",
+      "ruleName": "作业票缺失或过期",
+      "entityId": "op:OP-LOAD-01",
+      "severity": "major",
+      "effectKind": "violation",
+      "riskDelta": 20,
+      "message": "作业票缺失、过期或未审批",
+      "evidences": {
+        "clauseIds": [
+          "GB30871:6.3"
+        ],
+        "relationIds": []
+      }
+    },
+    {
+      "ruleId": "R-11",
+      "ruleName": "作业票缺失或过期",
+      "entityId": "op:OP-FEED-01",
+      "severity": "major",
+      "effectKind": "violation",
+      "riskDelta": 20,
+      "message": "作业票缺失、过期或未审批",
+      "evidences": {
+        "clauseIds": [
+          "GB30871:6.3"
+        ],
+        "relationIds": []
+      }
+    }
+  ],
+  "summary": {
+    "red": 1,
+    "orange": 2,
+    "yellow": 1,
+    "blue": 1,
+    "total": 5
+  }
+}

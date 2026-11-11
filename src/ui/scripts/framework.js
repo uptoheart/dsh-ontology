@@ -1,4 +1,4 @@
-/* ═════════════════════════ Tab3 APQC 框架 ═════════════════════════ */
+/* ═════════════════════════ Tab3 流程地图 ═════════════════════════ */
 function flattenFramework(fw) {
   const out = [];
   if (!fw) return out;
@@ -144,6 +144,11 @@ const PROC_ST_LABEL = { covered: '✅ 流程已覆盖', partial: '🟡 流程部
 
 function renderNodeDetail() {
   const box = $('#fwDetail');
+  // 覆盖度变化（挂载/摘除实体）后 state.selectedNode 是旧快照，这里按 code 重新解析
+  if (state.selectedNode) {
+    const fresh = findCoverageNode(state.selectedNode.code);
+    if (fresh) state.selectedNode = fresh;
+  }
   const node = state.selectedNode;
   if (!node) {
     box.innerHTML = '<div class="empty-hint"><div><div class="big">🗂️</div>点击左侧节点查看详情</div></div>';
@@ -153,16 +158,39 @@ function renderNodeDetail() {
   const pathHtml = node._path && node._path.length
     ? node._path.map(p => `${esc(p.code)} ${esc(p.label)}`).join('<span class="sep">›</span>') + '<span class="sep">›</span>'
     : '';
-  const ents = node.entities || [];
+  // 关联实体 = 覆盖度推导结果 ∪ 显式锚定到该编号的实体（后者挂载后立即出现）
+  // 新格式：entityFrameMapping[eid] = { [fwId]: { apqcCode, note, mappedAt } }，按 state.frameworkId 取
+  const explicitIds = Object.keys((state.suite.annotations && state.suite.annotations.entityFrameMapping) || {})
+    .filter(eid => { const e = fwEntryOf(eid); return e && e.apqcCode === node.code; });
+  const explicit = (eid) => { const e = fwEntryOf(eid); return !!(e && e.apqcCode === node.code); };
+  // 证据推导（只读派生，不写库）：访谈四问的「对象」按编号归集。
+  // 这些是名词实体，按轴向规则不能反向锚定到 L3+ 流程节点，只能作为证据展示。
+  const evidenceSrc = new Map();
+  const underNode = (c) => !!c && (c === node.code || String(c).startsWith(node.code + '.'));
+  for (const itv of (state.interviews || [])) {
+    const a = itv.answers && itv.answers.hasObject;
+    if (a && a.value && a.entityId && underNode(itv.apqcCode) && !evidenceSrc.has(a.entityId)) {
+      evidenceSrc.set(a.entityId, `访谈 ${itv.apqcCode}`);
+    }
+  }
+  const ents = [...new Set([...(node.entities || []), ...explicitIds, ...evidenceSrc.keys()])];
   const entChips = ents.slice(0, 50).map(eid => {
     const ent = state.suite.entities.find(x => x.id === eid);
     if (!ent) return '';
+    const tail = explicit(ent.id)
+      ? `<span class="ent-x" data-unmap="${esc(ent.id)}" title="解除与当前编号的锚定">×</span>`
+      : (evidenceSrc.has(ent.id) ? `<span class="e-src" title="由证据推导，未持久锚定">${esc(evidenceSrc.get(ent.id))}</span>` : '');
     return `<button class="ent-link" data-eid="${esc(ent.id)}">
       <span>${esc(ent.name)}</span>
       <span class="kind-tag">${esc(ent.kind)}</span>
-      <span class="e-id">${esc(ent.rawId)}</span>
+      ${tail || `<span class="e-id">${esc(ent.rawId)}</span>`}
     </button>`;
   }).join('');
+  const mountBlock = `
+    <div class="fw-mount" id="fwMount" style="display:none">
+      <input id="fwMountQ" placeholder="搜索实体名称 / ID">
+      <div class="fw-mount-hits" id="fwMountHits"></div>
+    </div>`;
 
   /* L3+ 流程工作区：挂载流程列表 + 流程覆盖状态 + 跳转；L4/L5 四问徽标 */
   const lvl = levelNumOfCode(node.code);
@@ -191,7 +219,7 @@ function renderNodeDetail() {
         <div class="crumbs">${pathHtml}<b>${esc(node.code)} ${esc(node.label)}</b><span class="badge st-${node.status}" style="margin-left:8px">${STATUS_LABEL[node.status]}</span></div>
         ${def && def.definition ? `<div class="def">${esc(def.definition)}</div>` : ''}
         <div class="stat-line">
-          <div class="stat-pill">关联实体 <b>${node.entityCount}</b></div>
+          <div class="stat-pill">关联实体 <b>${ents.length}</b></div>
           <div class="stat-pill" style="color:var(--st-covered)">已覆盖 <b>${node.coveredCount}</b></div>
           <div class="stat-pill" style="color:var(--st-partial)">部分 <b>${node.partialCount}</b></div>
           <div class="stat-pill" style="color:var(--st-gap)">缺口 <b>${node.gapCount}</b></div>
@@ -204,8 +232,11 @@ function renderNodeDetail() {
           <button class="btn" data-jump="flow">✏️ 去画板补画</button>
           <button class="btn" data-jump="interview">🎤 去访谈</button>
         </div>
-        <h3 class="section-title">关联实体（${ents.length}${ents.length > 50 ? '，显示前 50' : ''}）</h3>
-        <div class="ent-links">${entChips || '<div style="color:var(--text-dim);font-size:12px">该类型节点不直接挂名词实体（L3+ 由流程与参与关系推导覆盖度）</div>'}</div>
+        <h3 class="section-title">关联实体（${ents.length}${ents.length > 50 ? '，显示前 50' : ''}）
+          <button class="btn" data-mount="1" style="float:right;font-size:11px;padding:2px 8px;font-weight:400">＋ 挂载实体</button>
+        </h3>
+        ${mountBlock}
+        <div class="ent-links">${entChips || '<div style="color:var(--text-dim);font-size:12px">还没有实体挂到该编号。访谈里记的「对象」会自动出现在这里；也可点右上角手动挂载流程类实体</div>'}</div>
       </div>`;
     return;
   }
@@ -226,12 +257,57 @@ function renderNodeDetail() {
         <i class="cb-partial" style="width:${pct(node.partialCount, node.entityCount)}%"></i>
         <i class="cb-gap" style="width:${pct(node.gapCount, node.entityCount)}%"></i>
       </div>
-      <h3 class="section-title">域实体（${ents.length}${ents.length > 50 ? '，显示前 50' : ''}）</h3>
-      <div class="ent-links">${entChips || '<div style="color:var(--text-dim);font-size:12px">暂无关联实体，可在「套件管理」的实体列表中为实体标注该框架编号</div>'}</div>
+      <h3 class="section-title">域实体（${ents.length}${ents.length > 50 ? '，显示前 50' : ''}）
+        <button class="btn" data-mount="1" style="float:right;font-size:11px;padding:2px 8px;font-weight:400">＋ 挂载实体</button>
+      </h3>
+      ${mountBlock}
+      <div class="ent-links">${entChips || '<div style="color:var(--text-dim);font-size:12px">暂无关联实体，点右上角「挂载实体」把名词实体锚定到该编号</div>'}</div>
     </div>`;
 }
 
+/* 「挂载实体」候选：按当前节点的轴向过滤，名称/ID 模糊匹配，最多 8 条 */
+function renderMountHits(q) {
+  const box = $('#fwMountHits');
+  if (!box || !state.selectedNode) return;
+  const node = state.selectedNode;
+  const needAxis = levelNumOfCode(node.code) <= 2 ? 'domain' : 'process';
+  const kw = (q || '').trim().toLowerCase();
+  const hits = state.suite.entities.filter(ent => {
+    if (kindAxis(ent.kind) !== needAxis) return false;
+    const m = fwEntryOf(ent.id);
+    if (m && m.apqcCode === node.code) return false; // 已挂到当前编号
+    if (!kw) return true;
+    return (ent.name || '').toLowerCase().includes(kw) || (ent.rawId || '').toLowerCase().includes(kw);
+  }).slice(0, 8);
+  box.innerHTML = hits.length
+    ? hits.map(ent => {
+        const m = fwEntryOf(ent.id);
+        return `<button class="fw-hit" data-eid="${esc(ent.id)}">
+          <span class="fh-name">${esc(ent.name)}</span>
+          <span class="kind-tag">${esc(ent.kind)}</span>
+          <span class="fh-id">${esc(ent.rawId)}</span>
+          ${m && m.apqcCode ? `<span class="fh-warn">已挂 ${esc(m.apqcCode)}</span>` : ''}
+        </button>`;
+      }).join('')
+    : `<div class="fw-mount-empty">${needAxis === 'domain'
+        ? '无可挂载的名词实体（L1/L2 仅接受 ENTITY / AGGREGATE_ROOT / RULE / ACTOR / ROLE / REPORT 类型）'
+        : '无可挂载的流程实体（L3-L5 仅接受 FLOW / ACTIVITY，通常由流程图参与关系推导）'}</div>`;
+}
+
 $('#fwDetail').addEventListener('click', (e) => {
+  const mountBtn = e.target.closest('[data-mount]');
+  if (mountBtn) {
+    const box = $('#fwMount');
+    if (!box) return;
+    const open = box.style.display === 'none';
+    box.style.display = open ? '' : 'none';
+    if (open) { renderMountHits(''); $('#fwMountQ').focus(); }
+    return;
+  }
+  const unmap = e.target.closest('[data-unmap]');
+  if (unmap) { setEntityMapping(unmap.dataset.unmap, ''); return; }
+  const hit = e.target.closest('.fw-hit');
+  if (hit && state.selectedNode) { setEntityMapping(hit.dataset.eid, state.selectedNode.code); return; }
   const jump = e.target.closest('[data-jump]');
   if (jump && state.selectedNode) {
     const code = state.selectedNode.code;
@@ -250,6 +326,10 @@ $('#fwDetail').addEventListener('click', (e) => {
   if (flowItem) { switchTab('flowchart'); openFlowchart(flowItem.dataset.fid); return; }
   const link = e.target.closest('.ent-link');
   if (link) goEntity(link.dataset.eid);
+});
+
+$('#fwDetail').addEventListener('input', (e) => {
+  if (e.target.id === 'fwMountQ') renderMountHits(e.target.value);
 });
 
 /* ═══════════════ 框架节点编辑（增删改 / 拖拽排序 / 递归重编号） ═══════════════ */

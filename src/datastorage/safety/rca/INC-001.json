@@ -1,0 +1,382 @@
+{
+  "incidentId": "INC-001",
+  "graph": {
+    "nodes": [
+      {
+        "id": "event:EV-INC-01",
+        "label": "1#储罐动火闪爆",
+        "type": "event",
+        "category": "机",
+        "layer": 0,
+        "meta": {
+          "severity": "较大",
+          "occurredAt": "2026-03-12"
+        }
+      },
+      {
+        "id": "barrier:control:CT-GAS-TEST",
+        "label": "屏障缺失：气体检测",
+        "type": "barrier",
+        "category": "机",
+        "layer": 1,
+        "meta": {
+          "controlCode": "CT-GAS-TEST",
+          "implemented": false,
+          "sourceEntity": "op:OP-HOT-01"
+        }
+      },
+      {
+        "id": "barrier:control:CT-GUARD",
+        "label": "屏障缺失：专人监护",
+        "type": "barrier",
+        "category": "法",
+        "layer": 1,
+        "meta": {
+          "controlCode": "CT-GUARD",
+          "implemented": false,
+          "sourceEntity": "op:OP-HOT-01"
+        }
+      },
+      {
+        "id": "cause:CAUSE-C1",
+        "label": "未有效置换/清洗",
+        "type": "cause",
+        "category": "法",
+        "layer": 1,
+        "meta": {
+          "confidence": 0.9
+        }
+      },
+      {
+        "id": "cause:CAUSE-C2",
+        "label": "动火前气体检测缺失",
+        "type": "cause",
+        "category": "法",
+        "layer": 1,
+        "meta": {
+          "confidence": 0.85
+        }
+      },
+      {
+        "id": "cause:CAUSE-C4",
+        "label": "承包商未受专项培训",
+        "type": "cause",
+        "category": "人",
+        "layer": 1,
+        "meta": {
+          "confidence": 0.7
+        }
+      },
+      {
+        "id": "cause:CAUSE-C5",
+        "label": "动火作业 JSA 风险分析缺失",
+        "type": "cause",
+        "category": "法",
+        "layer": 1,
+        "meta": {
+          "confidence": 0.75
+        }
+      },
+      {
+        "id": "barrier:control:CT-JSA",
+        "label": "屏障失效：检维修风险分析",
+        "type": "barrier",
+        "category": "法",
+        "layer": 2,
+        "meta": {
+          "controlCode": "CT-JSA",
+          "implemented": false,
+          "causeIds": [
+            "cause:CAUSE-C5"
+          ]
+        }
+      },
+      {
+        "id": "barrier:control:CT-TRAIN",
+        "label": "屏障失效：安全培训",
+        "type": "barrier",
+        "category": "人",
+        "layer": 2,
+        "meta": {
+          "controlCode": "CT-TRAIN",
+          "implemented": false,
+          "causeIds": [
+            "cause:CAUSE-C4"
+          ]
+        }
+      },
+      {
+        "id": "cause:CAUSE-C3",
+        "label": "作业票审批流于形式",
+        "type": "cause",
+        "category": "法",
+        "layer": 2,
+        "meta": {
+          "confidence": 0.72
+        }
+      },
+      {
+        "id": "evidence:clause:GB30871:6.2",
+        "label": "依据：GB30871 6.2",
+        "type": "evidence",
+        "layer": 2,
+        "meta": {
+          "clauseId": "clause:GB30871:6.2",
+          "text": "动火作业前应进行气体检测，确认可燃气体浓度符合要求。",
+          "missingControls": [
+            "CT-GAS-TEST"
+          ]
+        }
+      },
+      {
+        "id": "evidence:clause:GB30871:6.4",
+        "label": "依据：GB30871 6.4",
+        "type": "evidence",
+        "layer": 2,
+        "meta": {
+          "clauseId": "clause:GB30871:6.4",
+          "text": "动火作业应设置专人监护。",
+          "missingControls": [
+            "CT-GUARD"
+          ]
+        }
+      },
+      {
+        "id": "barrier:control:CT-PERMIT",
+        "label": "屏障失效：作业票审批",
+        "type": "barrier",
+        "category": "法",
+        "layer": 3,
+        "meta": {
+          "controlCode": "CT-PERMIT",
+          "implemented": true,
+          "causeIds": [
+            "cause:CAUSE-C3"
+          ]
+        }
+      },
+      {
+        "id": "evidence:clause:GB30871:5.2",
+        "label": "依据：GB30871 5.2",
+        "type": "evidence",
+        "layer": 3,
+        "meta": {
+          "clauseId": "clause:GB30871:5.2",
+          "text": "检维修作业前应开展风险分析（JSA）。"
+        }
+      },
+      {
+        "id": "evidence:clause:SAFETY-LAW:40",
+        "label": "依据：SAFETY-LAW 40",
+        "type": "evidence",
+        "layer": 3,
+        "meta": {
+          "clauseId": "clause:SAFETY-LAW:40",
+          "text": "从业人员应接受安全生产教育和培训。"
+        }
+      },
+      {
+        "id": "evidence:clause:GB30871:6.3",
+        "label": "依据：GB30871 6.3",
+        "type": "evidence",
+        "layer": 4,
+        "meta": {
+          "clauseId": "clause:GB30871:6.3",
+          "text": "动火作业应办理动火作业票并经审批。"
+        }
+      },
+      {
+        "id": "evidence:clause:SAFETY-LAW:45",
+        "label": "依据：SAFETY-LAW 45",
+        "type": "evidence",
+        "layer": 4,
+        "meta": {
+          "clauseId": "clause:SAFETY-LAW:45",
+          "text": "危险作业应安排专门人员进行现场安全管理。"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "id": "event:EV-INC-01--SAFETY_EVENT_CAUSED_BY--cause:CAUSE-C1",
+        "source": "event:EV-INC-01",
+        "target": "cause:CAUSE-C1",
+        "label": "直接原因",
+        "confidence": 0.9
+      },
+      {
+        "id": "cause:CAUSE-C1--SAFETY_EVENT_CAUSED_BY--cause:CAUSE-C3",
+        "source": "cause:CAUSE-C1",
+        "target": "cause:CAUSE-C3",
+        "label": "管理原因",
+        "confidence": 0.8
+      },
+      {
+        "id": "event:EV-INC-01--SAFETY_EVENT_CAUSED_BY--cause:CAUSE-C2",
+        "source": "event:EV-INC-01",
+        "target": "cause:CAUSE-C2",
+        "label": "直接原因",
+        "confidence": 0.85
+      },
+      {
+        "id": "cause:CAUSE-C2--SAFETY_EVENT_CAUSED_BY--cause:CAUSE-C3",
+        "source": "cause:CAUSE-C2",
+        "target": "cause:CAUSE-C3",
+        "label": "管理原因",
+        "confidence": 0.8
+      },
+      {
+        "id": "event:EV-INC-01--SAFETY_EVENT_CAUSED_BY--cause:CAUSE-C4",
+        "source": "event:EV-INC-01",
+        "target": "cause:CAUSE-C4",
+        "label": "间接原因",
+        "confidence": 0.7
+      },
+      {
+        "id": "event:EV-INC-01--SAFETY_EVENT_CAUSED_BY--cause:CAUSE-C5",
+        "source": "event:EV-INC-01",
+        "target": "cause:CAUSE-C5",
+        "label": "间接原因",
+        "confidence": 0.75
+      },
+      {
+        "id": "cause:CAUSE-C5--barrier--barrier:control:CT-JSA",
+        "source": "cause:CAUSE-C5",
+        "target": "barrier:control:CT-JSA",
+        "label": "屏障失效",
+        "confidence": 0.85
+      },
+      {
+        "id": "barrier:control:CT-JSA--evidence--evidence:clause:GB30871:5.2",
+        "source": "barrier:control:CT-JSA",
+        "target": "evidence:clause:GB30871:5.2",
+        "label": "法规依据",
+        "confidence": 1
+      },
+      {
+        "id": "cause:CAUSE-C3--barrier--barrier:control:CT-PERMIT",
+        "source": "cause:CAUSE-C3",
+        "target": "barrier:control:CT-PERMIT",
+        "label": "屏障失效",
+        "confidence": 0.85
+      },
+      {
+        "id": "barrier:control:CT-PERMIT--evidence--evidence:clause:GB30871:6.3",
+        "source": "barrier:control:CT-PERMIT",
+        "target": "evidence:clause:GB30871:6.3",
+        "label": "法规依据",
+        "confidence": 1
+      },
+      {
+        "id": "barrier:control:CT-PERMIT--evidence--evidence:clause:SAFETY-LAW:45",
+        "source": "barrier:control:CT-PERMIT",
+        "target": "evidence:clause:SAFETY-LAW:45",
+        "label": "法规依据",
+        "confidence": 1
+      },
+      {
+        "id": "cause:CAUSE-C4--barrier--barrier:control:CT-TRAIN",
+        "source": "cause:CAUSE-C4",
+        "target": "barrier:control:CT-TRAIN",
+        "label": "屏障失效",
+        "confidence": 0.85
+      },
+      {
+        "id": "barrier:control:CT-TRAIN--evidence--evidence:clause:SAFETY-LAW:40",
+        "source": "barrier:control:CT-TRAIN",
+        "target": "evidence:clause:SAFETY-LAW:40",
+        "label": "法规依据",
+        "confidence": 1
+      },
+      {
+        "id": "event:EV-INC-01--barrier--barrier:control:CT-GAS-TEST",
+        "source": "event:EV-INC-01",
+        "target": "barrier:control:CT-GAS-TEST",
+        "label": "现场屏障缺失",
+        "confidence": 0.7
+      },
+      {
+        "id": "event:EV-INC-01--barrier--barrier:control:CT-GUARD",
+        "source": "event:EV-INC-01",
+        "target": "barrier:control:CT-GUARD",
+        "label": "现场屏障缺失",
+        "confidence": 0.7
+      }
+    ]
+  },
+  "roots": [
+    {
+      "causeId": "cause:CAUSE-C5",
+      "causeLabel": "动火作业 JSA 风险分析缺失",
+      "rankScore": 0.54,
+      "category": "法",
+      "pathCount": 1,
+      "evidences": [
+        {
+          "type": "clause",
+          "refId": "clause:GB30871:5.2",
+          "text": "检维修作业前应开展风险分析（JSA）。"
+        }
+      ]
+    },
+    {
+      "causeId": "cause:CAUSE-C3",
+      "causeLabel": "作业票审批流于形式",
+      "rankScore": 0.52,
+      "category": "法",
+      "pathCount": 2,
+      "evidences": [
+        {
+          "type": "clause",
+          "refId": "clause:GB30871:6.3",
+          "text": "动火作业应办理动火作业票并经审批。"
+        },
+        {
+          "type": "clause",
+          "refId": "clause:SAFETY-LAW:45",
+          "text": "危险作业应安排专门人员进行现场安全管理。"
+        }
+      ]
+    },
+    {
+      "causeId": "cause:CAUSE-C4",
+      "causeLabel": "承包商未受专项培训",
+      "rankScore": 0.39,
+      "category": "人",
+      "pathCount": 1,
+      "evidences": [
+        {
+          "type": "clause",
+          "refId": "clause:SAFETY-LAW:40",
+          "text": "从业人员应接受安全生产教育和培训。"
+        }
+      ]
+    }
+  ],
+  "unverified": [
+    "cause:CAUSE-C3"
+  ],
+  "recommendations": [
+    {
+      "text": "恢复并验证「检维修风险分析」的有效性，留存执行记录",
+      "targetClauseIds": [
+        "clause:GB30871:5.2"
+      ]
+    },
+    {
+      "text": "恢复并验证「作业票审批」的有效性，留存执行记录",
+      "targetClauseIds": [
+        "clause:GB30871:6.3",
+        "clause:SAFETY-LAW:45"
+      ]
+    },
+    {
+      "text": "恢复并验证「安全培训」的有效性，留存执行记录",
+      "targetClauseIds": [
+        "clause:SAFETY-LAW:40"
+      ]
+    }
+  ],
+  "modelVersion": "1.0.0",
+  "generatedAt": 1794215273472
+}

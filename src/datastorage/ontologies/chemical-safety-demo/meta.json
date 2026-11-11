@@ -1,0 +1,17 @@
+{
+  "suiteId": "chemical-safety-demo",
+  "domain": "化工安全",
+  "project": "样例厂区",
+  "sourceRequirements": "内置样例数据",
+  "sourceDir": "seed",
+  "importTime": 1794134729568,
+  "sourceMtime": 1794134729568,
+  "sourceFileCount": 1,
+  "entityCount": 84,
+  "relationCount": 141,
+  "appId": "chemical-safety",
+  "frameworks": [
+    "apqc-process"
+  ],
+  "activeFrameworkId": "apqc-process"
+}

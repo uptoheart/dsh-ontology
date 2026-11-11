@@ -1,0 +1,343 @@
+[
+  {
+    "id": "R-01",
+    "name": "动火前未进行气体检测",
+    "version": "1.0.0",
+    "sourceClauseIds": [
+      "GB30871:6.2"
+    ],
+    "scope": {
+      "entityKinds": [
+        "SAFETY_OPERATION"
+      ],
+      "operationTypes": [
+        "动火"
+      ]
+    },
+    "condition": {
+      "op": "contains",
+      "field": "missingControlCodes",
+      "value": "CT-GAS-TEST"
+    },
+    "effect": {
+      "kind": "violation",
+      "severity": "fatal",
+      "riskDelta": 30,
+      "message": "动火作业前未完成可燃气体检测"
+    },
+    "weight": 1,
+    "enabled": true
+  },
+  {
+    "id": "R-02",
+    "name": "动火作业无专人监护",
+    "version": "1.0.0",
+    "sourceClauseIds": [
+      "GB30871:6.4"
+    ],
+    "scope": {
+      "entityKinds": [
+        "SAFETY_OPERATION"
+      ],
+      "operationTypes": [
+        "动火"
+      ]
+    },
+    "condition": {
+      "op": "contains",
+      "field": "missingControlCodes",
+      "value": "CT-GUARD"
+    },
+    "effect": {
+      "kind": "violation",
+      "severity": "major",
+      "riskDelta": 15,
+      "message": "动火作业未设置专人监护"
+    },
+    "weight": 1,
+    "enabled": true
+  },
+  {
+    "id": "R-03",
+    "name": "受限空间未隔离置换",
+    "version": "1.0.0",
+    "sourceClauseIds": [
+      "GB30871:8.2"
+    ],
+    "scope": {
+      "entityKinds": [
+        "SAFETY_OPERATION"
+      ],
+      "operationTypes": [
+        "受限空间"
+      ]
+    },
+    "condition": {
+      "op": "contains",
+      "field": "missingControlCodes",
+      "value": "CT-ISOLATE"
+    },
+    "effect": {
+      "kind": "violation",
+      "severity": "fatal",
+      "riskDelta": 30,
+      "message": "受限空间作业前未完成隔离置换"
+    },
+    "weight": 1,
+    "enabled": true
+  },
+  {
+    "id": "R-04",
+    "name": "受限空间未检测氧含量",
+    "version": "1.0.0",
+    "sourceClauseIds": [
+      "GB30871:8.3"
+    ],
+    "scope": {
+      "entityKinds": [
+        "SAFETY_OPERATION"
+      ],
+      "operationTypes": [
+        "受限空间"
+      ]
+    },
+    "condition": {
+      "op": "contains",
+      "field": "missingControlCodes",
+      "value": "CT-GAS-TEST"
+    },
+    "effect": {
+      "kind": "violation",
+      "severity": "fatal",
+      "riskDelta": 30,
+      "message": "受限空间作业前未检测氧含量与有毒气体"
+    },
+    "weight": 1,
+    "enabled": true
+  },
+  {
+    "id": "R-05",
+    "name": "高处作业未佩戴安全带",
+    "version": "1.0.0",
+    "sourceClauseIds": [
+      "GB30871:9.2"
+    ],
+    "scope": {
+      "entityKinds": [
+        "SAFETY_OPERATION"
+      ],
+      "operationTypes": [
+        "高处"
+      ]
+    },
+    "condition": {
+      "op": "contains",
+      "field": "missingControlCodes",
+      "value": "CT-SEATBELT"
+    },
+    "effect": {
+      "kind": "violation",
+      "severity": "major",
+      "riskDelta": 20,
+      "message": "高处作业未正确佩戴安全带"
+    },
+    "weight": 1,
+    "enabled": true
+  },
+  {
+    "id": "R-06",
+    "name": "吊装作业未设警戒",
+    "version": "1.0.0",
+    "sourceClauseIds": [
+      "GB30871:10.2"
+    ],
+    "scope": {
+      "entityKinds": [
+        "SAFETY_OPERATION"
+      ],
+      "operationTypes": [
+        "吊装"
+      ]
+    },
+    "condition": {
+      "op": "contains",
+      "field": "missingControlCodes",
+      "value": "CT-BARRICADE"
+    },
+    "effect": {
+      "kind": "violation",
+      "severity": "general",
+      "riskDelta": 10,
+      "message": "吊装作业未设置警戒区域"
+    },
+    "weight": 1,
+    "enabled": true
+  },
+  {
+    "id": "R-07",
+    "name": "临时用电未接地",
+    "version": "1.0.0",
+    "sourceClauseIds": [
+      "GB30871:11.2"
+    ],
+    "scope": {
+      "entityKinds": [
+        "SAFETY_OPERATION"
+      ],
+      "operationTypes": [
+        "临时用电"
+      ]
+    },
+    "condition": {
+      "op": "contains",
+      "field": "missingControlCodes",
+      "value": "CT-GROUND"
+    },
+    "effect": {
+      "kind": "violation",
+      "severity": "major",
+      "riskDelta": 20,
+      "message": "临时用电设备未可靠接地"
+    },
+    "weight": 1,
+    "enabled": true
+  },
+  {
+    "id": "R-08",
+    "name": "盲板抽堵未隔离",
+    "version": "1.0.0",
+    "sourceClauseIds": [
+      "GB30871:12.2"
+    ],
+    "scope": {
+      "entityKinds": [
+        "SAFETY_OPERATION"
+      ],
+      "operationTypes": [
+        "盲板抽堵"
+      ]
+    },
+    "condition": {
+      "op": "contains",
+      "field": "missingControlCodes",
+      "value": "CT-ISOLATE"
+    },
+    "effect": {
+      "kind": "violation",
+      "severity": "fatal",
+      "riskDelta": 30,
+      "message": "盲板抽堵作业未完成有效隔离"
+    },
+    "weight": 1,
+    "enabled": true
+  },
+  {
+    "id": "R-09",
+    "name": "检维修未做风险分析",
+    "version": "1.0.0",
+    "sourceClauseIds": [
+      "GB30871:5.2"
+    ],
+    "scope": {
+      "entityKinds": [
+        "SAFETY_OPERATION"
+      ],
+      "operationTypes": [
+        "检维修"
+      ]
+    },
+    "condition": {
+      "op": "contains",
+      "field": "missingControlCodes",
+      "value": "CT-JSA"
+    },
+    "effect": {
+      "kind": "violation",
+      "severity": "major",
+      "riskDelta": 20,
+      "message": "检维修作业前未开展 JSA 风险分析"
+    },
+    "weight": 1,
+    "enabled": true
+  },
+  {
+    "id": "R-10",
+    "name": "作业人员未接受安全培训",
+    "version": "1.0.0",
+    "sourceClauseIds": [
+      "SAFETY-LAW:40"
+    ],
+    "scope": {
+      "entityKinds": [
+        "SAFETY_OPERATION"
+      ],
+      "operationTypes": [
+        "动火"
+      ]
+    },
+    "condition": {
+      "op": "contains",
+      "field": "missingControlCodes",
+      "value": "CT-TRAIN"
+    },
+    "effect": {
+      "kind": "violation",
+      "severity": "general",
+      "riskDelta": 10,
+      "message": "作业人员缺少有效安全培训记录"
+    },
+    "weight": 1,
+    "enabled": true
+  },
+  {
+    "id": "R-11",
+    "name": "作业票缺失或过期",
+    "version": "1.0.0",
+    "sourceClauseIds": [
+      "GB30871:6.3"
+    ],
+    "scope": {
+      "entityKinds": [
+        "SAFETY_OPERATION"
+      ]
+    },
+    "condition": {
+      "op": "exists",
+      "field": "permitViolation"
+    },
+    "effect": {
+      "kind": "violation",
+      "severity": "major",
+      "riskDelta": 20,
+      "message": "作业票缺失、过期或未审批"
+    },
+    "weight": 1,
+    "enabled": true
+  },
+  {
+    "id": "R-12",
+    "name": "设备检验过期",
+    "version": "1.0.0",
+    "sourceClauseIds": [
+      "GB18218:4.1"
+    ],
+    "scope": {
+      "entityKinds": [
+        "SAFETY_EQUIPMENT"
+      ]
+    },
+    "condition": {
+      "op": "eq",
+      "field": "inspectionOverdue",
+      "value": true
+    },
+    "effect": {
+      "kind": "violation",
+      "severity": "major",
+      "riskDelta": 25,
+      "message": "设备检验有效期已过期"
+    },
+    "weight": 1,
+    "enabled": true
+  }
+]

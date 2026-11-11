@@ -148,6 +148,7 @@ export async function parseSuite(disc: DiscoveredSuite): Promise<SuiteData> {
     sourceFileCount: fileCount,
     entityCount: entities.length,
     relationCount: relations.length,
+    appId: 'pcf',
   }
 
   const annotations: OntologyAnnotations = {

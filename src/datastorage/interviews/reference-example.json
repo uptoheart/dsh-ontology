@@ -24,5 +24,31 @@
     },
     "createdAt": 1792112937183,
     "updatedAt": 1792114484412
+  },
+  {
+    "id": "itv-mw8qc5pl-u5lnp",
+    "suiteId": "reference-example",
+    "apqcCode": "2.1.1.1",
+    "answers": {
+      "hasRole": {
+        "value": true,
+        "roleRef": "市场策划专员"
+      },
+      "hasObject": {
+        "value": true,
+        "entityId": "reference-example:AGGREGATE_ROOT:AGG-PRODUCT-001",
+        "op": "read"
+      },
+      "hasRule": {
+        "value": true,
+        "ruleRef": "市场营销活动如果大于3万，需要市场总监签字；如果大于7万，需要总经理签字。"
+      },
+      "hasBehavior": {
+        "value": true,
+        "behaviorRef": "市场市场活动策划单"
+      }
+    },
+    "createdAt": 1794196611561,
+    "updatedAt": 1794204266149
   }
 ]

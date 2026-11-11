@@ -93,9 +93,26 @@
     </div>
   </div>
 
-  <!-- 右栏：本套件访谈记录列表 -->
+  <!-- 右栏：证据板（流程图 + 本体同屏）/ 访谈记录 -->
   <div class="iv-right">
-    <div class="pane-head">访谈记录 <span class="ph-extra" id="ivCount"></span></div>
-    <div class="iv-list" id="ivList"></div>
+    <div class="iv-side-head">
+      <div class="iv-seg" id="ivSideSeg">
+        <button data-side="evidence" class="on">证据板</button>
+        <button data-side="records">记录 <span class="ph-extra" id="ivCount"></span></button>
+      </div>
+    </div>
+    <div class="iv-evidence" id="ivEvidence">
+      <div class="iv-ev">
+        <div class="iv-ev-h"><span>流程图</span><em id="ivEvFlowMeta">—</em></div>
+        <div class="iv-ev-body" id="ivEvFlow"></div>
+        <div class="iv-ev-note" id="ivEvFlowNote"></div>
+      </div>
+      <div class="iv-ev">
+        <div class="iv-ev-h"><span>本体</span><em id="ivEvOntoMeta">—</em></div>
+        <div class="iv-ev-body" id="ivEvOnto"></div>
+        <div class="iv-ev-note" id="ivEvNote"></div>
+      </div>
+    </div>
+    <div class="iv-list" id="ivList" style="display:none"></div>
   </div>
 </section>

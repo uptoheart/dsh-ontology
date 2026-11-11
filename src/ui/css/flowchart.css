@@ -22,7 +22,7 @@
 .flow-tools .btn { padding: 4px 9px; font-size: 11.5px; }
 .flow-tips { font-size: 10.5px; color: var(--text-dim); line-height: 1.6; margin-top: 8px; }
 
-/* 左栏 APQC 树行（可拖拽） */
+/* 左栏框架树行（可拖拽） */
 .flow-tree-row {
   display: flex; align-items: center; gap: 6px;
   padding: 4px 8px; border-radius: 6px; cursor: grab;

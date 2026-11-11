@@ -193,7 +193,7 @@ $('#tab-coverage').addEventListener('click', (e) => {
   }
   const gapItem = e.target.closest('.gap-item');
   if (gapItem) {
-    // 跳到 APQC 地图并定位该 L3（工作入口）
+    // 跳到流程地图并定位该 L3（工作入口）
     switchTab('framework');
     const node = findCoverageNode(gapItem.dataset.gcode);
     if (node) selectNode(node.code);

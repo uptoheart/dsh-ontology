@@ -52,7 +52,13 @@ async function selectSuite(suiteId) {
   try {
     // 先取套件 meta 解析锁定框架，再并行拉取框架相关数据
     const suite = await api('/api/suites/' + encodeURIComponent(suiteId));
-    const fwId = suiteFw(suite);
+    // 优先读 activeFrameworkId → frameworkId，缺省回退 LEGACY_DEFAULT_FW
+    const fwId = suite?.meta?.activeFrameworkId
+      || suite?.meta?.frameworkId
+      || LEGACY_DEFAULT_FW;
+    const frameworks = Array.isArray(suite?.meta?.frameworks) && suite.meta.frameworks.length
+      ? suite.meta.frameworks
+      : (suite?.meta?.frameworkId ? [suite.meta.frameworkId] : [fwId]);
     // 下拉框同步显示当前套件锁定的框架
     const fwSel = $('#fwNewSelect');
     if (fwSel && FW_LIST.some(f => f.frameworkId === fwId)) fwSel.value = fwId;
@@ -64,6 +70,7 @@ async function selectSuite(suiteId) {
     ]);
     state.currentSuiteId = suiteId;
     state.suite = suite;
+    state.frameworks = frameworks;
     state.frameworkId = fwId;
     state.coverage = coverage;
     state.framework = framework;
@@ -83,6 +90,7 @@ async function selectSuite(suiteId) {
     $('#cntEntities').textContent = suite.entities.length;
     updateTabLock();
     renderAll();
+    renderSuiteFwSwitcher();
     toast(`已选择套件 ${suiteId}（${suite.entities.length} 实体）`, 'ok');
   } catch (err) {
     toast('加载套件失败：' + err.message, 'err');
@@ -131,33 +139,40 @@ async function reimport() {
 $('#btnRefresh').addEventListener('click', refreshAll);
 $('#btnReimport').addEventListener('click', reimport);
 
-/* ─────────── 流程框架切换 + 自定义框架导入（P4-3） ─────────── */
+/* ─────────── 流程框架切换 + 自定义框架导入（多框架并行升级） ─────────── */
 $('#fwNewSelect') && $('#fwNewSelect').addEventListener('change', async (e) => {
   const fwId = e.target.value;
   if (!fwId) return;
-  const curFw = state.suite ? suiteFw(state.suite) : null;
-  // 无当前套件（或框架未变化）：仅记录为新套件缺省框架（重新导入时使用）
-  if (!state.currentSuiteId || !state.suite || curFw === fwId) {
+  // 无当前套件：仅记录为新套件缺省框架（重新导入时使用）
+  if (!state.currentSuiteId || !state.suite) {
     localStorage.setItem(NEW_FW_LS_KEY, fwId);
     return;
   }
-  // 有当前套件：确认后切换套件锁定框架并重载（流程地图/覆盖度/域词典按新框架重建）
   const fwName = fwNameOf(fwId);
-  if (!confirm(`将当前套件的流程框架切换为「${fwName}」？\n切换后流程地图与覆盖度按新框架展示；旧框架下的实体映射保留但不再参与统计，需按新框架重新锚定。`)) {
-    e.target.value = curFw;
+  // 已经在 frameworks[] 里 → 直接用切换器的轻量路径
+  if (state.frameworks && state.frameworks.includes(fwId)) {
+    if (fwId !== state.frameworkId) await switchFramework(fwId);
+    return;
+  }
+  // 不在 → 确认后加进 frameworks[] 并设为激活
+  if (!confirm(`将「${fwName}」关联到当前套件并设为激活框架？\n（原先的框架标注会保留，可随时切换回来）`)) {
+    e.target.value = state.frameworkId;
     return;
   }
   try {
-    await api('/api/suites/' + encodeURIComponent(state.currentSuiteId) + '/framework', {
+    const newList = [...(state.frameworks || []), fwId];
+    await api('/api/suites/' + encodeURIComponent(state.currentSuiteId) + '/frameworks', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ frameworkId: fwId }),
+      body: JSON.stringify({ frameworks: newList, activeFrameworkId: fwId }),
     });
-    localStorage.setItem(NEW_FW_LS_KEY, fwId);   // 同时作为重新导入时新套件的缺省框架
-    toast(`流程框架已切换为「${fwName}」`, 'ok');
-    await selectSuiteForce(state.currentSuiteId);
+    localStorage.setItem(NEW_FW_LS_KEY, fwId);
+    toast(`已关联并切换到框架「${fwName}」`, 'ok');
+    await switchFramework(fwId);   // 重拉 coverage/framework/dictionary + 刷新视图
+    state.frameworks = newList;    // switchFramework 内部没改 frameworks[]，这里补上
+    renderSuiteFwSwitcher();
   } catch (err) {
     toast('切换框架失败：' + err.message, 'err');
-    e.target.value = curFw;   // 失败回退显示
+    e.target.value = state.frameworkId;
   }
 });
 

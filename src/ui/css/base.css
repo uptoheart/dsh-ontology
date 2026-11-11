@@ -178,7 +178,7 @@ main { flex: 1; min-height: 0; position: relative; }
 .section-title { font-size: 13px; font-weight: 600; margin: 0 0 10px; }
 .section-block { margin-bottom: 24px; }
 
-/* ═══════════ 分栏布局（本体管理 / APQC 框架 / 本体） ═══════════ */
+/* ═══════════ 分栏布局（本体管理 / 流程地图 / 本体） ═══════════ */
 .tab-panel.split { padding: 0; }
 .tab-panel.split.active { display: flex; }
 .split-left {
@@ -317,3 +317,45 @@ main { flex: 1; min-height: 0; position: relative; }
 
 .spin { display: inline-block; animation: spin 1s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
+
+/* ═══════════ 套件框架切换栏（多框架并行） ═══════════ */
+.suite-fw-bar {
+  flex-shrink: 0;
+  display: flex; align-items: center; gap: 10px;
+  padding: 6px 14px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  font-size: 12px;
+}
+.suite-fw-bar .sfb-label {
+  font-weight: 600; color: var(--text-dim); letter-spacing: .02em;
+  white-space: nowrap; flex-shrink: 0;
+}
+.suite-fw-bar .sfb-pills { display: flex; gap: 5px; flex-wrap: wrap; }
+.suite-fw-bar .sfb-pill {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 3px 10px;
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 12px; font-size: 11.5px; color: var(--text-dim);
+  cursor: pointer; transition: all .12s;
+  white-space: nowrap;
+}
+.suite-fw-bar .sfb-pill:hover { background: var(--hover); color: var(--text); }
+.suite-fw-bar .sfb-pill.active {
+  background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600;
+}
+.suite-fw-bar .sfb-pill.active:hover { filter: brightness(1.08); }
+.suite-fw-bar .sfb-pill .close-fw {
+  display: none; font-size: 10px; padding: 0 3px; border-radius: 3px;
+  color: rgba(255,255,255,.7);
+}
+.suite-fw-bar .sfb-pill:hover .close-fw { display: inline-block; }
+.suite-fw-bar .sfb-pill .close-fw:hover { background: rgba(0,0,0,.15); color: #fff; }
+.suite-fw-bar .sfb-add {
+  background: var(--card); border: 1px dashed var(--border);
+  border-radius: 12px; padding: 3px 8px; font-size: 11.5px;
+  color: var(--text-dim); cursor: pointer; outline: none;
+}
+.suite-fw-bar .sfb-add:hover { border-color: var(--accent); color: var(--accent); }
+.suite-fw-bar .sfb-manage { font-size: 11.5px; padding: 3px 9px; margin-left: auto; }
+.suite-fw-bar .sfb-hint { font-size: 11px; color: var(--text-dim); white-space: nowrap; }

@@ -12,6 +12,9 @@
 /* @include: css/flowchart.css */
 /* @include: css/interview.css */
 /* @include: css/ontology.css */
+/* @include: css/safety.css */
+/* @include: css/chain.css */
+/* @include: css/agent.css */
 </style>
 </head>
 <body>
@@ -32,6 +35,8 @@
 </header>
 
 <nav class="tabs" id="tabs">
+  <span class="tab-group-label">▎交付驾驶舱</span>
+  <button data-tab="agent" disabled>FDE 助手</button>
   <span class="tab-group-label">▎流程工作台</span>
   <button data-tab="framework" disabled>流程地图</button>
   <button data-tab="flowchart" disabled>流程画板<span class="tab-count" id="cntFlows">0</span></button>
@@ -40,7 +45,19 @@
   <button data-tab="ontology" class="active">本体图谱<span class="tab-count" id="cntEntities">0</span></button>
   <button data-tab="suites">套件管理<span class="tab-count" id="cntSuites">0</span></button>
   <button data-tab="coverage" disabled>覆盖度</button>
+  <span class="tab-group-label">▎安全应用</span>
+  <button data-tab="safety">化工安全</button>
 </nav>
+
+<div id="suiteFwBar" class="suite-fw-bar" style="display:none">
+  <span class="sfb-label">当前框架：</span>
+  <div class="sfb-pills" id="suiteFwPills"></div>
+  <select id="suiteFwAdd" class="sfb-add" style="display:none">
+    <option value="">+ 关联新框架…</option>
+  </select>
+  <button class="btn sfb-manage" id="suiteFwManage" title="管理当前套件关联的框架（添加/移除）">⚙ 管理关联</button>
+  <span class="sfb-hint" id="suiteFwHint"></span>
+</div>
 
 <main>
 <!-- @include: pages/suites.html -->
@@ -49,6 +66,8 @@
 <!-- @include: pages/flowchart.html -->
 <!-- @include: pages/interview.html -->
 <!-- @include: pages/ontology.html -->
+<!-- @include: pages/safety.html -->
+<!-- @include: pages/agent.html -->
 </main>
 
 <!-- 标注抽屉 -->
@@ -103,6 +122,9 @@
 /* @include: scripts/flowchart.js */
 /* @include: scripts/interview.js */
 /* @include: scripts/ontology.js */
+/* @include: scripts/chain.js */
+/* @include: scripts/safety.js */
+/* @include: scripts/agent.js */
 /* @include: scripts/main.js */
 </script>
 

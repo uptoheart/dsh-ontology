@@ -1,0 +1,27 @@
+{
+  "id": "INC-001",
+  "suiteId": "chemical-safety-demo",
+  "title": "1#储罐动火闪爆",
+  "occurredAt": "2026-03-12",
+  "eventEntityId": "event:EV-INC-01",
+  "areaCode": "AREA-A",
+  "unitCode": "UNIT-A1",
+  "equipmentCode": "EQ-A1-T01",
+  "operationCode": "OP-HOT-01",
+  "category": "机",
+  "consequences": "1 人重伤，储罐局部损毁",
+  "facts": [
+    "未有效置换/清洗",
+    "动火前未检测可燃气体",
+    "作业票审批流于形式",
+    "承包商未受专项培训"
+  ],
+  "suspectedCauses": [
+    "cause:CAUSE-C1",
+    "cause:CAUSE-C2",
+    "cause:CAUSE-C4",
+    "cause:CAUSE-C5"
+  ],
+  "createdAt": 1794134729581,
+  "updatedAt": 1794134729581
+}

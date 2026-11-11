@@ -1,0 +1,107 @@
+<section class="tab-panel" id="tab-agent">
+  <div class="ag-root">
+
+    <div class="ag-head">
+      <div>
+        <h2 class="ag-title">FDE 助手 · 现场交付驾驶舱</h2>
+        <div class="ag-sub" id="agSuiteMeta">—</div>
+      </div>
+      <div class="ag-head-actions">
+        <span class="ag-hint">确定性内核 · 本地数据 · 不调用模型</span>
+        <button class="btn" id="agReload" title="重新计算当前的阶段、门禁、指标与行动">刷新</button>
+      </div>
+    </div>
+
+    <div class="ag-stage-wrap">
+      <div class="ag-stage-rail" id="agStageRail"></div>
+      <div class="ag-gatebar">
+        <span id="agGateSummary">—</span>
+        <span id="agNextStage"></span>
+      </div>
+    </div>
+
+    <div class="ag-metrics" id="agMetrics"></div>
+
+    <div class="ag-grid">
+      <div class="ag-col">
+        <section class="ag-card">
+          <div class="ag-card-head">
+            <h3>当前阶段该做什么</h3>
+            <span>未达成补门禁，已达成备下一阶段</span>
+          </div>
+          <div id="agActions" class="ag-list"></div>
+        </section>
+
+        <section class="ag-card">
+          <div class="ag-card-head">
+            <h3>全局风险</h3>
+            <span>常驻，不随阶段消失</span>
+          </div>
+          <div id="agRisks" class="ag-list"></div>
+        </section>
+
+        <section class="ag-card" id="agDeliverCard">
+          <div class="ag-card-head">
+            <h3>交付物中心</h3>
+            <span>复用现有导出，不新增格式</span>
+          </div>
+          <div id="agExports" class="ag-exports"></div>
+          <div id="agGates" class="ag-gates"></div>
+        </section>
+      </div>
+
+      <div class="ag-col">
+        <section class="ag-card">
+          <div class="ag-card-head">
+            <h3>访谈问题生成器</h3>
+            <span>只读提纲，不写回记录</span>
+          </div>
+          <div class="ag-row">
+            <select id="agQuestionNode" class="ag-grow"></select>
+            <button class="btn primary" id="agGenQuestions">生成</button>
+          </div>
+          <div id="agNodeMeta" class="ag-node-meta"></div>
+          <div id="agQuestions" class="ag-questions"></div>
+        </section>
+
+        <section class="ag-card" id="agLedgerCard">
+          <div class="ag-card-head">
+            <h3>决策台账</h3>
+            <span id="agLedgerStats"></span>
+          </div>
+          <div id="agLedgerList" class="ag-ledger"></div>
+          <form id="agDecForm" class="ag-dec-form">
+            <div class="ag-row">
+              <select id="agDecStage"></select>
+              <select id="agDecStatus">
+                <option value="pending">待确认</option>
+                <option value="confirmed">已确认</option>
+              </select>
+            </div>
+            <input id="agDecTopic" placeholder="主题，如：范围 / 痛点 / 口径" maxlength="200" autocomplete="off">
+            <input id="agDecQuestion" placeholder="客户需要确认的问题" maxlength="1000" autocomplete="off">
+            <textarea id="agDecAnswer" placeholder="客户结论（可先留空，标为待确认）" maxlength="2000"></textarea>
+            <div class="ag-row">
+              <button class="btn primary" type="submit">登记决策</button>
+              <button class="btn" type="button" id="agLedgerExport">导出 Markdown</button>
+            </div>
+          </form>
+        </section>
+
+        <section class="ag-card">
+          <div class="ag-card-head">
+            <h3>提示词工坊</h3>
+            <span>复制到 DSH / 任意大模型</span>
+          </div>
+          <div class="ag-row">
+            <select id="agPromptScene" class="ag-grow"></select>
+            <button class="btn" id="agGenPrompt">生成</button>
+            <button class="btn primary" id="agPromptCopy">复制</button>
+          </div>
+          <textarea id="agPromptText" readonly placeholder="选择场景后生成提示词…"></textarea>
+        </section>
+      </div>
+    </div>
+
+  </div>
+</section>

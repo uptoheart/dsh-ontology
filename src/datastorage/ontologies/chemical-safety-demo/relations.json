@@ -1,0 +1,872 @@
+[
+  {
+    "id": "reg:GB30871--SAFETY_REG_CONTAINS_CLAUSE--clause:GB30871:6.2",
+    "from": "reg:GB30871",
+    "to": "clause:GB30871:6.2",
+    "type": "SAFETY_REG_CONTAINS_CLAUSE"
+  },
+  {
+    "id": "clause:GB30871:6.2--SAFETY_CLAUSE_APPLIES_TO--op:OP-HOT-01",
+    "from": "clause:GB30871:6.2",
+    "to": "op:OP-HOT-01",
+    "type": "SAFETY_CLAUSE_APPLIES_TO"
+  },
+  {
+    "id": "clause:GB30871:6.2--SAFETY_CLAUSE_APPLIES_TO--eq:EQ-A1-T01",
+    "from": "clause:GB30871:6.2",
+    "to": "eq:EQ-A1-T01",
+    "type": "SAFETY_CLAUSE_APPLIES_TO"
+  },
+  {
+    "id": "clause:GB30871:6.2--SAFETY_CLAUSE_REQUIRES_CONTROL--control:CT-GAS-TEST",
+    "from": "clause:GB30871:6.2",
+    "to": "control:CT-GAS-TEST",
+    "type": "SAFETY_CLAUSE_REQUIRES_CONTROL"
+  },
+  {
+    "id": "reg:GB30871--SAFETY_REG_CONTAINS_CLAUSE--clause:GB30871:6.3",
+    "from": "reg:GB30871",
+    "to": "clause:GB30871:6.3",
+    "type": "SAFETY_REG_CONTAINS_CLAUSE"
+  },
+  {
+    "id": "clause:GB30871:6.3--SAFETY_CLAUSE_APPLIES_TO--op:OP-HOT-01",
+    "from": "clause:GB30871:6.3",
+    "to": "op:OP-HOT-01",
+    "type": "SAFETY_CLAUSE_APPLIES_TO"
+  },
+  {
+    "id": "clause:GB30871:6.3--SAFETY_CLAUSE_REQUIRES_CONTROL--control:CT-PERMIT",
+    "from": "clause:GB30871:6.3",
+    "to": "control:CT-PERMIT",
+    "type": "SAFETY_CLAUSE_REQUIRES_CONTROL"
+  },
+  {
+    "id": "reg:GB30871--SAFETY_REG_CONTAINS_CLAUSE--clause:GB30871:6.4",
+    "from": "reg:GB30871",
+    "to": "clause:GB30871:6.4",
+    "type": "SAFETY_REG_CONTAINS_CLAUSE"
+  },
+  {
+    "id": "clause:GB30871:6.4--SAFETY_CLAUSE_APPLIES_TO--op:OP-HOT-01",
+    "from": "clause:GB30871:6.4",
+    "to": "op:OP-HOT-01",
+    "type": "SAFETY_CLAUSE_APPLIES_TO"
+  },
+  {
+    "id": "clause:GB30871:6.4--SAFETY_CLAUSE_REQUIRES_CONTROL--control:CT-GUARD",
+    "from": "clause:GB30871:6.4",
+    "to": "control:CT-GUARD",
+    "type": "SAFETY_CLAUSE_REQUIRES_CONTROL"
+  },
+  {
+    "id": "reg:GB30871--SAFETY_REG_CONTAINS_CLAUSE--clause:GB30871:8.2",
+    "from": "reg:GB30871",
+    "to": "clause:GB30871:8.2",
+    "type": "SAFETY_REG_CONTAINS_CLAUSE"
+  },
+  {
+    "id": "clause:GB30871:8.2--SAFETY_CLAUSE_APPLIES_TO--op:OP-CS-01",
+    "from": "clause:GB30871:8.2",
+    "to": "op:OP-CS-01",
+    "type": "SAFETY_CLAUSE_APPLIES_TO"
+  },
+  {
+    "id": "clause:GB30871:8.2--SAFETY_CLAUSE_APPLIES_TO--eq:EQ-A1-T02",
+    "from": "clause:GB30871:8.2",
+    "to": "eq:EQ-A1-T02",
+    "type": "SAFETY_CLAUSE_APPLIES_TO"
+  },
+  {
+    "id": "clause:GB30871:8.2--SAFETY_CLAUSE_REQUIRES_CONTROL--control:CT-ISOLATE",
+    "from": "clause:GB30871:8.2",
+    "to": "control:CT-ISOLATE",
+    "type": "SAFETY_CLAUSE_REQUIRES_CONTROL"
+  },
+  {
+    "id": "reg:GB30871--SAFETY_REG_CONTAINS_CLAUSE--clause:GB30871:8.3",
+    "from": "reg:GB30871",
+    "to": "clause:GB30871:8.3",
+    "type": "SAFETY_REG_CONTAINS_CLAUSE"
+  },
+  {
+    "id": "clause:GB30871:8.3--SAFETY_CLAUSE_APPLIES_TO--op:OP-CS-01",
+    "from": "clause:GB30871:8.3",
+    "to": "op:OP-CS-01",
+    "type": "SAFETY_CLAUSE_APPLIES_TO"
+  },
+  {
+    "id": "clause:GB30871:8.3--SAFETY_CLAUSE_REQUIRES_CONTROL--control:CT-GAS-TEST",
+    "from": "clause:GB30871:8.3",
+    "to": "control:CT-GAS-TEST",
+    "type": "SAFETY_CLAUSE_REQUIRES_CONTROL"
+  },
+  {
+    "id": "reg:GB30871--SAFETY_REG_CONTAINS_CLAUSE--clause:GB30871:9.2",
+    "from": "reg:GB30871",
+    "to": "clause:GB30871:9.2",
+    "type": "SAFETY_REG_CONTAINS_CLAUSE"
+  },
+  {
+    "id": "clause:GB30871:9.2--SAFETY_CLAUSE_APPLIES_TO--op:OP-HW-01",
+    "from": "clause:GB30871:9.2",
+    "to": "op:OP-HW-01",
+    "type": "SAFETY_CLAUSE_APPLIES_TO"
+  },
+  {
+    "id": "clause:GB30871:9.2--SAFETY_CLAUSE_REQUIRES_CONTROL--control:CT-SEATBELT",
+    "from": "clause:GB30871:9.2",
+    "to": "control:CT-SEATBELT",
+    "type": "SAFETY_CLAUSE_REQUIRES_CONTROL"
+  },
+  {
+    "id": "reg:GB30871--SAFETY_REG_CONTAINS_CLAUSE--clause:GB30871:10.2",
+    "from": "reg:GB30871",
+    "to": "clause:GB30871:10.2",
+    "type": "SAFETY_REG_CONTAINS_CLAUSE"
+  },
+  {
+    "id": "clause:GB30871:10.2--SAFETY_CLAUSE_APPLIES_TO--op:OP-LIFT-01",
+    "from": "clause:GB30871:10.2",
+    "to": "op:OP-LIFT-01",
+    "type": "SAFETY_CLAUSE_APPLIES_TO"
+  },
+  {
+    "id": "clause:GB30871:10.2--SAFETY_CLAUSE_REQUIRES_CONTROL--control:CT-BARRICADE",
+    "from": "clause:GB30871:10.2",
+    "to": "control:CT-BARRICADE",
+    "type": "SAFETY_CLAUSE_REQUIRES_CONTROL"
+  },
+  {
+    "id": "reg:GB30871--SAFETY_REG_CONTAINS_CLAUSE--clause:GB30871:11.2",
+    "from": "reg:GB30871",
+    "to": "clause:GB30871:11.2",
+    "type": "SAFETY_REG_CONTAINS_CLAUSE"
+  },
+  {
+    "id": "clause:GB30871:11.2--SAFETY_CLAUSE_APPLIES_TO--op:OP-POWER-01",
+    "from": "clause:GB30871:11.2",
+    "to": "op:OP-POWER-01",
+    "type": "SAFETY_CLAUSE_APPLIES_TO"
+  },
+  {
+    "id": "clause:GB30871:11.2--SAFETY_CLAUSE_REQUIRES_CONTROL--control:CT-GROUND",
+    "from": "clause:GB30871:11.2",
+    "to": "control:CT-GROUND",
+    "type": "SAFETY_CLAUSE_REQUIRES_CONTROL"
+  },
+  {
+    "id": "reg:GB30871--SAFETY_REG_CONTAINS_CLAUSE--clause:GB30871:12.2",
+    "from": "reg:GB30871",
+    "to": "clause:GB30871:12.2",
+    "type": "SAFETY_REG_CONTAINS_CLAUSE"
+  },
+  {
+    "id": "clause:GB30871:12.2--SAFETY_CLAUSE_APPLIES_TO--op:OP-BLIND-01",
+    "from": "clause:GB30871:12.2",
+    "to": "op:OP-BLIND-01",
+    "type": "SAFETY_CLAUSE_APPLIES_TO"
+  },
+  {
+    "id": "clause:GB30871:12.2--SAFETY_CLAUSE_REQUIRES_CONTROL--control:CT-ISOLATE",
+    "from": "clause:GB30871:12.2",
+    "to": "control:CT-ISOLATE",
+    "type": "SAFETY_CLAUSE_REQUIRES_CONTROL"
+  },
+  {
+    "id": "reg:GB30871--SAFETY_REG_CONTAINS_CLAUSE--clause:GB30871:5.2",
+    "from": "reg:GB30871",
+    "to": "clause:GB30871:5.2",
+    "type": "SAFETY_REG_CONTAINS_CLAUSE"
+  },
+  {
+    "id": "clause:GB30871:5.2--SAFETY_CLAUSE_APPLIES_TO--op:OP-MAINT-01",
+    "from": "clause:GB30871:5.2",
+    "to": "op:OP-MAINT-01",
+    "type": "SAFETY_CLAUSE_APPLIES_TO"
+  },
+  {
+    "id": "clause:GB30871:5.2--SAFETY_CLAUSE_REQUIRES_CONTROL--control:CT-JSA",
+    "from": "clause:GB30871:5.2",
+    "to": "control:CT-JSA",
+    "type": "SAFETY_CLAUSE_REQUIRES_CONTROL"
+  },
+  {
+    "id": "reg:GB18218--SAFETY_REG_CONTAINS_CLAUSE--clause:GB18218:4.1",
+    "from": "reg:GB18218",
+    "to": "clause:GB18218:4.1",
+    "type": "SAFETY_REG_CONTAINS_CLAUSE"
+  },
+  {
+    "id": "clause:GB18218:4.1--SAFETY_CLAUSE_APPLIES_TO--unit:UNIT-A1",
+    "from": "clause:GB18218:4.1",
+    "to": "unit:UNIT-A1",
+    "type": "SAFETY_CLAUSE_APPLIES_TO"
+  },
+  {
+    "id": "clause:GB18218:4.1--SAFETY_CLAUSE_APPLIES_TO--area:AREA-A",
+    "from": "clause:GB18218:4.1",
+    "to": "area:AREA-A",
+    "type": "SAFETY_CLAUSE_APPLIES_TO"
+  },
+  {
+    "id": "clause:GB18218:4.1--SAFETY_CLAUSE_REQUIRES_CONTROL--control:CT-REGISTER",
+    "from": "clause:GB18218:4.1",
+    "to": "control:CT-REGISTER",
+    "type": "SAFETY_CLAUSE_REQUIRES_CONTROL"
+  },
+  {
+    "id": "reg:GB18218--SAFETY_REG_CONTAINS_CLAUSE--clause:GB18218:4.2",
+    "from": "reg:GB18218",
+    "to": "clause:GB18218:4.2",
+    "type": "SAFETY_REG_CONTAINS_CLAUSE"
+  },
+  {
+    "id": "clause:GB18218:4.2--SAFETY_CLAUSE_APPLIES_TO--unit:UNIT-A1",
+    "from": "clause:GB18218:4.2",
+    "to": "unit:UNIT-A1",
+    "type": "SAFETY_CLAUSE_APPLIES_TO"
+  },
+  {
+    "id": "clause:GB18218:4.2--SAFETY_CLAUSE_REQUIRES_CONTROL--control:CT-REGISTER",
+    "from": "clause:GB18218:4.2",
+    "to": "control:CT-REGISTER",
+    "type": "SAFETY_CLAUSE_REQUIRES_CONTROL"
+  },
+  {
+    "id": "reg:GBT33000--SAFETY_REG_CONTAINS_CLAUSE--clause:GBT33000:5.1",
+    "from": "reg:GBT33000",
+    "to": "clause:GBT33000:5.1",
+    "type": "SAFETY_REG_CONTAINS_CLAUSE"
+  },
+  {
+    "id": "clause:GBT33000:5.1--SAFETY_CLAUSE_APPLIES_TO--area:AREA-A",
+    "from": "clause:GBT33000:5.1",
+    "to": "area:AREA-A",
+    "type": "SAFETY_CLAUSE_APPLIES_TO"
+  },
+  {
+    "id": "clause:GBT33000:5.1--SAFETY_CLAUSE_APPLIES_TO--area:AREA-B",
+    "from": "clause:GBT33000:5.1",
+    "to": "area:AREA-B",
+    "type": "SAFETY_CLAUSE_APPLIES_TO"
+  },
+  {
+    "id": "clause:GBT33000:5.1--SAFETY_CLAUSE_REQUIRES_CONTROL--control:CT-RISK-LIST",
+    "from": "clause:GBT33000:5.1",
+    "to": "control:CT-RISK-LIST",
+    "type": "SAFETY_CLAUSE_REQUIRES_CONTROL"
+  },
+  {
+    "id": "reg:GBT33000--SAFETY_REG_CONTAINS_CLAUSE--clause:GBT33000:5.2",
+    "from": "reg:GBT33000",
+    "to": "clause:GBT33000:5.2",
+    "type": "SAFETY_REG_CONTAINS_CLAUSE"
+  },
+  {
+    "id": "clause:GBT33000:5.2--SAFETY_CLAUSE_APPLIES_TO--area:AREA-A",
+    "from": "clause:GBT33000:5.2",
+    "to": "area:AREA-A",
+    "type": "SAFETY_CLAUSE_APPLIES_TO"
+  },
+  {
+    "id": "clause:GBT33000:5.2--SAFETY_CLAUSE_APPLIES_TO--area:AREA-B",
+    "from": "clause:GBT33000:5.2",
+    "to": "area:AREA-B",
+    "type": "SAFETY_CLAUSE_APPLIES_TO"
+  },
+  {
+    "id": "clause:GBT33000:5.2--SAFETY_CLAUSE_APPLIES_TO--area:AREA-C",
+    "from": "clause:GBT33000:5.2",
+    "to": "area:AREA-C",
+    "type": "SAFETY_CLAUSE_APPLIES_TO"
+  },
+  {
+    "id": "clause:GBT33000:5.2--SAFETY_CLAUSE_REQUIRES_CONTROL--control:CT-INSPECT",
+    "from": "clause:GBT33000:5.2",
+    "to": "control:CT-INSPECT",
+    "type": "SAFETY_CLAUSE_REQUIRES_CONTROL"
+  },
+  {
+    "id": "reg:SAFETY-LAW--SAFETY_REG_CONTAINS_CLAUSE--clause:SAFETY-LAW:40",
+    "from": "reg:SAFETY-LAW",
+    "to": "clause:SAFETY-LAW:40",
+    "type": "SAFETY_REG_CONTAINS_CLAUSE"
+  },
+  {
+    "id": "clause:SAFETY-LAW:40--SAFETY_CLAUSE_APPLIES_TO--op:OP-HOT-01",
+    "from": "clause:SAFETY-LAW:40",
+    "to": "op:OP-HOT-01",
+    "type": "SAFETY_CLAUSE_APPLIES_TO"
+  },
+  {
+    "id": "clause:SAFETY-LAW:40--SAFETY_CLAUSE_APPLIES_TO--op:OP-CS-01",
+    "from": "clause:SAFETY-LAW:40",
+    "to": "op:OP-CS-01",
+    "type": "SAFETY_CLAUSE_APPLIES_TO"
+  },
+  {
+    "id": "clause:SAFETY-LAW:40--SAFETY_CLAUSE_APPLIES_TO--op:OP-HW-01",
+    "from": "clause:SAFETY-LAW:40",
+    "to": "op:OP-HW-01",
+    "type": "SAFETY_CLAUSE_APPLIES_TO"
+  },
+  {
+    "id": "clause:SAFETY-LAW:40--SAFETY_CLAUSE_REQUIRES_CONTROL--control:CT-TRAIN",
+    "from": "clause:SAFETY-LAW:40",
+    "to": "control:CT-TRAIN",
+    "type": "SAFETY_CLAUSE_REQUIRES_CONTROL"
+  },
+  {
+    "id": "reg:SAFETY-LAW--SAFETY_REG_CONTAINS_CLAUSE--clause:SAFETY-LAW:44",
+    "from": "reg:SAFETY-LAW",
+    "to": "clause:SAFETY-LAW:44",
+    "type": "SAFETY_REG_CONTAINS_CLAUSE"
+  },
+  {
+    "id": "clause:SAFETY-LAW:44--SAFETY_CLAUSE_APPLIES_TO--op:OP-HW-01",
+    "from": "clause:SAFETY-LAW:44",
+    "to": "op:OP-HW-01",
+    "type": "SAFETY_CLAUSE_APPLIES_TO"
+  },
+  {
+    "id": "clause:SAFETY-LAW:44--SAFETY_CLAUSE_APPLIES_TO--op:OP-CS-01",
+    "from": "clause:SAFETY-LAW:44",
+    "to": "op:OP-CS-01",
+    "type": "SAFETY_CLAUSE_APPLIES_TO"
+  },
+  {
+    "id": "clause:SAFETY-LAW:44--SAFETY_CLAUSE_REQUIRES_CONTROL--control:CT-PPE",
+    "from": "clause:SAFETY-LAW:44",
+    "to": "control:CT-PPE",
+    "type": "SAFETY_CLAUSE_REQUIRES_CONTROL"
+  },
+  {
+    "id": "reg:SAFETY-LAW--SAFETY_REG_CONTAINS_CLAUSE--clause:SAFETY-LAW:45",
+    "from": "reg:SAFETY-LAW",
+    "to": "clause:SAFETY-LAW:45",
+    "type": "SAFETY_REG_CONTAINS_CLAUSE"
+  },
+  {
+    "id": "clause:SAFETY-LAW:45--SAFETY_CLAUSE_APPLIES_TO--op:OP-HOT-01",
+    "from": "clause:SAFETY-LAW:45",
+    "to": "op:OP-HOT-01",
+    "type": "SAFETY_CLAUSE_APPLIES_TO"
+  },
+  {
+    "id": "clause:SAFETY-LAW:45--SAFETY_CLAUSE_APPLIES_TO--op:OP-CS-01",
+    "from": "clause:SAFETY-LAW:45",
+    "to": "op:OP-CS-01",
+    "type": "SAFETY_CLAUSE_APPLIES_TO"
+  },
+  {
+    "id": "clause:SAFETY-LAW:45--SAFETY_CLAUSE_REQUIRES_CONTROL--control:CT-PERMIT",
+    "from": "clause:SAFETY-LAW:45",
+    "to": "control:CT-PERMIT",
+    "type": "SAFETY_CLAUSE_REQUIRES_CONTROL"
+  },
+  {
+    "id": "reg:HC-REG--SAFETY_REG_CONTAINS_CLAUSE--clause:HC-REG:24",
+    "from": "reg:HC-REG",
+    "to": "clause:HC-REG:24",
+    "type": "SAFETY_REG_CONTAINS_CLAUSE"
+  },
+  {
+    "id": "clause:HC-REG:24--SAFETY_CLAUSE_APPLIES_TO--unit:UNIT-A1",
+    "from": "clause:HC-REG:24",
+    "to": "unit:UNIT-A1",
+    "type": "SAFETY_CLAUSE_APPLIES_TO"
+  },
+  {
+    "id": "clause:HC-REG:24--SAFETY_CLAUSE_REQUIRES_CONTROL--control:CT-REGISTER",
+    "from": "clause:HC-REG:24",
+    "to": "control:CT-REGISTER",
+    "type": "SAFETY_CLAUSE_REQUIRES_CONTROL"
+  },
+  {
+    "id": "area:AREA-A--SAFETY_AREA_CONTAINS_UNIT--unit:UNIT-A1",
+    "from": "area:AREA-A",
+    "to": "unit:UNIT-A1",
+    "type": "SAFETY_AREA_CONTAINS_UNIT"
+  },
+  {
+    "id": "area:AREA-A--SAFETY_AREA_CONTAINS_UNIT--unit:UNIT-A2",
+    "from": "area:AREA-A",
+    "to": "unit:UNIT-A2",
+    "type": "SAFETY_AREA_CONTAINS_UNIT"
+  },
+  {
+    "id": "area:AREA-B--SAFETY_AREA_CONTAINS_UNIT--unit:UNIT-B1",
+    "from": "area:AREA-B",
+    "to": "unit:UNIT-B1",
+    "type": "SAFETY_AREA_CONTAINS_UNIT"
+  },
+  {
+    "id": "area:AREA-B--SAFETY_AREA_CONTAINS_UNIT--unit:UNIT-B2",
+    "from": "area:AREA-B",
+    "to": "unit:UNIT-B2",
+    "type": "SAFETY_AREA_CONTAINS_UNIT"
+  },
+  {
+    "id": "area:AREA-C--SAFETY_AREA_CONTAINS_UNIT--unit:UNIT-C1",
+    "from": "area:AREA-C",
+    "to": "unit:UNIT-C1",
+    "type": "SAFETY_AREA_CONTAINS_UNIT"
+  },
+  {
+    "id": "unit:UNIT-A1--SAFETY_UNIT_CONTAINS_EQUIPMENT--eq:EQ-A1-T01",
+    "from": "unit:UNIT-A1",
+    "to": "eq:EQ-A1-T01",
+    "type": "SAFETY_UNIT_CONTAINS_EQUIPMENT"
+  },
+  {
+    "id": "eq:EQ-A1-T01--SAFETY_EQUIPMENT_HANDLES_MATERIAL--mat:MAT-TOLUENE",
+    "from": "eq:EQ-A1-T01",
+    "to": "mat:MAT-TOLUENE",
+    "type": "SAFETY_EQUIPMENT_HANDLES_MATERIAL"
+  },
+  {
+    "id": "unit:UNIT-A1--SAFETY_UNIT_CONTAINS_EQUIPMENT--eq:EQ-A1-T02",
+    "from": "unit:UNIT-A1",
+    "to": "eq:EQ-A1-T02",
+    "type": "SAFETY_UNIT_CONTAINS_EQUIPMENT"
+  },
+  {
+    "id": "eq:EQ-A1-T02--SAFETY_EQUIPMENT_HANDLES_MATERIAL--mat:MAT-METHANOL",
+    "from": "eq:EQ-A1-T02",
+    "to": "mat:MAT-METHANOL",
+    "type": "SAFETY_EQUIPMENT_HANDLES_MATERIAL"
+  },
+  {
+    "id": "unit:UNIT-A1--SAFETY_UNIT_CONTAINS_EQUIPMENT--eq:EQ-A1-P01",
+    "from": "unit:UNIT-A1",
+    "to": "eq:EQ-A1-P01",
+    "type": "SAFETY_UNIT_CONTAINS_EQUIPMENT"
+  },
+  {
+    "id": "unit:UNIT-A2--SAFETY_UNIT_CONTAINS_EQUIPMENT--eq:EQ-A2-L01",
+    "from": "unit:UNIT-A2",
+    "to": "eq:EQ-A2-L01",
+    "type": "SAFETY_UNIT_CONTAINS_EQUIPMENT"
+  },
+  {
+    "id": "eq:EQ-A2-L01--SAFETY_EQUIPMENT_HANDLES_MATERIAL--mat:MAT-GASOLINE",
+    "from": "eq:EQ-A2-L01",
+    "to": "mat:MAT-GASOLINE",
+    "type": "SAFETY_EQUIPMENT_HANDLES_MATERIAL"
+  },
+  {
+    "id": "unit:UNIT-B1--SAFETY_UNIT_CONTAINS_EQUIPMENT--eq:EQ-B1-R01",
+    "from": "unit:UNIT-B1",
+    "to": "eq:EQ-B1-R01",
+    "type": "SAFETY_UNIT_CONTAINS_EQUIPMENT"
+  },
+  {
+    "id": "eq:EQ-B1-R01--SAFETY_EQUIPMENT_HANDLES_MATERIAL--mat:MAT-METHANOL",
+    "from": "eq:EQ-B1-R01",
+    "to": "mat:MAT-METHANOL",
+    "type": "SAFETY_EQUIPMENT_HANDLES_MATERIAL"
+  },
+  {
+    "id": "unit:UNIT-B2--SAFETY_UNIT_CONTAINS_EQUIPMENT--eq:EQ-B2-C01",
+    "from": "unit:UNIT-B2",
+    "to": "eq:EQ-B2-C01",
+    "type": "SAFETY_UNIT_CONTAINS_EQUIPMENT"
+  },
+  {
+    "id": "unit:UNIT-C1--SAFETY_UNIT_CONTAINS_EQUIPMENT--eq:EQ-C1-U01",
+    "from": "unit:UNIT-C1",
+    "to": "eq:EQ-C1-U01",
+    "type": "SAFETY_UNIT_CONTAINS_EQUIPMENT"
+  },
+  {
+    "id": "op:OP-HOT-01--SAFETY_OPERATION_IN_AREA--area:AREA-A",
+    "from": "op:OP-HOT-01",
+    "to": "area:AREA-A",
+    "type": "SAFETY_OPERATION_IN_AREA"
+  },
+  {
+    "id": "op:OP-HOT-01--SAFETY_OPERATION_ON_EQUIPMENT--eq:EQ-A1-T01",
+    "from": "op:OP-HOT-01",
+    "to": "eq:EQ-A1-T01",
+    "type": "SAFETY_OPERATION_ON_EQUIPMENT"
+  },
+  {
+    "id": "op:OP-HOT-01--SAFETY_OPERATION_REQUIRES_PERMIT--permit:PTW-HOT-001",
+    "from": "op:OP-HOT-01",
+    "to": "permit:PTW-HOT-001",
+    "type": "SAFETY_OPERATION_REQUIRES_PERMIT"
+  },
+  {
+    "id": "op:OP-HOT-01--SAFETY_OPERATION_HAS_HAZARD--hazard:H-FLAM",
+    "from": "op:OP-HOT-01",
+    "to": "hazard:H-FLAM",
+    "type": "SAFETY_OPERATION_HAS_HAZARD"
+  },
+  {
+    "id": "op:OP-HOT-01--SAFETY_OPERATION_HAS_HAZARD--hazard:H-OBJ",
+    "from": "op:OP-HOT-01",
+    "to": "hazard:H-OBJ",
+    "type": "SAFETY_OPERATION_HAS_HAZARD"
+  },
+  {
+    "id": "op:OP-CS-01--SAFETY_OPERATION_IN_AREA--area:AREA-A",
+    "from": "op:OP-CS-01",
+    "to": "area:AREA-A",
+    "type": "SAFETY_OPERATION_IN_AREA"
+  },
+  {
+    "id": "op:OP-CS-01--SAFETY_OPERATION_ON_EQUIPMENT--eq:EQ-A1-T02",
+    "from": "op:OP-CS-01",
+    "to": "eq:EQ-A1-T02",
+    "type": "SAFETY_OPERATION_ON_EQUIPMENT"
+  },
+  {
+    "id": "op:OP-CS-01--SAFETY_OPERATION_REQUIRES_PERMIT--permit:PTW-CS-002",
+    "from": "op:OP-CS-01",
+    "to": "permit:PTW-CS-002",
+    "type": "SAFETY_OPERATION_REQUIRES_PERMIT"
+  },
+  {
+    "id": "op:OP-CS-01--SAFETY_OPERATION_HAS_HAZARD--hazard:H-TOXIC",
+    "from": "op:OP-CS-01",
+    "to": "hazard:H-TOXIC",
+    "type": "SAFETY_OPERATION_HAS_HAZARD"
+  },
+  {
+    "id": "op:OP-HW-01--SAFETY_OPERATION_IN_AREA--area:AREA-B",
+    "from": "op:OP-HW-01",
+    "to": "area:AREA-B",
+    "type": "SAFETY_OPERATION_IN_AREA"
+  },
+  {
+    "id": "op:OP-HW-01--SAFETY_OPERATION_ON_EQUIPMENT--eq:EQ-B1-R01",
+    "from": "op:OP-HW-01",
+    "to": "eq:EQ-B1-R01",
+    "type": "SAFETY_OPERATION_ON_EQUIPMENT"
+  },
+  {
+    "id": "op:OP-HW-01--SAFETY_OPERATION_REQUIRES_PERMIT--permit:PTW-HW-003",
+    "from": "op:OP-HW-01",
+    "to": "permit:PTW-HW-003",
+    "type": "SAFETY_OPERATION_REQUIRES_PERMIT"
+  },
+  {
+    "id": "op:OP-HW-01--SAFETY_OPERATION_HAS_HAZARD--hazard:H-FALL",
+    "from": "op:OP-HW-01",
+    "to": "hazard:H-FALL",
+    "type": "SAFETY_OPERATION_HAS_HAZARD"
+  },
+  {
+    "id": "op:OP-HW-01--SAFETY_OPERATION_HAS_HAZARD--hazard:H-MECH",
+    "from": "op:OP-HW-01",
+    "to": "hazard:H-MECH",
+    "type": "SAFETY_OPERATION_HAS_HAZARD"
+  },
+  {
+    "id": "op:OP-LIFT-01--SAFETY_OPERATION_IN_AREA--area:AREA-C",
+    "from": "op:OP-LIFT-01",
+    "to": "area:AREA-C",
+    "type": "SAFETY_OPERATION_IN_AREA"
+  },
+  {
+    "id": "op:OP-LIFT-01--SAFETY_OPERATION_ON_EQUIPMENT--eq:EQ-C1-U01",
+    "from": "op:OP-LIFT-01",
+    "to": "eq:EQ-C1-U01",
+    "type": "SAFETY_OPERATION_ON_EQUIPMENT"
+  },
+  {
+    "id": "op:OP-LIFT-01--SAFETY_OPERATION_HAS_HAZARD--hazard:H-OBJ",
+    "from": "op:OP-LIFT-01",
+    "to": "hazard:H-OBJ",
+    "type": "SAFETY_OPERATION_HAS_HAZARD"
+  },
+  {
+    "id": "op:OP-POWER-01--SAFETY_OPERATION_IN_AREA--area:AREA-B",
+    "from": "op:OP-POWER-01",
+    "to": "area:AREA-B",
+    "type": "SAFETY_OPERATION_IN_AREA"
+  },
+  {
+    "id": "op:OP-POWER-01--SAFETY_OPERATION_ON_EQUIPMENT--eq:EQ-B2-C01",
+    "from": "op:OP-POWER-01",
+    "to": "eq:EQ-B2-C01",
+    "type": "SAFETY_OPERATION_ON_EQUIPMENT"
+  },
+  {
+    "id": "op:OP-POWER-01--SAFETY_OPERATION_HAS_HAZARD--hazard:H-SHOCK",
+    "from": "op:OP-POWER-01",
+    "to": "hazard:H-SHOCK",
+    "type": "SAFETY_OPERATION_HAS_HAZARD"
+  },
+  {
+    "id": "op:OP-BLIND-01--SAFETY_OPERATION_IN_AREA--area:AREA-A",
+    "from": "op:OP-BLIND-01",
+    "to": "area:AREA-A",
+    "type": "SAFETY_OPERATION_IN_AREA"
+  },
+  {
+    "id": "op:OP-BLIND-01--SAFETY_OPERATION_ON_EQUIPMENT--eq:EQ-A1-T01",
+    "from": "op:OP-BLIND-01",
+    "to": "eq:EQ-A1-T01",
+    "type": "SAFETY_OPERATION_ON_EQUIPMENT"
+  },
+  {
+    "id": "op:OP-BLIND-01--SAFETY_OPERATION_HAS_HAZARD--hazard:H-FLAM",
+    "from": "op:OP-BLIND-01",
+    "to": "hazard:H-FLAM",
+    "type": "SAFETY_OPERATION_HAS_HAZARD"
+  },
+  {
+    "id": "op:OP-BLIND-01--SAFETY_OPERATION_HAS_HAZARD--hazard:H-TOXIC",
+    "from": "op:OP-BLIND-01",
+    "to": "hazard:H-TOXIC",
+    "type": "SAFETY_OPERATION_HAS_HAZARD"
+  },
+  {
+    "id": "op:OP-ROAD-01--SAFETY_OPERATION_IN_AREA--area:AREA-C",
+    "from": "op:OP-ROAD-01",
+    "to": "area:AREA-C",
+    "type": "SAFETY_OPERATION_IN_AREA"
+  },
+  {
+    "id": "op:OP-ROAD-01--SAFETY_OPERATION_HAS_HAZARD--hazard:H-MECH",
+    "from": "op:OP-ROAD-01",
+    "to": "hazard:H-MECH",
+    "type": "SAFETY_OPERATION_HAS_HAZARD"
+  },
+  {
+    "id": "op:OP-MAINT-01--SAFETY_OPERATION_IN_AREA--area:AREA-A",
+    "from": "op:OP-MAINT-01",
+    "to": "area:AREA-A",
+    "type": "SAFETY_OPERATION_IN_AREA"
+  },
+  {
+    "id": "op:OP-MAINT-01--SAFETY_OPERATION_ON_EQUIPMENT--eq:EQ-A1-T01",
+    "from": "op:OP-MAINT-01",
+    "to": "eq:EQ-A1-T01",
+    "type": "SAFETY_OPERATION_ON_EQUIPMENT"
+  },
+  {
+    "id": "op:OP-MAINT-01--SAFETY_OPERATION_HAS_HAZARD--hazard:H-FLAM",
+    "from": "op:OP-MAINT-01",
+    "to": "hazard:H-FLAM",
+    "type": "SAFETY_OPERATION_HAS_HAZARD"
+  },
+  {
+    "id": "op:OP-MAINT-01--SAFETY_OPERATION_HAS_HAZARD--hazard:H-MECH",
+    "from": "op:OP-MAINT-01",
+    "to": "hazard:H-MECH",
+    "type": "SAFETY_OPERATION_HAS_HAZARD"
+  },
+  {
+    "id": "op:OP-LOAD-01--SAFETY_OPERATION_IN_AREA--area:AREA-A",
+    "from": "op:OP-LOAD-01",
+    "to": "area:AREA-A",
+    "type": "SAFETY_OPERATION_IN_AREA"
+  },
+  {
+    "id": "op:OP-LOAD-01--SAFETY_OPERATION_ON_EQUIPMENT--eq:EQ-A2-L01",
+    "from": "op:OP-LOAD-01",
+    "to": "eq:EQ-A2-L01",
+    "type": "SAFETY_OPERATION_ON_EQUIPMENT"
+  },
+  {
+    "id": "op:OP-LOAD-01--SAFETY_OPERATION_HAS_HAZARD--hazard:H-FLAM",
+    "from": "op:OP-LOAD-01",
+    "to": "hazard:H-FLAM",
+    "type": "SAFETY_OPERATION_HAS_HAZARD"
+  },
+  {
+    "id": "op:OP-LOAD-01--SAFETY_OPERATION_HAS_HAZARD--hazard:H-TOXIC",
+    "from": "op:OP-LOAD-01",
+    "to": "hazard:H-TOXIC",
+    "type": "SAFETY_OPERATION_HAS_HAZARD"
+  },
+  {
+    "id": "op:OP-FEED-01--SAFETY_OPERATION_IN_AREA--area:AREA-B",
+    "from": "op:OP-FEED-01",
+    "to": "area:AREA-B",
+    "type": "SAFETY_OPERATION_IN_AREA"
+  },
+  {
+    "id": "op:OP-FEED-01--SAFETY_OPERATION_ON_EQUIPMENT--eq:EQ-B1-R01",
+    "from": "op:OP-FEED-01",
+    "to": "eq:EQ-B1-R01",
+    "type": "SAFETY_OPERATION_ON_EQUIPMENT"
+  },
+  {
+    "id": "op:OP-FEED-01--SAFETY_OPERATION_HAS_HAZARD--hazard:H-MECH",
+    "from": "op:OP-FEED-01",
+    "to": "hazard:H-MECH",
+    "type": "SAFETY_OPERATION_HAS_HAZARD"
+  },
+  {
+    "id": "op:OP-FEED-01--SAFETY_OPERATION_HAS_HAZARD--hazard:H-TOXIC",
+    "from": "op:OP-FEED-01",
+    "to": "hazard:H-TOXIC",
+    "type": "SAFETY_OPERATION_HAS_HAZARD"
+  },
+  {
+    "id": "check:CI-GAS--SAFETY_CHECK_VERIFIES_CLAUSE--clause:GB30871:6.2",
+    "from": "check:CI-GAS",
+    "to": "clause:GB30871:6.2",
+    "type": "SAFETY_CHECK_VERIFIES_CLAUSE"
+  },
+  {
+    "id": "check:CI-PERMIT--SAFETY_CHECK_VERIFIES_CLAUSE--clause:GB30871:6.3",
+    "from": "check:CI-PERMIT",
+    "to": "clause:GB30871:6.3",
+    "type": "SAFETY_CHECK_VERIFIES_CLAUSE"
+  },
+  {
+    "id": "check:CI-GUARD--SAFETY_CHECK_VERIFIES_CLAUSE--clause:GB30871:6.4",
+    "from": "check:CI-GUARD",
+    "to": "clause:GB30871:6.4",
+    "type": "SAFETY_CHECK_VERIFIES_CLAUSE"
+  },
+  {
+    "id": "check:CI-ISOLATE--SAFETY_CHECK_VERIFIES_CLAUSE--clause:GB30871:8.2",
+    "from": "check:CI-ISOLATE",
+    "to": "clause:GB30871:8.2",
+    "type": "SAFETY_CHECK_VERIFIES_CLAUSE"
+  },
+  {
+    "id": "check:CI-TRAIN--SAFETY_CHECK_VERIFIES_CLAUSE--clause:SAFETY-LAW:40",
+    "from": "check:CI-TRAIN",
+    "to": "clause:SAFETY-LAW:40",
+    "type": "SAFETY_CHECK_VERIFIES_CLAUSE"
+  },
+  {
+    "id": "eq:EQ-A1-T01--SAFETY_EQUIPMENT_HAS_HAZARD--hazard:H-FLAM",
+    "from": "eq:EQ-A1-T01",
+    "to": "hazard:H-FLAM",
+    "type": "SAFETY_EQUIPMENT_HAS_HAZARD"
+  },
+  {
+    "id": "eq:EQ-A1-T02--SAFETY_EQUIPMENT_HAS_HAZARD--hazard:H-TOXIC",
+    "from": "eq:EQ-A1-T02",
+    "to": "hazard:H-TOXIC",
+    "type": "SAFETY_EQUIPMENT_HAS_HAZARD"
+  },
+  {
+    "id": "eq:EQ-A2-L01--SAFETY_EQUIPMENT_HAS_HAZARD--hazard:H-FLAM",
+    "from": "eq:EQ-A2-L01",
+    "to": "hazard:H-FLAM",
+    "type": "SAFETY_EQUIPMENT_HAS_HAZARD"
+  },
+  {
+    "id": "control:CT-GAS-TEST--SAFETY_CONTROL_MITIGATES_HAZARD--hazard:H-FLAM",
+    "from": "control:CT-GAS-TEST",
+    "to": "hazard:H-FLAM",
+    "type": "SAFETY_CONTROL_MITIGATES_HAZARD"
+  },
+  {
+    "id": "control:CT-ISOLATE--SAFETY_CONTROL_MITIGATES_HAZARD--hazard:H-TOXIC",
+    "from": "control:CT-ISOLATE",
+    "to": "hazard:H-TOXIC",
+    "type": "SAFETY_CONTROL_MITIGATES_HAZARD"
+  },
+  {
+    "id": "control:CT-GUARD--SAFETY_CONTROL_MITIGATES_HAZARD--hazard:H-FLAM",
+    "from": "control:CT-GUARD",
+    "to": "hazard:H-FLAM",
+    "type": "SAFETY_CONTROL_MITIGATES_HAZARD"
+  },
+  {
+    "id": "control:CT-SEATBELT--SAFETY_CONTROL_MITIGATES_HAZARD--hazard:H-FALL",
+    "from": "control:CT-SEATBELT",
+    "to": "hazard:H-FALL",
+    "type": "SAFETY_CONTROL_MITIGATES_HAZARD"
+  },
+  {
+    "id": "control:CT-GROUND--SAFETY_CONTROL_MITIGATES_HAZARD--hazard:H-SHOCK",
+    "from": "control:CT-GROUND",
+    "to": "hazard:H-SHOCK",
+    "type": "SAFETY_CONTROL_MITIGATES_HAZARD"
+  },
+  {
+    "id": "control:CT-BARRICADE--SAFETY_CONTROL_MITIGATES_HAZARD--hazard:H-OBJ",
+    "from": "control:CT-BARRICADE",
+    "to": "hazard:H-OBJ",
+    "type": "SAFETY_CONTROL_MITIGATES_HAZARD"
+  },
+  {
+    "id": "event:EV-INC-01--SAFETY_EVENT_OCCURS_AT--eq:EQ-A1-T01",
+    "from": "event:EV-INC-01",
+    "to": "eq:EQ-A1-T01",
+    "type": "SAFETY_EVENT_OCCURS_AT"
+  },
+  {
+    "id": "event:EV-INC-01--SAFETY_EVENT_OCCURS_AT--area:AREA-A",
+    "from": "event:EV-INC-01",
+    "to": "area:AREA-A",
+    "type": "SAFETY_EVENT_OCCURS_AT"
+  },
+  {
+    "id": "event:EV-INC-01--SAFETY_EVENT_INVOLVES--op:OP-HOT-01",
+    "from": "event:EV-INC-01",
+    "to": "op:OP-HOT-01",
+    "type": "SAFETY_EVENT_INVOLVES"
+  },
+  {
+    "id": "event:EV-INC-01--SAFETY_EVENT_CAUSED_BY--cause:CAUSE-C1",
+    "from": "event:EV-INC-01",
+    "to": "cause:CAUSE-C1",
+    "type": "SAFETY_EVENT_CAUSED_BY",
+    "label": "直接原因",
+    "properties": {
+      "confidence": 0.9
+    }
+  },
+  {
+    "id": "event:EV-INC-01--SAFETY_EVENT_CAUSED_BY--cause:CAUSE-C2",
+    "from": "event:EV-INC-01",
+    "to": "cause:CAUSE-C2",
+    "type": "SAFETY_EVENT_CAUSED_BY",
+    "label": "直接原因",
+    "properties": {
+      "confidence": 0.85
+    }
+  },
+  {
+    "id": "event:EV-INC-01--SAFETY_EVENT_CAUSED_BY--cause:CAUSE-C4",
+    "from": "event:EV-INC-01",
+    "to": "cause:CAUSE-C4",
+    "type": "SAFETY_EVENT_CAUSED_BY",
+    "label": "间接原因",
+    "properties": {
+      "confidence": 0.7
+    }
+  },
+  {
+    "id": "event:EV-INC-01--SAFETY_EVENT_CAUSED_BY--cause:CAUSE-C5",
+    "from": "event:EV-INC-01",
+    "to": "cause:CAUSE-C5",
+    "type": "SAFETY_EVENT_CAUSED_BY",
+    "label": "间接原因",
+    "properties": {
+      "confidence": 0.75
+    }
+  },
+  {
+    "id": "cause:CAUSE-C1--SAFETY_EVENT_CAUSED_BY--cause:CAUSE-C3",
+    "from": "cause:CAUSE-C1",
+    "to": "cause:CAUSE-C3",
+    "type": "SAFETY_EVENT_CAUSED_BY",
+    "label": "管理原因",
+    "properties": {
+      "confidence": 0.8
+    }
+  },
+  {
+    "id": "cause:CAUSE-C2--SAFETY_EVENT_CAUSED_BY--cause:CAUSE-C3",
+    "from": "cause:CAUSE-C2",
+    "to": "cause:CAUSE-C3",
+    "type": "SAFETY_EVENT_CAUSED_BY",
+    "label": "管理原因",
+    "properties": {
+      "confidence": 0.8
+    }
+  }
+]

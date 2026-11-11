@@ -1,25 +1,44 @@
 {
   "entityFrameMapping": {
     "reference-example:AGGREGATE_ROOT:AGG-PRODUCT-001": {
-      "frameworkId": "apqc-process",
-      "apqcCode": "2.3.2",
-      "mappedAt": 1792047623774
+      "apqc-process": {
+        "apqcCode": "2.3.2",
+        "mappedAt": 1792047623774
+      },
+      "hw-style-pcf": {
+        "apqcCode": "2.3",
+        "note": "语义迁移：与 apqc-process 编号同形（自动）",
+        "mappedAt": 1794216172764
+      }
     },
     "reference-example:AGGREGATE_ROOT:AGG-CUSTOMER-001": {
-      "frameworkId": "apqc-process",
-      "apqcCode": "6.1.1",
-      "mappedAt": 1792050660145
+      "apqc-process": {
+        "apqcCode": "6.1.1",
+        "mappedAt": 1792050660145
+      },
+      "hw-style-pcf": {
+        "apqcCode": "6.1.1",
+        "note": "语义迁移：与 apqc-process 编号同形（自动）",
+        "mappedAt": 1794215933571
+      }
     },
     "reference-example:FLOW:FLOW-CONTRACT-001": {
-      "frameworkId": "apqc-process",
-      "apqcCode": "1.1.1",
-      "note": "smoke"
+      "apqc-process": {
+        "apqcCode": "1.1.1",
+        "note": "smoke"
+      },
+      "hw-style-pcf": {
+        "apqcCode": "1.1.1",
+        "note": "smoke · 语义迁移：与 apqc-process 编号同形（自动）",
+        "mappedAt": 1794215933571
+      }
     }
   },
   "coverageMarks": {
     "reference-example:AGGREGATE_ROOT:AGG-PRODUCT-001": {
       "status": "partial",
-      "updatedAt": 1792047623774
+      "note": "语义迁移：与 apqc-process 编号同形（自动）",
+      "updatedAt": 1794216172764
     },
     "reference-example:AGGREGATE_ROOT:AGG-CUSTOMER-001": {
       "status": "covered",
