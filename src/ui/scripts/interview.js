@@ -17,6 +17,22 @@ function ivRecordOf(code) {
   return (state.interviews || []).find(r => r.apqcCode === code) || null;
 }
 
+/* 访谈作用域：未选择套件时读写「未分配桶」（与全局流程图同哲学：FDE 进场先记录，建套件后认领） */
+const IV_UNASSIGNED = '_unassigned';
+function ivScope() { return state.currentSuiteId || IV_UNASSIGNED; }
+async function loadInterviewScope() {
+  const list = await api('/api/suites/' + encodeURIComponent(ivScope()) + '/interviews');
+  state.interviews = list || [];
+  if (state.currentSuiteId) {
+    // 选中套件时同时拉取未分配桶供「认领」分组展示；桶为空不视为错误
+    try { state.unassignedInterviews = await api('/api/suites/' + IV_UNASSIGNED + '/interviews') || []; }
+    catch { state.unassignedInterviews = []; }
+  } else {
+    state.unassignedInterviews = [];
+  }
+  return state.interviews;
+}
+
 /* 访谈完成度：done = 角色+对象双有效（可驱动覆盖度）；有记录但未齐 = 进行中 */
 function ivStatusOf(code) {
   const rec = ivRecordOf(code);
@@ -71,7 +87,7 @@ function ivTreeNodeHtml(node, depth, q, covMap) {
 function renderInterviewTree() {
   const wrap = $('#ivTreeWrap');
   if (!state.framework || !state.framework.domains) {
-    wrap.innerHTML = '<div class="empty-hint"><div><div class="big">🗂️</div>请先在「套件管理」中选择套件</div></div>';
+    wrap.innerHTML = '<div class="empty-hint"><div><div class="big">🗂️</div>流程框架加载中或加载失败</div></div>';
     $('#ivProgress').textContent = '—';
     return;
   }
@@ -147,6 +163,17 @@ function renderIvDatalists() {
   fill('#ivBehaviorList', ['BEHAVIOR']);
 }
 
+/* 作用域相关 UI 同步：未分配桶模式下禁用需真实套件的动作，对象选择器降级为自由文本 */
+function ivSyncScopeUI() {
+  const noSuite = !state.currentSuiteId;
+  const draft = $('#ivDraft'), exp = $('#ivExport');
+  if (draft) { draft.disabled = noSuite; draft.title = noSuite ? '需先选择套件（桶内记录认领后再生成草稿）' : '把本套件全部访谈记录生成为一个独立画板草稿（角色/规则/参与关系自动预填）'; }
+  if (exp) { exp.disabled = noSuite; exp.title = noSuite ? '需先选择套件' : '导出全部访谈记录为 Markdown 纪要（gap 项可辨识）'; }
+  const nameInput = $('#ivEntityName'), entSel = $('#ivEntity');
+  if (nameInput) nameInput.style.display = noSuite ? '' : 'none';
+  if (entSel) entSel.style.display = noSuite ? 'none' : '';
+}
+
 function selectInterviewNode(code) {
   iv.selectedCode = code;
   const rec = ivRecordOf(code);
@@ -160,6 +187,7 @@ function selectInterviewNode(code) {
 function renderInterviewForm() {
   const node = iv.selectedCode ? ivFindNode(iv.selectedCode) : null;
   const empty = $('#ivEmpty'), form = $('#ivForm');
+  ivSyncScopeUI();
   if (!iv.selectedCode || !node) {
     iv.selectedCode = null; iv.currentId = null;
     empty.style.display = ''; form.style.display = 'none';
@@ -195,6 +223,8 @@ function renderInterviewForm() {
   objCb.closest('.iv-q').classList.toggle('off', !objCb.checked);
   $('#ivEntity').value = (obj && obj.value && obj.entityId) || '';
   $('#ivOp').value = (obj && obj.value && obj.op) || '';
+  const enInput = $('#ivEntityName');
+  if (enInput) enInput.value = (obj && obj.value && obj.entityName) || '';
   $('#ivNote').value = (rec && rec.note) || '';
   renderIvProjectLine();
 }
@@ -206,6 +236,7 @@ function ivCollectForm() {
   ans.hasObject = {
     value: $('#ivHasObject').checked,
     entityId: $('#ivEntity').value || undefined,
+    entityName: ($('#ivEntityName') ? $('#ivEntityName').value.trim() : '') || undefined,
     op: $('#ivOp').value || undefined,
   };
   ans.hasRule = { value: $('#ivHasRule').checked, ruleRef: $('#ivRule').value.trim() || undefined };
@@ -228,6 +259,9 @@ function renderIvProjectLine() {
     el.className = 'iv-project on';
     el.innerHTML = `⚙️ 保存后自动派生参与关系：<b>${esc(ent ? ent.name : '')}</b> × ${esc($('#ivOp').value.toUpperCase())}
       → <span class="mono">ACTIVITY_OPERATES_OBJECT</span>（derivedFrom: <span class="mono">${esc(src)}</span>）`;
+  } else if (!state.currentSuiteId) {
+    el.className = 'iv-project';
+    el.textContent = '📥 未分配桶模式：记录先存入桶中，认领进套件并绑定实体后才会投影参与关系。';
   } else {
     el.className = 'iv-project';
     el.textContent = '勾选 ② 并选择对象与操作后，保存即自动投影为参与关系（读取时推导，重导入不丢失）。';
@@ -248,7 +282,7 @@ $('#ivSave') && $('#ivSave').addEventListener('click', async () => {
   const btn = $('#ivSave');
   btn.disabled = true;
   try {
-    const saved = await api(`/api/suites/${encodeURIComponent(state.currentSuiteId)}/interviews`, {
+    const saved = await api(`/api/suites/${encodeURIComponent(ivScope())}/interviews`, {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(ivCollectForm()),
     });
@@ -260,7 +294,7 @@ $('#ivSave') && $('#ivSave').addEventListener('click', async () => {
     renderIvRightList();
     ivLoadEvidence(true);
     const proj = saved.answers.hasObject?.value && saved.answers.hasObject.entityId && saved.answers.hasObject.op;
-    toast(proj ? '已保存，参与关系已自动投影' : '已保存访谈记录', 'ok');
+    toast(proj ? '已保存，参与关系已自动投影' : (state.currentSuiteId ? '已保存访谈记录' : '已保存到未分配桶（建套件后可认领）'), 'ok');
   } catch (err) {
     toast('保存失败：' + err.message, 'err');
   } finally { btn.disabled = false; }
@@ -270,7 +304,7 @@ $('#ivDelete') && $('#ivDelete').addEventListener('click', async () => {
   if (!iv.currentId) return;
   if (!confirm('确定删除该节点的访谈记录？投影关系将随之消失。')) return;
   try {
-    await api(`/api/suites/${encodeURIComponent(state.currentSuiteId)}/interviews/${encodeURIComponent(iv.currentId)}`, { method: 'DELETE' });
+    await api(`/api/suites/${encodeURIComponent(ivScope())}/interviews/${encodeURIComponent(iv.currentId)}`, { method: 'DELETE' });
     state.interviews = state.interviews.filter(r => r.id !== iv.currentId);
     iv.currentId = null;
     renderInterviewForm();
@@ -319,55 +353,110 @@ function ivNodeLabelOf(code) {
   return n ? (n.label || '') : code;
 }
 
+/* 认领：把桶内记录迁入当前套件（保留 apqcCode/answers/note；id 由服务端重新生成，派生关系读取时重算无悬挂引用） */
+async function ivClaimRecords(recs) {
+  if (!state.currentSuiteId || !recs.length) return;
+  const allBtn = $('#ivClaimAll'); if (allBtn) allBtn.disabled = true;
+  let ok = 0, fail = 0;
+  for (const rec of recs) {
+    try {
+      await api('/api/suites/' + encodeURIComponent(state.currentSuiteId) + '/interviews', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ apqcCode: rec.apqcCode, answers: rec.answers, note: rec.note }),
+      });
+      await api(`/api/suites/${IV_UNASSIGNED}/interviews/${encodeURIComponent(rec.id)}`, { method: 'DELETE' });
+      ok++;
+    } catch { fail++; }
+  }
+  try { await loadInterviewScope(); } catch { /* 重拉失败不阻断 */ }
+  renderInterviewTree();
+  renderIvRightList();
+  if (fail) toast(`认领完成：成功 ${ok} 条，失败 ${fail} 条`, ok === 0 ? 'err' : '');
+  else toast(`已认领 ${ok} 条记录到当前套件`, 'ok');
+}
+
+function ivItemHtml(r, claimable) {
+  const a = r.answers || {};
+  const bits = [];
+  if (a.hasRole?.value && a.hasRole.roleRef) bits.push(`👤 ${esc(a.hasRole.roleRef)}`);
+  if (a.hasObject?.value && (a.hasObject.entityId || a.hasObject.entityName) && a.hasObject.op) {
+    const ent = a.hasObject.entityId ? ivEntityById(a.hasObject.entityId) : null;
+    bits.push(`📄 ${esc(ent ? ent.name : (a.hasObject.entityName || a.hasObject.entityId))} × ${IV_OP_SHORT[a.hasObject.op] || ''}`);
+  }
+  if (a.hasRule?.value && a.hasRule.ruleRef) bits.push(`📏 ${esc(a.hasRule.ruleRef)}`);
+  else if (a.hasRule && !a.hasRule.value) bits.push('📏 客户未提');
+  if (a.hasBehavior?.value && a.hasBehavior.behaviorRef) bits.push(`⚙️ ${esc(a.hasBehavior.behaviorRef)}`);
+  const proj = !!(a.hasObject?.value && a.hasObject.entityId && a.hasObject.op);
+  return `<div class="iv-item ${!claimable && r.apqcCode === iv.selectedCode ? 'selected' : ''}" data-code="${esc(r.apqcCode)}" ${claimable ? 'data-ua="1"' : ''}>
+    <div class="ii-code">${esc(r.apqcCode)}</div>
+    <div class="ii-name">${esc(ivNodeLabelOf(r.apqcCode))}</div>
+    <div class="ii-sum">${bits.join('<br>') || '—'}</div>
+    ${proj ? '<span class="ii-badge">⇒ 已自动投影</span>' : ''}
+    ${claimable ? `<button class="ii-claim" data-iid="${esc(r.id)}" title="把这条记录认领进当前套件">⇩ 认领</button>` : ''}
+    <button class="ii-del" data-iid="${esc(r.id)}" title="删除记录">✕</button>
+  </div>`;
+}
+
 function renderIvRightList() {
   const box = $('#ivList');
   const list = state.interviews || [];
   $('#ivCount').textContent = list.length ? `${list.length} 条` : '';
   $('#cntInterviews').textContent = list.length || '';
-  if (!list.length) {
-    box.innerHTML = '<div class="empty-hint" style="height:160px"><div><div class="big">🎤</div>暂无访谈记录<br>从左侧选择 L3/L4 节点开始四问</div></div>';
+  const ua = state.currentSuiteId ? (state.unassignedInterviews || []) : [];
+  if (!list.length && !ua.length) {
+    const hint = state.currentSuiteId
+      ? '暂无访谈记录<br>从左侧选择 L3/L4 节点开始四问'
+      : '未分配桶为空<br>从左侧选择 L3/L4 节点开始四问，记录将存入桶中';
+    box.innerHTML = `<div class="empty-hint" style="height:160px"><div><div class="big">🎤</div>${hint}</div></div>`;
     return;
   }
-  box.innerHTML = list.map(r => {
-    const a = r.answers || {};
-    const bits = [];
-    if (a.hasRole?.value && a.hasRole.roleRef) bits.push(`👤 ${esc(a.hasRole.roleRef)}`);
-    if (a.hasObject?.value && a.hasObject.entityId && a.hasObject.op) {
-      const ent = ivEntityById(a.hasObject.entityId);
-      bits.push(`📄 ${esc(ent ? ent.name : a.hasObject.entityId)} × ${IV_OP_SHORT[a.hasObject.op] || ''}`);
-    }
-    if (a.hasRule?.value && a.hasRule.ruleRef) bits.push(`📏 ${esc(a.hasRule.ruleRef)}`);
-    else if (a.hasRule && !a.hasRule.value) bits.push('📏 客户未提');
-    if (a.hasBehavior?.value && a.hasBehavior.behaviorRef) bits.push(`⚙️ ${esc(a.hasBehavior.behaviorRef)}`);
-    const proj = !!(a.hasObject?.value && a.hasObject.entityId && a.hasObject.op);
-    return `<div class="iv-item ${r.apqcCode === iv.selectedCode ? 'selected' : ''}" data-code="${esc(r.apqcCode)}">
-      <div class="ii-code">${esc(r.apqcCode)}</div>
-      <div class="ii-name">${esc(ivNodeLabelOf(r.apqcCode))}</div>
-      <div class="ii-sum">${bits.join('<br>') || '—'}</div>
-      ${proj ? '<span class="ii-badge">⇒ 已自动投影</span>' : ''}
-      <button class="ii-del" data-iid="${esc(r.id)}" title="删除记录">✕</button>
-    </div>`;
-  }).join('');
+  let html = list.map(r => ivItemHtml(r, false)).join('');
+  if (ua.length) {
+    html += `<div class="iv-ua-sep"><span>📥 未分配桶 · ${ua.length} 条（进场期记录）</span>
+      <button class="btn" id="ivClaimAll" title="把桶内全部记录认领进当前套件">全部认领</button></div>`
+      + ua.map(r => ivItemHtml(r, true)).join('');
+  }
+  box.innerHTML = html;
 }
 
 $('#ivList') && $('#ivList').addEventListener('click', async (e) => {
+  // 认领（单条）
+  const claim = e.target.closest('.ii-claim');
+  if (claim) {
+    const rec = (state.unassignedInterviews || []).find(r => r.id === claim.dataset.iid);
+    if (rec) await ivClaimRecords([rec]);
+    return;
+  }
+  // 全部认领
+  if (e.target.closest('#ivClaimAll')) {
+    await ivClaimRecords((state.unassignedInterviews || []).slice());
+    return;
+  }
   const del = e.target.closest('.ii-del');
   if (del) {
-    const rec = (state.interviews || []).find(r => r.id === del.dataset.iid);
+    const item = del.closest('.iv-item');
+    const inBucket = !!(item && item.dataset.ua === '1');
+    const src = inBucket ? (state.unassignedInterviews || []) : (state.interviews || []);
+    const rec = src.find(r => r.id === del.dataset.iid);
     if (!rec) return;
     if (!confirm(`删除 ${rec.apqcCode} 的访谈记录？`)) return;
     try {
-      await api(`/api/suites/${encodeURIComponent(state.currentSuiteId)}/interviews/${encodeURIComponent(rec.id)}`, { method: 'DELETE' });
-      state.interviews = state.interviews.filter(r => r.id !== rec.id);
-      if (iv.currentId === rec.id) { iv.currentId = null; renderInterviewForm(); }
-      renderInterviewTree();
+      const scope = inBucket ? IV_UNASSIGNED : ivScope();
+      await api(`/api/suites/${encodeURIComponent(scope)}/interviews/${encodeURIComponent(rec.id)}`, { method: 'DELETE' });
+      if (inBucket) {
+        state.unassignedInterviews = state.unassignedInterviews.filter(r => r.id !== rec.id);
+      } else {
+        state.interviews = state.interviews.filter(r => r.id !== rec.id);
+        if (iv.currentId === rec.id) { iv.currentId = null; renderInterviewForm(); }
+        renderInterviewTree();
+      }
       renderIvRightList();
       toast('已删除访谈记录', 'ok');
     } catch (err) { toast('删除失败：' + err.message, 'err'); }
     return;
   }
   const item = e.target.closest('.iv-item');
-  if (item) selectInterviewNode(item.dataset.code);
+  if (item && item.dataset.ua !== '1') selectInterviewNode(item.dataset.code);
 });
 
 /* ─────────── 右栏：证据板（流程图 + 本体同屏） ─────────── */

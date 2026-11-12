@@ -255,7 +255,8 @@ function ensurePanelMounted(): void {
   panelIframe.style.cssText = 'width:100%;height:100%;border:0;display:block;'
   panelIframe.title = 'Ontology'
   if (serverBaseUrl) panelIframe.src = serverBaseUrl
-  panelIframe.addEventListener('load', () => injectThemeToIframe(panelIframe!))
+  const iframeRef = panelIframe
+  iframeRef.addEventListener('load', () => injectThemeToIframe(iframeRef))
 
   panelContainer.appendChild(panelIframe)
   column.appendChild(panelContainer)
@@ -277,15 +278,19 @@ function createSidebarEntry(): HTMLButtonElement {
   entry.setAttribute('aria-label', 'Ontology')
 
   entry.addEventListener('click', () => {
-    if (isPanelOpen()) {
-      closePanel()
-      delete entry.dataset.active
-    } else {
-      openPanel()
-      if (panelIframe && serverBaseUrl && panelIframe.src !== serverBaseUrl) {
-        panelIframe.src = serverBaseUrl
+    try {
+      if (isPanelOpen()) {
+        closePanel()
+        delete entry.dataset.active
+      } else {
+        openPanel()
+        if (panelIframe && serverBaseUrl && panelIframe.src !== serverBaseUrl) {
+          panelIframe.src = serverBaseUrl
+        }
+        entry.dataset.active = 'true'
       }
-      entry.dataset.active = 'true'
+    } catch (err) {
+      console.error('[dsh-ontology] sidebar entry click error:', err)
     }
   })
 
@@ -340,6 +345,12 @@ function mountLegacy(): () => void {
   let placed = false
   let root: HTMLElement | undefined
 
+  const safe = <T extends (...args: never[]) => void>(fn: T): T => {
+    return ((...args: never[]) => {
+      try { fn(...args) } catch (err) { dbg('callback error:', err) }
+    }) as T
+  }
+
   const tryPlace = (): void => {
     if (root !== undefined && !root.isConnected) {
       root = undefined
@@ -370,21 +381,10 @@ function mountLegacy(): () => void {
     placed = true
   }
 
-  const waitObserver = new MutationObserver(() => { tryPlace() })
+  const waitObserver = new MutationObserver(safe(() => { tryPlace() }))
   waitObserver.observe(document.body, { childList: true, subtree: true })
 
-  const rootObserver = new MutationObserver(() => {
-    if (root === undefined || !root.isConnected) {
-      placed = false
-      tryPlace()
-      return
-    }
-    if (!root.contains(entry)) {
-      placed = placeEntry(root, entry)
-    }
-  })
-
-  const retry = setInterval(() => { tryPlace() }, 2_000)
+  const retry = setInterval(safe(() => { tryPlace() }), 2_000)
 
   const syncActive = (): void => {
     if (panelOpen) entry.dataset.active = 'true'
@@ -392,7 +392,7 @@ function mountLegacy(): () => void {
   }
 
   const SIDEBAR_ROW_SELECTOR = '[class*="sessionRow"], [class*="projectRow"], [class*="searchResultRow"], [class*="searchResultWorkspace"], [class*="newSession"], [data-dsh-taskboard-entry], [data-dsh-ssh-entry], [data-dsh-plugin]'
-  const onClickSidebarRow = (event: MouseEvent): void => {
+  const onClickSidebarRow = safe((event: MouseEvent): void => {
     if (!panelOpen) return
     const target = event.target as HTMLElement | null
     if (target === null) return
@@ -407,19 +407,19 @@ function mountLegacy(): () => void {
       closePanel()
       syncActive()
     }
-  }
-  const onOtherActivate = (event: Event): void => {
+  })
+  const onOtherActivate = safe((event: Event): void => {
     const detail = (event as CustomEvent).detail
     if (detail === PANEL_NAME || detail === '') return
     if (panelOpen) closePanel()
     document.documentElement.removeAttribute(ACTIVE_ATTR)
     syncActive()
-  }
+  })
 
   document.addEventListener('click', onClickSidebarRow, true)
   document.addEventListener(ACTIVATE_EVENT, onOtherActivate)
 
-  const htmlAttrObserver = new MutationObserver((mutations) => {
+  const htmlAttrObserver = new MutationObserver(safe((mutations: MutationRecord[]) => {
     for (const m of mutations) {
       if (m.type !== 'attributes') continue
       if (m.attributeName === ACTIVE_ATTR) continue
@@ -432,12 +432,12 @@ function mountLegacy(): () => void {
         }
       }
     }
-  })
+  }))
   htmlAttrObserver.observe(document.documentElement, { attributes: true })
 
-  const panelObserver = new MutationObserver(() => {
+  const panelObserver = new MutationObserver(safe(() => {
     if (panelOpen) ensurePanelMounted()
-  })
+  }))
   panelObserver.observe(document.body, { childList: true, subtree: true })
 
   tryPlace()
@@ -446,7 +446,6 @@ function mountLegacy(): () => void {
   return () => {
     clearInterval(retry)
     waitObserver.disconnect()
-    rootObserver.disconnect()
     panelObserver.disconnect()
     htmlAttrObserver.disconnect()
     document.removeEventListener('click', onClickSidebarRow, true)
@@ -454,20 +453,6 @@ function mountLegacy(): () => void {
     document.documentElement.removeAttribute(ACTIVE_ATTR)
     entry.remove()
   }
-}
-
-function placeEntry(root: HTMLElement, entry: HTMLButtonElement): boolean {
-  const button = newSessionButton(root)
-  if (button === undefined) return false
-  if (entry.parentElement !== root) {
-    const family = Array.from(root.children).filter(
-      (el): el is HTMLElement => el instanceof HTMLElement && el.matches('[data-dsh-ontology-entry], [data-dsh-taskboard-entry], [data-dsh-ssh-entry]'),
-    )
-    const anchor = family.length > 0 ? (family[0] ?? null) : (button.nextElementSibling ?? null)
-    if (anchor) root.insertBefore(entry, anchor)
-    else root.appendChild(entry)
-  }
-  return true
 }
 
 const OFFICIAL_PANEL_ID = 'dsh-ontology'
@@ -559,53 +544,76 @@ function tryRegisterOfficial(slots: SlotsServiceFace, ctx: MountContextFace): ((
 const PROBE_ROUNDS = 3
 const PROBE_INTERVAL_MS = 350
 
+/**
+ * 挂载面板：优先尝试官方 slots 注册，同时始终保留 legacy DOM 条目作为兜底。
+ * 官方注册被 harness 注销时，legacy 条目自动可见，确保插件不会从侧边栏消失。
+ */
 function mountPanelCompat(ctx: MountContextFace): () => void {
-  const slots = officialSlots(ctx)
-  console.info('[dsh-ontology] mountPanelCompat: slots available =', !!slots)
-  if (slots !== undefined) {
+  // 始终先挂载 legacy 条目（自愈式，MutationObserver 会在被移除时重新注入）
+  const legacyDisposer = mountLegacy()
+
+  // 尝试官方路径注册
+  let upgraded: (() => void) | undefined
+  let officialActive = false
+
+  const tryOfficial = (): boolean => {
+    const slots = officialSlots(ctx)
+    if (slots === undefined) return false
     const dispose = tryRegisterOfficial(slots, ctx)
-    if (dispose !== undefined) {
-      console.info('[dsh-ontology] → using OFFICIAL path')
-      return dispose
-    }
+    if (dispose === undefined) return false
+    upgraded = dispose
+    officialActive = true
+    return true
   }
 
-  console.info('[dsh-ontology] → using LEGACY path (slots unavailable or registration failed)')
-  let legacyDisposer: (() => void) | undefined = mountLegacy()
+  // 首次尝试
+  if (tryOfficial()) {
+    console.info('[dsh-ontology] → using OFFICIAL path (legacy kept as fallback)')
+  } else {
+    console.info('[dsh-ontology] → using LEGACY path (probing official...)')
+  }
 
+  // 官方条目可见性同步：官方条目存在时隐藏 legacy 条目，官方被移除时 legacy 自动显示
+  const syncLegacyVisibility = (): void => {
+    const officialEntry = document.querySelector('[data-dsh-plugin="dsh-ontology"]:not([data-dsh-ontology-entry])')
+    const legacyEntry = document.querySelector<HTMLElement>('[data-dsh-ontology-entry]')
+    if (legacyEntry) {
+      legacyEntry.style.display = officialEntry ? 'none' : ''
+    }
+  }
+  const visObserver = new MutationObserver(syncLegacyVisibility)
+  visObserver.observe(document.body, { childList: true, subtree: true })
+  syncLegacyVisibility()
+
+  // 探测：后续轮次尝试升级到官方路径
   let round = 0
-  let upgraded: (() => void) | undefined
   const timer = setInterval(() => {
+    if (officialActive) { clearInterval(timer); return }
     round++
-    const probed = officialSlots(ctx)
-    if (probed !== undefined) {
-      const dispose = tryRegisterOfficial(probed, ctx)
-      if (dispose !== undefined) {
-        upgraded = dispose
-        legacyDisposer?.()
-        legacyDisposer = undefined
-        clearInterval(timer)
-        console.info('[dsh-ontology] → UPGRADED from legacy to official')
-        return
-      }
-    }
-    if (round >= PROBE_ROUNDS) {
+    if (tryOfficial()) {
       clearInterval(timer)
+      syncLegacyVisibility()
+      console.info('[dsh-ontology] → UPGRADED to official (legacy kept as fallback)')
+      return
     }
+    if (round >= PROBE_ROUNDS) clearInterval(timer)
   }, PROBE_INTERVAL_MS)
+
   return () => {
     clearInterval(timer)
-    legacyDisposer?.()
+    visObserver.disconnect()
     upgraded?.()
+    legacyDisposer()
   }
 }
 
-declare global { var __dshOntologyApplied: boolean | undefined }
+let mounted = false
 
 export function apply(ctx: Context): void {
   if (typeof document === 'undefined') return
-  if (globalThis.__dshOntologyApplied) return
-  globalThis.__dshOntologyApplied = true
+  // 幂等：已挂载则跳过，避免重复注入
+  if (mounted) return
+  mounted = true
 
   const mountCtx = ctx as unknown as MountContextFace
 
@@ -625,23 +633,37 @@ export function apply(ctx: Context): void {
     const disposer = mountPanelCompat(mountCtx)
 
     const themeObserver = new MutationObserver(() => {
-      if (panelIframe) injectThemeToIframe(panelIframe)
+      try { if (panelIframe) injectThemeToIframe(panelIframe) } catch { /* ignore */ }
     })
     themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-ds-theme', 'data-ds-dark-theme', 'class', 'style'] })
     if (document.body) themeObserver.observe(document.body, { attributes: true, attributeFilter: ['data-ds-theme', 'data-ds-dark-theme', 'class', 'style'] })
 
     const globalAttrObserver = new MutationObserver(() => {
-      if (!panelOpen && document.documentElement.hasAttribute(ACTIVE_ATTR)) {
-        document.documentElement.removeAttribute(ACTIVE_ATTR)
-      }
+      try {
+        if (!panelOpen && document.documentElement.hasAttribute(ACTIVE_ATTR)) {
+          document.documentElement.removeAttribute(ACTIVE_ATTR)
+        }
+      } catch { /* ignore */ }
     })
     globalAttrObserver.observe(document.documentElement, { attributes: true, attributeFilter: [ACTIVE_ATTR] })
 
-    ;(ctx as unknown as { effect?: (fn: () => () => void, label?: string) => void }).effect?.(() => {
-      const cleanup = () => { disposer(); globalAttrObserver.disconnect(); themeObserver.disconnect() }
-      return cleanup
-    }, 'dsh-ontology: client mount')
+    // 通过 ctx.on('dispose') 注册清理，而非 ctx.effect——避免 harness 在正常操作中
+    // 触发 effect 清理导致侧边栏条目被移除且无法恢复。
+    const ctxAny = ctx as unknown as { on?: (event: string, fn: () => void) => void }
+    const cleanup = (): void => {
+      disposer()
+      globalAttrObserver.disconnect()
+      themeObserver.disconnect()
+      mounted = false
+    }
+    if (typeof ctxAny.on === 'function') {
+      ctxAny.on('dispose', cleanup)
+    }
   }
 
-  init().catch((err) => console.error('[dsh-ontology] init failed:', err))
+  init().catch((err) => {
+    console.error('[dsh-ontology] init failed:', err)
+    // 初始化失败时重置标志，允许下次 apply 重试
+    mounted = false
+  })
 }

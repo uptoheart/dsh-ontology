@@ -11,7 +11,9 @@
   "relationCount": 141,
   "appId": "chemical-safety",
   "frameworks": [
-    "apqc-process"
+    "apqc-process",
+    "hw-style-pcf"
   ],
-  "activeFrameworkId": "apqc-process"
+  "activeFrameworkId": "apqc-process",
+  "frameworkId": "apqc-process"
 }

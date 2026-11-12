@@ -8,6 +8,8 @@ const STATUS_LABEL = { covered: '已覆盖', partial: '部分', gap: '缺口', u
 const PAGE_SIZE = 300;
 /* 旧套件（meta 无 frameworkId）兼容缺省；实际框架跟随套件 meta（项目级锁定） */
 const LEGACY_DEFAULT_FW = 'apqc-process';
+/* 全局缺省框架（无套件冷启动时加载）：与 builtin-frameworks.ts 的 DEFAULT_NEW_SUITE_FW 对齐，前端纯 JS 需显式写死 */
+const GLOBAL_DEFAULT_FW = 'hw-style-pcf';
 function suiteFw(suite) { return (suite && suite.meta && suite.meta.frameworkId) || LEGACY_DEFAULT_FW; }
 /* 框架轻量清单（id → 名称），init 时加载 */
 let FW_LIST = [];
@@ -108,7 +110,9 @@ const state = {
   framework: null,      // FrameworkDefinition
   coverage: null,       // CoverageMatrix
   dictionary: null,     // DomainDictionary（受控词表，只读）
-  interviews: [],       // InterviewRecord[]（当前套件访谈记录）
+  domainReconcile: null, // DomainReconcileResult（领域对齐 dry-run 结果）
+  interviews: [],       // InterviewRecord[]（当前作用域访谈记录：套件或未分配桶）
+  unassignedInterviews: [], // InterviewRecord[]（未分配桶，仅在选中套件时加载，供认领）
   flatFw: [],           // 框架扁平索引（含 definition / path）
   entityFilter: { kind: '', keyword: '' },
   entityPage: 1,
@@ -118,6 +122,10 @@ const state = {
   drawer: null,         // {entityId, apqc, status, note}
   agent: null,          // FDE 助手运行时状态（首次进入初始化）
   loading: false,
+  graphScope: 'suite',  // 'suite' = 当前套件图谱；'global' = 全局本体图谱（世界本体）
+  globalGraph: null,    // GraphData {nodes, edges}，全局图谱缓存
+  processLinks: [],     // GlobalProcessLink[]（全局「本体↔流程」关联，只读派生）
+  browseMode: false,    // 流程地图浏览模式（无套件，仅展示全局关联）
 };
 
 /* 实体标注快捷读取（套件页表格 + 本体详情共用）
@@ -139,7 +147,7 @@ function entityApqc(eid) {
   const e = fwEntryOf(eid); return e && e.apqcCode ? e.apqcCode : null
 }
 function entityStatus(eid) {
-  const m = state.suite.annotations.coverageMarks[eid];
+  const m = state.suite?.annotations?.coverageMarks?.[eid];
   return (m && m.status) || 'unset';
 }
 
@@ -263,13 +271,40 @@ async function removeFrameworkFromSuite(rmFwId) {
 /* ═════════════════════════ Tab 切换 ═════════════════════════ */
 function switchTab(name) {
   document.querySelectorAll('nav.tabs button').forEach(b => b.classList.toggle('active', b.dataset.tab === name));
-  document.querySelectorAll('.tab-panel').forEach(p => p.classList.toggle('active', p.id === 'tab-' + name));
-  if (name === 'framework') renderTree();
+  // global 图谱复用 ontology 面板（同一画布，不同数据源）
+  const panelName = (name === 'global') ? 'ontology' : name;
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.toggle('active', p.id === 'tab-' + panelName));
+  if (name === 'framework') { renderTree(); renderNodeDetail(); }
   if (name === 'flowchart') { renderFlowTree(); renderMountSelect(); refreshFlowList(); }
   if (name === 'interview') renderInterviewTab();
-  if (name === 'ontology') { sizeCanvas(); ensureSim(false); }
+  if (name === 'ontology') { setGraphScope('suite'); sizeCanvas(); ensureSim(false); }
+  if (name === 'global') { setGraphScope('global'); sizeCanvas(); ensureSim(false); }
   if (name === 'agent') renderAgentTab();
   if (name === 'safety' && typeof initSafety === 'function') initSafety();
+}
+
+/** 设置图谱范围：suite=当前套件局部图谱，global=跨套件合并的世界本体 */
+function setGraphScope(scope) {
+  if (typeof state === 'undefined') return;
+  if (state.graphScope === scope) return;
+  state.graphScope = scope;
+  const title = $('#graphTitle');
+  const subtitle = $('#graphSubtitle');
+  const viewToggle = document.querySelector('#tab-ontology .view-toggle');
+  if (title) title.textContent = scope === 'global' ? '🌍 全局本体图谱' : '🕸️ 套件本体图谱';
+  if (subtitle) {
+    subtitle.textContent = scope === 'global'
+      ? '跨套件合并去重后的世界本体 · 主数据实体全局唯一'
+      : (state.currentSuiteId ? `当前套件：${state.currentSuiteId}` : '');
+  }
+  // 全局模式下 CRUD 矩阵无意义（矩阵基于套件流程），仅显示图形视图
+  if (viewToggle) viewToggle.style.display = scope === 'global' ? 'none' : '';
+  if (scope === 'global') {
+    state.viewMode = 'graph';
+    document.querySelectorAll('#tab-ontology .view-toggle .toggle').forEach(b => b.classList.toggle('active', b.dataset.view === 'graph'));
+  }
+  // 触发图谱数据加载与重绘
+  if (typeof refreshGraphByScope === 'function') refreshGraphByScope();
 }
 
 $('#tabs').addEventListener('click', (e) => {
@@ -302,9 +337,35 @@ document.addEventListener('change', (e) => {
 
 function updateTabLock() {
   const has = !!state.suite;
+  const hasFw = !!state.framework;
+  // 仅需全局框架即可工作的 Tab：流程画板、访谈清单、流程地图（浏览模式）
+  const fwOnly = ['flowchart', 'interview', 'framework'];
   document.querySelectorAll('nav.tabs button').forEach(b => {
-    if (b.dataset.tab !== 'suites' && b.dataset.tab !== 'safety') b.disabled = !has;
+    // suites / safety / global 不依赖当前选中套件（global 跨所有已导入套件）
+    if (b.dataset.tab !== 'suites' && b.dataset.tab !== 'safety' && b.dataset.tab !== 'global') {
+      b.disabled = fwOnly.includes(b.dataset.tab) ? !hasFw : !has;
+    }
   });
+}
+
+/* 无套件冷启动：加载全局缺省框架，使画板/访谈两棵树可用（selectSuite 会整组覆盖框架状态，天然优先于此） */
+async function ensureGlobalFramework() {
+  if (state.framework && state.frameworkId === GLOBAL_DEFAULT_FW) return;
+  const framework = await api('/api/frameworks/' + GLOBAL_DEFAULT_FW);
+  state.framework = framework;
+  state.frameworkId = GLOBAL_DEFAULT_FW;
+  state.flatFw = flattenFramework(framework);
+}
+
+/* 全局「本体↔流程」关联（只读派生，跨套件合并，保留来源套件） */
+async function loadGlobalProcessLinks() {
+  try {
+    const links = await api('/api/global/process-links');
+    state.processLinks = Array.isArray(links) ? links : [];
+  } catch {
+    state.processLinks = [];
+  }
+  return state.processLinks;
 }
 
 /* 从框架详情跳转到实体并打开抽屉（实体列表在「本体管理」右侧） */
@@ -336,9 +397,11 @@ function openDrawer(entityId) {
   $('#dwInfo').innerHTML = `
     <dt>Kind</dt><dd><span class="kind-tag">${esc(ent.kind)}</span></dd>
     <dt>轴向</dt><dd>${kindAxisLabel(ent.kind)}</dd>
-    <dt>领域</dt><dd>${esc(ent.domain || '—')}</dd>
+    <dt>领域</dt><dd>${esc(ent.domain || '—')}${ent.domainCategory ? ` <span class="cat-tag cat-${ent.domainCategory}">${catLabel(ent.domainCategory)}</span>` : ''}</dd>
+    ${ent.domainCode ? `<dt>标准领域</dt><dd>${esc(ent.domainCode)} ${esc(ent.domainLabel || '')}<span class="e-id"> · ${esc(ent.domainSource || 'rule')}</span></dd>` : ''}
     <dt>来源</dt><dd class="mono" style="font-size:11px">${esc(ent.sourceFile || '—')}</dd>
     <dt>实体 ID</dt><dd class="mono" style="font-size:11px">${esc(ent.id)}</dd>
+    ${ent.canonicalId && ent.canonicalId !== ent.id ? `<dt>规范 ID</dt><dd class="mono" style="font-size:11px">${esc(ent.canonicalId)}</dd>` : ''}
     <dt>框架路径</dt><dd style="line-height:1.7">${fwPathHtml(state.drawer.apqc)}</dd>`;
   const axis = kindAxis(ent.kind);
   const inp = $('#dwApqc');
@@ -361,6 +424,14 @@ function kindAxisLabel(kind) {
   return axis === 'domain' ? '<span class="axis-tag axis-domain">名词轴 · L1/L2</span>'
     : axis === 'process' ? '<span class="axis-tag axis-process">动词轴 · L3-L5</span>'
     : '<span class="axis-tag axis-none">不参与映射</span>';
+}
+
+/* 领域类别中文标签 */
+function catLabel(cat) {
+  return cat === 'master' ? '主数据'
+    : cat === 'core' ? '核心域'
+    : cat === 'supporting' ? '支撑域'
+    : cat || '';
 }
 
 /* 按当前套件锁定的框架取示例编号：不同框架编号规则不同（APQC / hw-style PCF …），不能写死 */

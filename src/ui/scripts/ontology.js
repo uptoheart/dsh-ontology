@@ -16,6 +16,20 @@ const KIND_COLORS = {
   DANGLING_REF: '#9ca3af',
   PCF: '#c9873a',
 };
+/* 全局图谱模式：按领域类别着色（主数据=金色系，核心域=按套件哈希，支撑域=灰蓝） */
+const DOMAIN_CAT_COLORS = {
+  master: '#f59e0b',
+  core: '#3b82f6',
+  supporting: '#94a3b8',
+};
+/* 套件哈希色（全局模式下 core 实体按来源套件区分） */
+function suiteHashColor(suiteId) {
+  if (!suiteId) return DOMAIN_CAT_COLORS.core;
+  let h = 0;
+  for (let i = 0; i < suiteId.length; i++) h = (h * 31 + suiteId.charCodeAt(i)) >>> 0;
+  const hue = h % 360;
+  return `hsl(${hue}, 65%, 55%)`;
+}
 const RELATION_LABELS = {
   REFERENCE: '引用',
   AGGREGATE_OWN_ENTITY: '聚合拥有',
@@ -49,6 +63,7 @@ const graph = {
   allNodes: [],     // 全量（含隐藏）
   posMap: new Map(),// id -> {x,y}（跨筛选保留位置）
   visibleKinds: new Set(),
+  visibleCats: new Set(['master', 'core', 'supporting']), // 全局图谱双层级：domainCategory 过滤层
   alpha: 0,
   raf: 0,
   scale: 1, tx: 0, ty: 0,
@@ -84,28 +99,95 @@ function kindCounts(entities) {
 }
 
 function renderLegend() {
-  if (!state.suite) { $('#kindLegend').innerHTML = ''; return; }
-  const counts = kindCounts(state.suite.entities);
-  const maps = pcfMapping();
-  const codes = new Set();
-  for (const e of state.suite.entities) {
-    const entry = fwEntryOf(e.id);
-    if (entry && entry.apqcCode && graph.visibleKinds.has(e.kind)) codes.add(entry.apqcCode);
+  const isGlobal = state.graphScope === 'global'
+  const nodes = isGlobal
+    ? ((state.globalGraph && state.globalGraph.nodes) || [])
+    : (state.suite ? state.suite.entities : [])
+
+  // ── domainCategory 统计（仅 global 有意义，suite 一般只有一个） ──
+  const catCounts = { master: 0, core: 0, supporting: 0 }
+  for (const n of nodes) {
+    const c = n.group || 'core'
+    catCounts[c] = (catCounts[c] || 0) + 1
   }
-  const pcfChip = codes.size
-    ? `<button class="lg-chip ${graph.showPcf ? '' : 'off'}" data-pcf="1" title="显示/隐藏 PCF 编号投影节点"><i style="background:${KIND_COLORS.PCF}"></i>PCF 投影 <b>${codes.size}</b></button>`
-    : '';
-  $('#kindLegend').innerHTML = Array.from(counts.entries()).sort((a, b) => b[1] - a[1]).map(([k, n]) => `
-    <button class="lg-chip ${graph.visibleKinds.has(k) ? '' : 'off'}" data-kind="${esc(k)}" title="点击显示/隐藏该类型">
-      <i style="background:${KIND_COLORS[k] || '#9ca3af'}"></i>${esc(k)} <b>${n}</b>
-    </button>`).join('') + pcfChip;
+
+  // ── kind 统计 ──
+  const kindCounts = new Map()
+  for (const n of nodes) kindCounts.set(n.kind, (kindCounts.get(n.kind) || 0) + 1)
+
+  // ── 第一行：domainCategory 过滤（global 可点击，suite 只读参考） ──
+  const catLabel = { master: '主数据', core: '核心域', supporting: '支撑域' }
+  const catTitle = {
+    master: '跨套件共享的基础数据实体（如产品/客户/设备）',
+    core: '套件核心业务对象与跨套件引用',
+    supporting: '法规/流程/权限等支撑性实体',
+  }
+  let catRow = ''
+  for (const c of ['master', 'core', 'supporting']) {
+    if (!catCounts[c]) continue // 该类别为 0 则不渲染 chip，避免视觉噪音
+    if (isGlobal) {
+      // global 模式：可点击切换
+      const on = graph.visibleCats.has(c)
+      catRow += `<button class="lg-chip cat-chip ${on ? '' : 'off'}" data-cat="${c}" title="${esc(catTitle[c])}">
+        <i style="background:${DOMAIN_CAT_COLORS[c]}"></i>${esc(catLabel[c])} <b>${catCounts[c]}</b>
+      </button>`
+    } else {
+      // suite 模式：只读（suite 不按 domainCategory 过滤）
+      catRow += `<span class="lg-chip cat-chip readonly" title="${esc(catTitle[c])}">
+        <i style="background:${DOMAIN_CAT_COLORS[c]}"></i>${esc(catLabel[c])} <b>${catCounts[c]}</b>
+      </span>`
+    }
+  }
+
+  // ── 第二行：kind 过滤（始终可点击） ──
+  const kindRow = Array.from(kindCounts.entries())
+    .sort((a, b) => b[1] - a[1])
+    .map(([k, n]) => `
+      <button class="lg-chip ${graph.visibleKinds.has(k) ? '' : 'off'}" data-kind="${esc(k)}" title="点击显示/隐藏 ${esc(k)} 类型节点">
+        <i style="background:${KIND_COLORS[k] || '#9ca3af'}"></i>${esc(k)} <b>${n}</b>
+      </button>`).join('')
+
+  // ── PCF 投影 chip（仅套件图谱） ──
+  let pcfChip = ''
+  if (!isGlobal && state.suite) {
+    const codes = new Set()
+    for (const e of state.suite.entities) {
+      const entry = fwEntryOf(e.id)
+      if (entry && entry.apqcCode && graph.visibleKinds.has(e.kind)) codes.add(entry.apqcCode)
+    }
+    if (codes.size) {
+      pcfChip = `<button class="lg-chip ${graph.showPcf ? '' : 'off'}" data-pcf="1" title="显示/隐藏 PCF 编号投影节点"><i style="background:${KIND_COLORS.PCF}"></i>PCF 投影 <b>${codes.size}</b></button>`
+    }
+  }
+
+  // ── 组合渲染 ──
+  const totalTip = isGlobal
+    ? `跨套件合并去重 · 共 ${nodes.length} 实体`
+    : `当前套件 · 共 ${nodes.length} 实体`
+
+  $('#kindLegend').innerHTML = `
+    ${catRow ? `<div class="lg-row">${catRow}</div>` : ''}
+    <div class="lg-row">${kindRow}${pcfChip}</div>
+    <div class="lg-row hint-row"><span class="lg-hint">${esc(totalTip)}</span></div>
+  `
 }
 
 $('#kindLegend').addEventListener('click', (e) => {
   const chip = e.target.closest('.lg-chip');
   if (!chip) return;
+  if (chip.classList.contains('readonly')) return; // suite 模式下 domainCategory chip 只读，不响应点击
   if (chip.dataset.pcf) {
     graph.showPcf = !graph.showPcf;
+    rebuildGraph(false);
+    ensureSim(true);
+    renderOntologyDetail();
+    return;
+  }
+  if (chip.dataset.cat) {
+    // 双层级：domainCategory 过滤（仅 global 模式有效）
+    const c = chip.dataset.cat;
+    if (graph.visibleCats.has(c)) graph.visibleCats.delete(c);
+    else graph.visibleCats.add(c);
     rebuildGraph(false);
     ensureSim(true);
     renderOntologyDetail();
@@ -126,6 +208,7 @@ function pcfMapping() {
 /* PCF 投影图层：把已锚定的框架编号作为节点接入本体图，只读，不改动数据 */
 function addPcfProjection() {
   if (!graph.showPcf) return;
+  if (state.graphScope === 'global') { addGlobalPcfProjection(); return; }
   const maps = pcfMapping();
   const groups = new Map();
   for (const [eid] of Object.entries(maps)) {
@@ -150,22 +233,67 @@ function addPcfProjection() {
   }
 }
 
-function rebuildGraph(resetView) {
-  if (!state.suite) { graph.nodes = []; graph.edges = []; renderLegend(); drawGraph(); return; }
-  if (resetView) {
-    // 默认仅显示聚合根（AGGREGATE_ROOT）；其它类型由用户在图例中手动开启。
-    // 套件中不存在聚合根时回退为全部显示；visibleKinds 被用户全部关闭时不自动恢复（画布留空）。
-    const hasRoot = state.suite.entities.some(e => e.kind === 'AGGREGATE_ROOT');
-    graph.visibleKinds = new Set(hasRoot ? ['AGGREGATE_ROOT'] : state.suite.entities.map(e => e.kind));
+/* 全局图谱的 PCF 投影：用跨套件合流后的 processLinks，边代表「实体支撑该流程节点」 */
+function addGlobalPcfProjection() {
+  const groups = new Map(); // apqcCode → Set(canonicalId)
+  for (const l of (state.processLinks || [])) {
+    if (!graph.nodeById.has(l.canonicalId)) continue;
+    if (!groups.has(l.apqcCode)) groups.set(l.apqcCode, new Set());
+    groups.get(l.apqcCode).add(l.canonicalId);
   }
-  graph.allNodes = state.suite.entities.map(e => ({
+  for (const [code, ids] of groups) {
+    const id = 'pcf:' + code;
+    if (graph.nodeById.has(id)) continue;
+    const item = state.flatFw ? state.flatFw.find(x => x.code === code) : null;
+    const node = {
+      id, name: code, label: item ? item.label : code, kind: 'PCF',
+      ...(graph.posMap.get(id) || { x: (Math.random() - 0.5) * 180, y: (Math.random() - 0.5) * 180 }),
+      vx: 0, vy: 0, degree: ids.size, fixed: false,
+    };
+    graph.nodes.push(node);
+    graph.nodeById.set(id, node);
+    for (const cid of ids) graph.edges.push({ source: id, target: cid, type: 'PCF_HAS_ENTITY' });
+  }
+}
+
+function rebuildGraph(resetView) {
+  // 根据图谱范围选择数据源：suite 用当前套件，global 用全局本体
+  const isGlobal = state.graphScope === 'global';
+  const src = isGlobal ? state.globalGraph : state.suite;
+  if (!src) { graph.nodes = []; graph.edges = []; renderLegend(); drawGraph(); return; }
+  const entities = isGlobal ? src.nodes : src.entities;
+  // 全局图谱边字段为 source/target，套件关系为 from/to，统一归一化为 from/to
+  const relations = isGlobal
+    ? src.edges.map(e => ({ from: e.source, to: e.target, type: e.type }))
+    : src.relations;
+  if (resetView) {
+    // 全局图谱：默认显示所有 kind（不同套件 kind 差异大，AGGREGATE_ROOT 不一定存在）
+    // 套件图谱：默认仅显示聚合根，套件中无聚合根时回退全部显示
+    if (isGlobal) {
+      graph.visibleKinds = new Set(entities.map(e => e.kind))
+      graph.visibleCats = new Set(['master', 'core', 'supporting'])
+    } else {
+      const hasRoot = entities.some(e => e.kind === 'AGGREGATE_ROOT')
+      graph.visibleKinds = new Set(hasRoot ? ['AGGREGATE_ROOT'] : entities.map(e => e.kind))
+      graph.visibleCats = new Set(['master', 'core', 'supporting'])
+    }
+  }
+  graph.allNodes = entities.map(e => ({
     id: e.id, name: e.name, kind: e.kind,
+    domain: e.domain,
+    group: e.group,          // global 模式下为 domainCategory（master/core/supporting）
     ...(graph.posMap.get(e.id) || { x: 0, y: 0 }),
     vx: 0, vy: 0, degree: 0, fixed: false,
-  }));
-  graph.nodes = graph.allNodes.filter(n => graph.visibleKinds.has(n.kind));
+  }))
+  // 双层级过滤：kind AND domainCategory 都要命中
+  graph.nodes = graph.allNodes.filter(n => {
+    if (!graph.visibleKinds.has(n.kind)) return false
+    const cat = n.group || 'core'
+    if (!graph.visibleCats.has(cat)) return false
+    return true
+  })
   graph.nodeById = new Map(graph.nodes.map(n => [n.id, n]));
-  graph.edges = state.suite.relations
+  graph.edges = relations
     .filter(r => graph.nodeById.has(r.from) && graph.nodeById.has(r.to))
     .map(r => ({ source: r.from, target: r.to, type: r.type }));
   const deg = new Map();
@@ -174,7 +302,7 @@ function rebuildGraph(resetView) {
     deg.set(ed.target, (deg.get(ed.target) || 0) + 1);
   }
   for (const n of graph.nodes) n.degree = deg.get(n.id) || 0;
-  addPcfProjection();
+  if (!isGlobal) addPcfProjection();   // PCF 投影（全局模式改用 processLinks，见 addGlobalPcfProjection）
   // 新节点没有历史位置 → 按类型聚簇初始化
   const kindsArr = Array.from(graph.visibleKinds);
   let fresh = 0;
@@ -197,6 +325,31 @@ function rebuildGraph(resetView) {
   graph.selectedId = graph.nodes.some(n => n.id === graph.selectedId) ? graph.selectedId : null;
   renderLegend();
   drawGraph();
+}
+
+/* 加载全局本体图谱（世界本体），缓存于 state.globalGraph */
+async function loadGlobalGraph() {
+  try {
+    state.globalGraph = await api('/api/global/graph');
+    await loadGlobalProcessLinks();
+    return true;
+  } catch (err) {
+    toast('加载全局图谱失败：' + err.message, 'err');
+    state.globalGraph = null;
+    return false;
+  }
+}
+
+/* 根据当前 state.graphScope 加载对应图谱数据并重绘（由 Tab 切换触发） */
+async function refreshGraphByScope() {
+  const scope = state.graphScope || 'suite';
+  if (scope === 'global') {
+    const ok = await loadGlobalGraph();
+    if (!ok) { state.graphScope = 'suite'; }
+  }
+  rebuildGraph(true);
+  ensureSim(true);
+  renderOntologyDetail();
 }
 
 function tickGraph() {
@@ -246,6 +399,18 @@ function tickGraph() {
 }
 
 function nodeRadius(n) { return 4.5 + Math.min(5, n.degree * 0.6); }
+
+/* 节点配色：全局模式按领域类别（master/core/supporting），套件模式按 kind */
+function nodeColor(n) {
+  if (state.graphScope === 'global' && n.group) {
+    if (n.group === 'master') return DOMAIN_CAT_COLORS.master;
+    if (n.group === 'supporting') return DOMAIN_CAT_COLORS.supporting;
+    // core：从实体 id 提取 suiteId 作哈希色（非主数据实体 id = suiteId:kind:rawId）
+    const suiteId = (n.id || '').split(':')[0];
+    return suiteHashColor(suiteId);
+  }
+  return KIND_COLORS[n.kind] || '#9ca3af';
+}
 
 /* 视图钳制：内容包围盒至少保留 edge 像素在画布内，平移/缩放都不能把图完全挪出左侧区域 */
 function clampView() {
@@ -311,7 +476,7 @@ function drawGraph() {
     } else {
       ctx.arc(n.x, n.y, r, 0, Math.PI * 2);
     }
-    ctx.fillStyle = KIND_COLORS[n.kind] || '#9ca3af';
+    ctx.fillStyle = nodeColor(n);
     ctx.fill();
     if (isSel) {
       ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#f59e0b';
@@ -470,8 +635,12 @@ window.addEventListener('resize', () => {
 /* ═════════════════════════ Tab4 本体：右侧详情 ═════════════════════════ */
 function entityRelations(eid) {
   // 返回 [{rel, other, dir}]  dir: 'out' | 'in'
+  // 全局模式下使用全局图谱的边，套件模式下使用套件关系
+  const rels = (state.graphScope === 'global' && state.globalGraph)
+    ? state.globalGraph.edges.map(e => ({ id: e.id, from: e.source, to: e.target, type: e.type, label: e.label }))
+    : (state.suite ? state.suite.relations : []);
   const out = [];
-  for (const r of state.suite.relations) {
+  for (const r of rels) {
     if (r.from === eid) out.push({ rel: r, other: r.to, dir: 'out' });
     else if (r.to === eid) out.push({ rel: r, other: r.from, dir: 'in' });
   }
@@ -479,7 +648,7 @@ function entityRelations(eid) {
 }
 
 function selectOntoEntity(eid) {
-  if (!state.suite) return;
+  if (!state.suite && state.graphScope !== 'global') return;
   graph.selectedId = eid;
   // 视图平移至该节点
   const n = graph.nodes.find(x => x.id === eid);
@@ -527,13 +696,34 @@ function renderOntologyDetail() {
   const box = $('#ontoDetail');
   const eid = graph.selectedId;
   if (eid && eid.indexOf('pcf:') === 0) { renderPcfDetail(eid.slice(4)); return; }
-  const ent = eid && state.suite ? state.suite.entities.find(x => x.id === eid) : null;
+
+  // 全局模式：从全局图谱节点构造轻量实体对象
+  let ent = null;
+  if (state.graphScope === 'global' && state.globalGraph) {
+    const node = state.globalGraph.nodes.find(n => n.id === eid);
+    if (node) {
+      ent = {
+        id: node.id, name: node.name, kind: node.kind, domain: node.domain,
+        domainCategory: node.group, canonicalId: node.id.startsWith('canonical:') ? node.id : undefined,
+        properties: { suites: node.suites || [] },
+      };
+    }
+  } else if (eid && state.suite) {
+    ent = state.suite.entities.find(x => x.id === eid) || null;
+  }
+
   if (!ent) {
     box.innerHTML = '<div class="empty-hint"><div><div class="big">🧩</div>点击左侧实体节点，查看行为、规则与关联内容</div></div>';
     return;
   }
   const rels = entityRelations(ent.id);
-  const entOf = (id) => state.suite.entities.find(x => x.id === id);
+  const entOf = (id) => {
+    if (state.graphScope === 'global' && state.globalGraph) {
+      const n = state.globalGraph.nodes.find(x => x.id === id);
+      return n ? { id: n.id, name: n.name, kind: n.kind, domain: n.domain, domainCategory: n.group } : null;
+    }
+    return state.suite ? state.suite.entities.find(x => x.id === id) : null;
+  };
   const uniq = (arr) => {
     const seen = new Set();
     return arr.filter(it => { const k = it.other + '|' + it.rel.type + '|' + it.dir; if (seen.has(k)) return false; seen.add(k); return true; });
@@ -570,6 +760,11 @@ function renderOntologyDetail() {
   const desc = ent.description || (ent.properties && ent.properties.description) || '';
   const apqc = entityApqc(ent.id);
   const st = entityStatus(ent.id);
+  const isGlobal = state.graphScope === 'global';
+  const suites = (ent.properties && Array.isArray(ent.properties.suites)) ? ent.properties.suites : [];
+  const catLabel = ent.domainCategory === 'master' ? '主数据'
+    : ent.domainCategory === 'supporting' ? '支撑域'
+    : ent.domainCategory === 'core' ? '核心域' : '';
 
   box.innerHTML = `
     <div class="onto-detail">
@@ -577,19 +772,22 @@ function renderOntologyDetail() {
         <span class="dot" style="width:11px;height:11px;border-radius:50%;background:${KIND_COLORS[ent.kind] || '#9ca3af'};display:inline-block"></span>
         ${esc(ent.name)}
         <span class="kind-tag">${esc(ent.kind)}</span>
-        <span class="badge st-${st}" style="margin-left:auto">${STATUS_LABEL[st]}</span>
-        <button class="btn" id="odAnnotate" title="打开标注抽屉">🏷️ 标注</button>
+        ${catLabel ? `<span class="cat-tag cat-${ent.domainCategory}">${catLabel}</span>` : ''}
+        ${!isGlobal ? `<span class="badge st-${st}" style="margin-left:auto">${STATUS_LABEL[st]}</span>` : ''}
+        ${!isGlobal ? `<button class="btn" id="odAnnotate" title="打开标注抽屉">🏷️ 标注</button>` : ''}
       </h2>
-      <div class="od-sub">${esc(ent.rawId)}${apqc ? ' · 框架 ' + esc(apqc) : ''}</div>
+      <div class="od-sub">${esc(ent.rawId || '')}${apqc ? ' · 框架 ' + esc(apqc) : ''}</div>
       ${desc ? `<div class="ent-desc">${esc(desc)}</div>` : ''}
       <div class="detail-sec">
         <h4>实体信息</h4>
         <dl class="info-grid">
           <dt>领域</dt><dd>${esc(ent.domain || '—')}</dd>
-          <dt>来源</dt><dd class="mono" style="font-size:11px">${esc(ent.sourceFile || '—')}</dd>
+          <dt>来源</dt><dd class="mono" style="font-size:11px">${esc(ent.sourceFile || (isGlobal ? '全局本体' : '—'))}</dd>
           <dt>实体 ID</dt><dd class="mono" style="font-size:11px">${esc(ent.id)}</dd>
-          <dt>框架编号</dt><dd class="mono" style="font-size:11px">${apqc ? esc(apqc) : '未标注'}</dd>
-          <dt>覆盖状态</dt><dd>${STATUS_LABEL[st]}</dd>
+          ${ent.canonicalId && ent.canonicalId !== ent.id ? `<dt>规范 ID</dt><dd class="mono" style="font-size:11px">${esc(ent.canonicalId)}</dd>` : ''}
+          ${isGlobal && suites.length ? `<dt>来源套件</dt><dd>${esc(suites.join(', '))}</dd>` : ''}
+          ${!isGlobal ? `<dt>框架编号</dt><dd class="mono" style="font-size:11px">${apqc ? esc(apqc) : '未标注'}</dd>` : ''}
+          ${!isGlobal ? `<dt>覆盖状态</dt><dd>${STATUS_LABEL[st]}</dd>` : ''}
         </dl>
       </div>
       <div class="detail-sec">
@@ -604,12 +802,13 @@ function renderOntologyDetail() {
         <h4>关联内容 <span class="sec-n">${others.length}</span></h4>
         ${others.length ? groupByType(others) : '<div class="rel-empty">暂无其他关联内容</div>'}
       </div>
+      ${!isGlobal ? `
       <div class="detail-sec">
         <h4>参与流程（派生反查）</h4>
         <div id="odParts" class="rel-empty">加载中…</div>
-      </div>
+      </div>` : ''}
     </div>`;
-  renderOntoParticipations(box.querySelector('#odParts'), ent.id);
+  if (!isGlobal) renderOntoParticipations(box.querySelector('#odParts'), ent.id);
 }
 
 /* 参与流程反查：该实体被哪些流程/访谈以什么 op 引用（读 derived-relations，点击跳来源） */

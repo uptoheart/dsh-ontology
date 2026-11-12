@@ -4,14 +4,14 @@ import { fileURLToPath } from 'node:url'
 import * as yaml from 'js-yaml'
 import type {
   OntologyEntity, OntologyRelation, OntologySuiteMeta, OntologyAnnotations,
-  EntityKind, RelationType, SuiteData,
+  EntityKind, RelationType, SuiteData, DomainCategory,
 } from './shared-types.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
 // ─────────────── 内部工具 ───────────────
 
-function buildEntity(
+export function buildEntity(
   suiteId: string,
   rawId: string,
   name: string,
@@ -21,18 +21,50 @@ function buildEntity(
   properties: Record<string, unknown>,
   alias?: string,
   description?: string,
+  domainCategory: DomainCategory = 'core',
 ): OntologyEntity {
+  const id = `${suiteId}:${kind}:${rawId}`
+  // 主数据实体使用全局规范 ID，其余实体的 canonicalId 等于自身 id
+  const canonicalId = domainCategory === 'master'
+    ? `canonical:${kind}:${name}`
+    : id
   return {
-    id: `${suiteId}:${kind}:${rawId}`,
+    id,
     rawId,
     name,
     kind,
     domain,
+    domainCategory,
+    canonicalId,
     sourceFile,
     alias,
     description,
     properties,
   }
+}
+
+/**
+ * 领域二次划分：依据聚合根的 tags 判定领域类别与规范领域名。
+ * - 主数据：domainCategory=master，domain 取实体自身名称（跨套件去重的基础）
+ * - 核心域：domainCategory=core，domain 取套件主领域
+ * - 支撑域：domainCategory=supporting，domain = 套件主领域 +「·支撑」
+ * - 无 tags：默认 core，domain 取套件主领域
+ */
+export function classifyDomain(
+  agg: Record<string, unknown>,
+  suiteDomain: string,
+): { domain: string; domainCategory: DomainCategory } {
+  const tags = Array.isArray(agg.tags) ? (agg.tags as string[]) : []
+  const tagSet = new Set(tags)
+  if (tagSet.has('主数据')) {
+    const name = String(agg.name ?? '')
+    return { domain: name || suiteDomain, domainCategory: 'master' }
+  }
+  if (tagSet.has('支撑域')) {
+    return { domain: `${suiteDomain}·支撑`, domainCategory: 'supporting' }
+  }
+  // 核心域或未标注：默认归为核心域
+  return { domain: suiteDomain, domainCategory: 'core' }
 }
 
 function buildRelation(
@@ -170,23 +202,34 @@ function parseM1(
   const aggs = (raw.aggregates as any[]) ?? []
   for (const agg of aggs) {
     if (!agg?.id) continue
-    const e = buildEntity(suiteId, agg.id, agg.name, 'AGGREGATE_ROOT', domain, sourceFile, agg, agg.alias, agg.description)
+    // 领域二次划分：按 tags 判定聚合根的领域类别与规范领域名
+    const { domain: aggDomain, domainCategory } = classifyDomain(agg, domain)
+    const e = buildEntity(suiteId, agg.id, agg.name, 'AGGREGATE_ROOT', aggDomain, sourceFile, agg, agg.alias, agg.description, domainCategory)
     entities.push(e)
 
+    // 子实体（ENTITY）跟随聚合根的领域与类别
     const subEnts = (agg.entities as any[]) ?? []
     for (const sub of subEnts) {
       if (!sub?.name) continue
       const subRawId = `${agg.id}::${sub.name}`
-      const subE = buildEntity(suiteId, subRawId, sub.name, 'ENTITY', domain, sourceFile, sub, sub.alias, sub.description)
+      const subE = buildEntity(suiteId, subRawId, sub.name, 'ENTITY', aggDomain, sourceFile, sub, sub.alias, sub.description, domainCategory)
       entities.push(subE)
       relations.push(buildRelation(subE.id, e.id, 'AGGREGATE_OWN_ENTITY', '属于'))
     }
   }
 
+  // 数据字典：若名称命中某主数据聚合根则跟随其领域，否则独立为 master（domain=字典名）
+  const masterAggNames = new Set(
+    aggs.filter((a: any) => Array.isArray(a?.tags) && a.tags.includes('主数据')).map((a: any) => String(a.name ?? '')),
+  )
   const dicts = (raw.data_dictionaries as any[]) ?? []
   for (const d of dicts) {
     if (!d?.id) continue
-    const de = buildEntity(suiteId, d.id, d.name, 'DATA_DICTIONARY', domain, sourceFile, d)
+    const dname = String(d.name ?? '')
+    // 字典归属：名称包含某主数据聚合根名 → 跟随该主数据领域；否则独立 master（domain=字典名）
+    const matchedMaster = Array.from(masterAggNames).find(m => m && dname.includes(m))
+    const dictDomain = matchedMaster || dname
+    const de = buildEntity(suiteId, d.id, dname, 'DATA_DICTIONARY', dictDomain, sourceFile, d, undefined, undefined, 'master')
     entities.push(de)
   }
 

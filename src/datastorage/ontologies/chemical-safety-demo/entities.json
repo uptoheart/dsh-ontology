@@ -11,7 +11,9 @@
       "title": "安全生产法（2021 修正）",
       "type": "法律",
       "issuer": "全国人大常委会"
-    }
+    },
+    "domainCategory": "supporting",
+    "canonicalId": "reg:SAFETY-LAW"
   },
   {
     "id": "reg:HC-REG",
@@ -25,7 +27,9 @@
       "title": "危险化学品安全管理条例",
       "type": "行政法规",
       "issuer": "国务院"
-    }
+    },
+    "domainCategory": "supporting",
+    "canonicalId": "reg:HC-REG"
   },
   {
     "id": "reg:GB30871",
@@ -39,7 +43,9 @@
       "title": "GB 30871-2022 危险化学品企业特殊作业安全规范",
       "type": "国家标准",
       "issuer": "市场监管总局"
-    }
+    },
+    "domainCategory": "supporting",
+    "canonicalId": "reg:GB30871"
   },
   {
     "id": "reg:GB18218",
@@ -53,7 +59,9 @@
       "title": "GB 18218-2018 危险化学品重大危险源辨识",
       "type": "国家标准",
       "issuer": "市场监管总局"
-    }
+    },
+    "domainCategory": "supporting",
+    "canonicalId": "reg:GB18218"
   },
   {
     "id": "reg:GBT33000",
@@ -67,7 +75,9 @@
       "title": "GB/T 33000-2016 企业安全生产标准化基本规范",
       "type": "国家标准",
       "issuer": "市场监管总局"
-    }
+    },
+    "domainCategory": "supporting",
+    "canonicalId": "reg:GBT33000"
   },
   {
     "id": "clause:GB30871:6.2",
@@ -81,7 +91,9 @@
       "regulationCode": "GB30871",
       "text": "动火作业前应进行气体检测，确认可燃气体浓度符合要求。",
       "mandatory": true
-    }
+    },
+    "domainCategory": "supporting",
+    "canonicalId": "clause:GB30871:6.2"
   },
   {
     "id": "clause:GB30871:6.3",
@@ -95,7 +107,9 @@
       "regulationCode": "GB30871",
       "text": "动火作业应办理动火作业票并经审批。",
       "mandatory": true
-    }
+    },
+    "domainCategory": "supporting",
+    "canonicalId": "clause:GB30871:6.3"
   },
   {
     "id": "clause:GB30871:6.4",
@@ -109,7 +123,9 @@
       "regulationCode": "GB30871",
       "text": "动火作业应设置专人监护。",
       "mandatory": true
-    }
+    },
+    "domainCategory": "supporting",
+    "canonicalId": "clause:GB30871:6.4"
   },
   {
     "id": "clause:GB30871:8.2",
@@ -123,7 +139,9 @@
       "regulationCode": "GB30871",
       "text": "受限空间作业前应进行隔离、清洗、置换。",
       "mandatory": true
-    }
+    },
+    "domainCategory": "supporting",
+    "canonicalId": "clause:GB30871:8.2"
   },
   {
     "id": "clause:GB30871:8.3",
@@ -137,7 +155,9 @@
       "regulationCode": "GB30871",
       "text": "受限空间作业应检测氧含量与有毒有害气体。",
       "mandatory": true
-    }
+    },
+    "domainCategory": "supporting",
+    "canonicalId": "clause:GB30871:8.3"
   },
   {
     "id": "clause:GB30871:9.2",
@@ -151,7 +171,9 @@
       "regulationCode": "GB30871",
       "text": "高处作业应正确佩戴安全带。",
       "mandatory": true
-    }
+    },
+    "domainCategory": "supporting",
+    "canonicalId": "clause:GB30871:9.2"
   },
   {
     "id": "clause:GB30871:10.2",
@@ -165,7 +187,9 @@
       "regulationCode": "GB30871",
       "text": "吊装作业应设置警戒区域。",
       "mandatory": true
-    }
+    },
+    "domainCategory": "supporting",
+    "canonicalId": "clause:GB30871:10.2"
   },
   {
     "id": "clause:GB30871:11.2",
@@ -179,7 +203,9 @@
       "regulationCode": "GB30871",
       "text": "临时用电应可靠接地。",
       "mandatory": true
-    }
+    },
+    "domainCategory": "supporting",
+    "canonicalId": "clause:GB30871:11.2"
   },
   {
     "id": "clause:GB30871:12.2",
@@ -193,7 +219,9 @@
       "regulationCode": "GB30871",
       "text": "盲板抽堵作业应完成有效隔离。",
       "mandatory": true
-    }
+    },
+    "domainCategory": "supporting",
+    "canonicalId": "clause:GB30871:12.2"
   },
   {
     "id": "clause:GB30871:5.2",
@@ -207,7 +235,9 @@
       "regulationCode": "GB30871",
       "text": "检维修作业前应开展风险分析（JSA）。",
       "mandatory": true
-    }
+    },
+    "domainCategory": "supporting",
+    "canonicalId": "clause:GB30871:5.2"
   },
   {
     "id": "clause:GB18218:4.1",
@@ -221,7 +251,9 @@
       "regulationCode": "GB18218",
       "text": "危险化学品构成重大危险源的应进行辨识。",
       "mandatory": true
-    }
+    },
+    "domainCategory": "supporting",
+    "canonicalId": "clause:GB18218:4.1"
   },
   {
     "id": "clause:GB18218:4.2",
@@ -235,7 +267,9 @@
       "regulationCode": "GB18218",
       "text": "重大危险源应按危险程度分级。",
       "mandatory": true
-    }
+    },
+    "domainCategory": "supporting",
+    "canonicalId": "clause:GB18218:4.2"
   },
   {
     "id": "clause:GBT33000:5.1",
@@ -249,7 +283,9 @@
       "regulationCode": "GBT33000",
       "text": "企业应建立风险分级管控机制。",
       "mandatory": false
-    }
+    },
+    "domainCategory": "supporting",
+    "canonicalId": "clause:GBT33000:5.1"
   },
   {
     "id": "clause:GBT33000:5.2",
@@ -263,7 +299,9 @@
       "regulationCode": "GBT33000",
       "text": "企业应建立隐患排查治理机制。",
       "mandatory": false
-    }
+    },
+    "domainCategory": "supporting",
+    "canonicalId": "clause:GBT33000:5.2"
   },
   {
     "id": "clause:SAFETY-LAW:40",
@@ -277,7 +315,9 @@
       "regulationCode": "SAFETY-LAW",
       "text": "从业人员应接受安全生产教育和培训。",
       "mandatory": true
-    }
+    },
+    "domainCategory": "supporting",
+    "canonicalId": "clause:SAFETY-LAW:40"
   },
   {
     "id": "clause:SAFETY-LAW:44",
@@ -291,7 +331,9 @@
       "regulationCode": "SAFETY-LAW",
       "text": "应为从业人员提供符合标准的劳动防护用品。",
       "mandatory": true
-    }
+    },
+    "domainCategory": "supporting",
+    "canonicalId": "clause:SAFETY-LAW:44"
   },
   {
     "id": "clause:SAFETY-LAW:45",
@@ -305,7 +347,9 @@
       "regulationCode": "SAFETY-LAW",
       "text": "危险作业应安排专门人员进行现场安全管理。",
       "mandatory": true
-    }
+    },
+    "domainCategory": "supporting",
+    "canonicalId": "clause:SAFETY-LAW:45"
   },
   {
     "id": "clause:HC-REG:24",
@@ -319,7 +363,9 @@
       "regulationCode": "HC-REG",
       "text": "重大危险源应向应急管理部门备案。",
       "mandatory": true
-    }
+    },
+    "domainCategory": "supporting",
+    "canonicalId": "clause:HC-REG:24"
   },
   {
     "id": "control:CT-GAS-TEST",
@@ -332,7 +378,9 @@
       "controlCode": "CT-GAS-TEST",
       "level": "engineering",
       "implemented": false
-    }
+    },
+    "domainCategory": "core",
+    "canonicalId": "control:CT-GAS-TEST"
   },
   {
     "id": "control:CT-PERMIT",
@@ -345,7 +393,9 @@
       "controlCode": "CT-PERMIT",
       "level": "management",
       "implemented": true
-    }
+    },
+    "domainCategory": "core",
+    "canonicalId": "control:CT-PERMIT"
   },
   {
     "id": "control:CT-GUARD",
@@ -358,7 +408,9 @@
       "controlCode": "CT-GUARD",
       "level": "management",
       "implemented": false
-    }
+    },
+    "domainCategory": "core",
+    "canonicalId": "control:CT-GUARD"
   },
   {
     "id": "control:CT-ISOLATE",
@@ -371,7 +423,9 @@
       "controlCode": "CT-ISOLATE",
       "level": "engineering",
       "implemented": false
-    }
+    },
+    "domainCategory": "core",
+    "canonicalId": "control:CT-ISOLATE"
   },
   {
     "id": "control:CT-SEATBELT",
@@ -384,7 +438,9 @@
       "controlCode": "CT-SEATBELT",
       "level": "engineering",
       "implemented": true
-    }
+    },
+    "domainCategory": "core",
+    "canonicalId": "control:CT-SEATBELT"
   },
   {
     "id": "control:CT-BARRICADE",
@@ -397,7 +453,9 @@
       "controlCode": "CT-BARRICADE",
       "level": "management",
       "implemented": true
-    }
+    },
+    "domainCategory": "core",
+    "canonicalId": "control:CT-BARRICADE"
   },
   {
     "id": "control:CT-GROUND",
@@ -410,7 +468,9 @@
       "controlCode": "CT-GROUND",
       "level": "engineering",
       "implemented": true
-    }
+    },
+    "domainCategory": "core",
+    "canonicalId": "control:CT-GROUND"
   },
   {
     "id": "control:CT-JSA",
@@ -423,7 +483,9 @@
       "controlCode": "CT-JSA",
       "level": "management",
       "implemented": false
-    }
+    },
+    "domainCategory": "core",
+    "canonicalId": "control:CT-JSA"
   },
   {
     "id": "control:CT-REGISTER",
@@ -436,7 +498,9 @@
       "controlCode": "CT-REGISTER",
       "level": "management",
       "implemented": true
-    }
+    },
+    "domainCategory": "core",
+    "canonicalId": "control:CT-REGISTER"
   },
   {
     "id": "control:CT-RISK-LIST",
@@ -449,7 +513,9 @@
       "controlCode": "CT-RISK-LIST",
       "level": "management",
       "implemented": true
-    }
+    },
+    "domainCategory": "core",
+    "canonicalId": "control:CT-RISK-LIST"
   },
   {
     "id": "control:CT-INSPECT",
@@ -462,7 +528,9 @@
       "controlCode": "CT-INSPECT",
       "level": "management",
       "implemented": true
-    }
+    },
+    "domainCategory": "core",
+    "canonicalId": "control:CT-INSPECT"
   },
   {
     "id": "control:CT-TRAIN",
@@ -475,7 +543,9 @@
       "controlCode": "CT-TRAIN",
       "level": "training",
       "implemented": false
-    }
+    },
+    "domainCategory": "core",
+    "canonicalId": "control:CT-TRAIN"
   },
   {
     "id": "control:CT-PPE",
@@ -488,7 +558,9 @@
       "controlCode": "CT-PPE",
       "level": "engineering",
       "implemented": true
-    }
+    },
+    "domainCategory": "core",
+    "canonicalId": "control:CT-PPE"
   },
   {
     "id": "hazard:H-FLAM",
@@ -502,7 +574,9 @@
       "name": "可燃气体",
       "category": "化学",
       "accidentType": "火灾爆炸"
-    }
+    },
+    "domainCategory": "core",
+    "canonicalId": "hazard:H-FLAM"
   },
   {
     "id": "hazard:H-TOXIC",
@@ -516,7 +590,9 @@
       "name": "中毒窒息",
       "category": "化学",
       "accidentType": "中毒窒息"
-    }
+    },
+    "domainCategory": "core",
+    "canonicalId": "hazard:H-TOXIC"
   },
   {
     "id": "hazard:H-FALL",
@@ -530,7 +606,9 @@
       "name": "高处坠落",
       "category": "物理",
       "accidentType": "高处坠落"
-    }
+    },
+    "domainCategory": "core",
+    "canonicalId": "hazard:H-FALL"
   },
   {
     "id": "hazard:H-MECH",
@@ -544,7 +622,9 @@
       "name": "机械伤害",
       "category": "物理",
       "accidentType": "机械伤害"
-    }
+    },
+    "domainCategory": "core",
+    "canonicalId": "hazard:H-MECH"
   },
   {
     "id": "hazard:H-SHOCK",
@@ -558,7 +638,9 @@
       "name": "触电",
       "category": "电气",
       "accidentType": "触电"
-    }
+    },
+    "domainCategory": "core",
+    "canonicalId": "hazard:H-SHOCK"
   },
   {
     "id": "hazard:H-OBJ",
@@ -572,7 +654,9 @@
       "name": "物体打击",
       "category": "物理",
       "accidentType": "物体打击"
-    }
+    },
+    "domainCategory": "core",
+    "canonicalId": "hazard:H-OBJ"
   },
   {
     "id": "mat:MAT-TOLUENE",
@@ -588,7 +672,9 @@
       "flashPoint": 4,
       "criticalQuantity": 500,
       "hazardClass": "易燃液体"
-    }
+    },
+    "domainCategory": "master",
+    "canonicalId": "canonical:SAFETY_MATERIAL:甲苯"
   },
   {
     "id": "mat:MAT-METHANOL",
@@ -604,7 +690,9 @@
       "flashPoint": 11,
       "criticalQuantity": 500,
       "hazardClass": "易燃液体"
-    }
+    },
+    "domainCategory": "master",
+    "canonicalId": "canonical:SAFETY_MATERIAL:甲醇"
   },
   {
     "id": "mat:MAT-GASOLINE",
@@ -620,7 +708,9 @@
       "flashPoint": -50,
       "criticalQuantity": 200,
       "hazardClass": "易燃液体"
-    }
+    },
+    "domainCategory": "master",
+    "canonicalId": "canonical:SAFETY_MATERIAL:汽油"
   },
   {
     "id": "area:AREA-A",
@@ -635,7 +725,9 @@
       "riskLevel": "红色",
       "headcount": 30,
       "stock": 1200
-    }
+    },
+    "domainCategory": "master",
+    "canonicalId": "canonical:SAFETY_AREA:罐区"
   },
   {
     "id": "area:AREA-B",
@@ -650,7 +742,9 @@
       "riskLevel": "橙色",
       "headcount": 60,
       "stock": 300
-    }
+    },
+    "domainCategory": "master",
+    "canonicalId": "canonical:SAFETY_AREA:生产车间"
   },
   {
     "id": "area:AREA-C",
@@ -665,7 +759,9 @@
       "riskLevel": "黄色",
       "headcount": 20,
       "stock": 50
-    }
+    },
+    "domainCategory": "master",
+    "canonicalId": "canonical:SAFETY_AREA:公用工程"
   },
   {
     "id": "unit:UNIT-A1",
@@ -681,7 +777,9 @@
       "process": "储存",
       "stock": 900,
       "headcount": 12
-    }
+    },
+    "domainCategory": "master",
+    "canonicalId": "canonical:SAFETY_UNIT:常压储罐区"
   },
   {
     "id": "unit:UNIT-A2",
@@ -697,7 +795,9 @@
       "process": "装卸",
       "stock": 200,
       "headcount": 8
-    }
+    },
+    "domainCategory": "master",
+    "canonicalId": "canonical:SAFETY_UNIT:装卸车区"
   },
   {
     "id": "unit:UNIT-B1",
@@ -713,7 +813,9 @@
       "process": "反应",
       "stock": 200,
       "headcount": 30
-    }
+    },
+    "domainCategory": "master",
+    "canonicalId": "canonical:SAFETY_UNIT:反应装置"
   },
   {
     "id": "unit:UNIT-B2",
@@ -729,7 +831,9 @@
       "process": "精馏",
       "stock": 100,
       "headcount": 20
-    }
+    },
+    "domainCategory": "master",
+    "canonicalId": "canonical:SAFETY_UNIT:精馏装置"
   },
   {
     "id": "unit:UNIT-C1",
@@ -745,7 +849,9 @@
       "process": "公用工程",
       "stock": 50,
       "headcount": 10
-    }
+    },
+    "domainCategory": "master",
+    "canonicalId": "canonical:SAFETY_UNIT:公用工程站"
   },
   {
     "id": "eq:EQ-A1-T01",
@@ -761,7 +867,9 @@
       "status": "在用",
       "unitCode": "UNIT-A1",
       "stock": 500
-    }
+    },
+    "domainCategory": "master",
+    "canonicalId": "canonical:SAFETY_EQUIPMENT:1#储罐"
   },
   {
     "id": "eq:EQ-A1-T02",
@@ -777,7 +885,9 @@
       "status": "在用",
       "unitCode": "UNIT-A1",
       "stock": 300
-    }
+    },
+    "domainCategory": "master",
+    "canonicalId": "canonical:SAFETY_EQUIPMENT:2#储罐"
   },
   {
     "id": "eq:EQ-A1-P01",
@@ -793,7 +903,9 @@
       "status": "在用",
       "unitCode": "UNIT-A1",
       "stock": 0
-    }
+    },
+    "domainCategory": "master",
+    "canonicalId": "canonical:SAFETY_EQUIPMENT:输送泵"
   },
   {
     "id": "eq:EQ-A2-L01",
@@ -809,7 +921,9 @@
       "status": "在用",
       "unitCode": "UNIT-A2",
       "stock": 100
-    }
+    },
+    "domainCategory": "master",
+    "canonicalId": "canonical:SAFETY_EQUIPMENT:装车鹤管"
   },
   {
     "id": "eq:EQ-B1-R01",
@@ -825,7 +939,9 @@
       "status": "在用",
       "unitCode": "UNIT-B1",
       "stock": 100
-    }
+    },
+    "domainCategory": "master",
+    "canonicalId": "canonical:SAFETY_EQUIPMENT:反应釜"
   },
   {
     "id": "eq:EQ-B2-C01",
@@ -841,7 +957,9 @@
       "status": "在用",
       "unitCode": "UNIT-B2",
       "stock": 0
-    }
+    },
+    "domainCategory": "master",
+    "canonicalId": "canonical:SAFETY_EQUIPMENT:精馏塔"
   },
   {
     "id": "eq:EQ-C1-U01",
@@ -857,7 +975,9 @@
       "status": "在用",
       "unitCode": "UNIT-C1",
       "stock": 0
-    }
+    },
+    "domainCategory": "master",
+    "canonicalId": "canonical:SAFETY_EQUIPMENT:空压机"
   },
   {
     "id": "op:OP-HOT-01",
@@ -874,7 +994,9 @@
         "EQ-A1-T01"
       ],
       "permitType": "动火"
-    }
+    },
+    "domainCategory": "core",
+    "canonicalId": "op:OP-HOT-01"
   },
   {
     "id": "op:OP-CS-01",
@@ -891,7 +1013,9 @@
         "EQ-A1-T02"
       ],
       "permitType": "受限空间"
-    }
+    },
+    "domainCategory": "core",
+    "canonicalId": "op:OP-CS-01"
   },
   {
     "id": "op:OP-HW-01",
@@ -908,7 +1032,9 @@
         "EQ-B1-R01"
       ],
       "permitType": "高处"
-    }
+    },
+    "domainCategory": "core",
+    "canonicalId": "op:OP-HW-01"
   },
   {
     "id": "op:OP-LIFT-01",
@@ -925,7 +1051,9 @@
         "EQ-C1-U01"
       ],
       "permitType": "吊装"
-    }
+    },
+    "domainCategory": "core",
+    "canonicalId": "op:OP-LIFT-01"
   },
   {
     "id": "op:OP-POWER-01",
@@ -942,7 +1070,9 @@
         "EQ-B2-C01"
       ],
       "permitType": "临时用电"
-    }
+    },
+    "domainCategory": "core",
+    "canonicalId": "op:OP-POWER-01"
   },
   {
     "id": "op:OP-BLIND-01",
@@ -959,7 +1089,9 @@
         "EQ-A1-T01"
       ],
       "permitType": "盲板抽堵"
-    }
+    },
+    "domainCategory": "core",
+    "canonicalId": "op:OP-BLIND-01"
   },
   {
     "id": "op:OP-ROAD-01",
@@ -974,7 +1106,9 @@
       "areaCode": "AREA-C",
       "equipmentCodes": [],
       "permitType": "断路"
-    }
+    },
+    "domainCategory": "core",
+    "canonicalId": "op:OP-ROAD-01"
   },
   {
     "id": "op:OP-MAINT-01",
@@ -991,7 +1125,9 @@
         "EQ-A1-T01"
       ],
       "permitType": "检维修"
-    }
+    },
+    "domainCategory": "core",
+    "canonicalId": "op:OP-MAINT-01"
   },
   {
     "id": "op:OP-LOAD-01",
@@ -1008,7 +1144,9 @@
         "EQ-A2-L01"
       ],
       "permitType": "其他"
-    }
+    },
+    "domainCategory": "core",
+    "canonicalId": "op:OP-LOAD-01"
   },
   {
     "id": "op:OP-FEED-01",
@@ -1025,7 +1163,9 @@
         "EQ-B1-R01"
       ],
       "permitType": "其他"
-    }
+    },
+    "domainCategory": "core",
+    "canonicalId": "op:OP-FEED-01"
   },
   {
     "id": "permit:PTW-HOT-001",
@@ -1040,7 +1180,9 @@
       "permitType": "动火",
       "valid": true,
       "status": "已批准"
-    }
+    },
+    "domainCategory": "supporting",
+    "canonicalId": "permit:PTW-HOT-001"
   },
   {
     "id": "permit:PTW-CS-002",
@@ -1055,7 +1197,9 @@
       "permitType": "受限空间",
       "valid": false,
       "status": "已过期"
-    }
+    },
+    "domainCategory": "supporting",
+    "canonicalId": "permit:PTW-CS-002"
   },
   {
     "id": "permit:PTW-HW-003",
@@ -1070,7 +1214,9 @@
       "permitType": "高处",
       "valid": true,
       "status": "已批准"
-    }
+    },
+    "domainCategory": "supporting",
+    "canonicalId": "permit:PTW-HW-003"
   },
   {
     "id": "check:CI-GAS",
@@ -1084,7 +1230,9 @@
       "name": "气体检测记录",
       "clause": "GB30871:6.2",
       "frequency": "每次作业"
-    }
+    },
+    "domainCategory": "core",
+    "canonicalId": "check:CI-GAS"
   },
   {
     "id": "check:CI-PERMIT",
@@ -1098,7 +1246,9 @@
       "name": "审批签字",
       "clause": "GB30871:6.3",
       "frequency": "每票"
-    }
+    },
+    "domainCategory": "core",
+    "canonicalId": "check:CI-PERMIT"
   },
   {
     "id": "check:CI-GUARD",
@@ -1112,7 +1262,9 @@
       "name": "监护到位",
       "clause": "GB30871:6.4",
       "frequency": "每次作业"
-    }
+    },
+    "domainCategory": "core",
+    "canonicalId": "check:CI-GUARD"
   },
   {
     "id": "check:CI-ISOLATE",
@@ -1126,7 +1278,9 @@
       "name": "隔离确认",
       "clause": "GB30871:8.2",
       "frequency": "每次作业"
-    }
+    },
+    "domainCategory": "core",
+    "canonicalId": "check:CI-ISOLATE"
   },
   {
     "id": "check:CI-TRAIN",
@@ -1140,7 +1294,9 @@
       "name": "培训记录",
       "clause": "SAFETY-LAW:40",
       "frequency": "每季度"
-    }
+    },
+    "domainCategory": "core",
+    "canonicalId": "check:CI-TRAIN"
   },
   {
     "id": "event:EV-INC-01",
@@ -1155,7 +1311,9 @@
       "occurredAt": "2026-03-12",
       "consequences": "1 人重伤，储罐局部损毁",
       "category": "机"
-    }
+    },
+    "domainCategory": "core",
+    "canonicalId": "event:EV-INC-01"
   },
   {
     "id": "cause:CAUSE-C1",
@@ -1168,7 +1326,9 @@
       "code": "CAUSE-C1",
       "name": "未有效置换/清洗",
       "category": "法"
-    }
+    },
+    "domainCategory": "core",
+    "canonicalId": "cause:CAUSE-C1"
   },
   {
     "id": "cause:CAUSE-C2",
@@ -1181,7 +1341,9 @@
       "code": "CAUSE-C2",
       "name": "动火前气体检测缺失",
       "category": "法"
-    }
+    },
+    "domainCategory": "core",
+    "canonicalId": "cause:CAUSE-C2"
   },
   {
     "id": "cause:CAUSE-C3",
@@ -1194,7 +1356,9 @@
       "code": "CAUSE-C3",
       "name": "作业票审批流于形式",
       "category": "法"
-    }
+    },
+    "domainCategory": "core",
+    "canonicalId": "cause:CAUSE-C3"
   },
   {
     "id": "cause:CAUSE-C4",
@@ -1207,7 +1371,9 @@
       "code": "CAUSE-C4",
       "name": "承包商未受专项培训",
       "category": "人"
-    }
+    },
+    "domainCategory": "core",
+    "canonicalId": "cause:CAUSE-C4"
   },
   {
     "id": "cause:CAUSE-C5",
@@ -1220,6 +1386,8 @@
       "code": "CAUSE-C5",
       "name": "动火作业 JSA 风险分析缺失",
       "category": "法"
-    }
+    },
+    "domainCategory": "core",
+    "canonicalId": "cause:CAUSE-C5"
   }
 ]

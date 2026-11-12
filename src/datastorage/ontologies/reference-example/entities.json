@@ -4,7 +4,9 @@
     "rawId": "AGG-PRODUCT-001",
     "name": "产品",
     "kind": "AGGREGATE_ROOT",
-    "domain": "销售合同执行管理",
+    "domain": "产品",
+    "domainCategory": "master",
+    "canonicalId": "canonical:AGGREGATE_ROOT:产品",
     "sourceFile": "m1-object-model.yaml",
     "alias": "Product",
     "description": "产品主数据，本系统维护，被合同引用",
@@ -53,7 +55,9 @@
     "rawId": "AGG-CUSTOMER-001",
     "name": "客户",
     "kind": "AGGREGATE_ROOT",
-    "domain": "销售合同执行管理",
+    "domain": "客户",
+    "domainCategory": "master",
+    "canonicalId": "canonical:AGGREGATE_ROOT:客户",
     "sourceFile": "m1-object-model.yaml",
     "alias": "Customer",
     "description": "客户主数据，本系统维护，被合同引用",
@@ -102,7 +106,9 @@
     "rawId": "AGG-DEPARTMENT-001",
     "name": "部门",
     "kind": "AGGREGATE_ROOT",
-    "domain": "销售合同执行管理",
+    "domain": "部门",
+    "domainCategory": "master",
+    "canonicalId": "canonical:AGGREGATE_ROOT:部门",
     "sourceFile": "m1-object-model.yaml",
     "alias": "Department",
     "description": "组织主数据，本系统维护，被人员和合同引用",
@@ -141,7 +147,9 @@
     "rawId": "AGG-EMPLOYEE-001",
     "name": "人员",
     "kind": "AGGREGATE_ROOT",
-    "domain": "销售合同执行管理",
+    "domain": "人员",
+    "domainCategory": "master",
+    "canonicalId": "canonical:AGGREGATE_ROOT:人员",
     "sourceFile": "m1-object-model.yaml",
     "alias": "Employee",
     "description": "人员主数据，本系统维护，被合同责任人引用",
@@ -188,6 +196,8 @@
     "name": "合同",
     "kind": "AGGREGATE_ROOT",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:AGGREGATE_ROOT:AGG-CONTRACT-001",
     "sourceFile": "m1-object-model.yaml",
     "alias": "Contract",
     "description": "对外销售产生的合同签订信息，包含合同基本信息和付款条款明细",
@@ -434,6 +444,8 @@
     "name": "付款阶段",
     "kind": "ENTITY",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:ENTITY:AGG-CONTRACT-001::付款阶段",
     "sourceFile": "m1-object-model.yaml",
     "alias": "PaymentStage",
     "description": "合同付款阶段明细",
@@ -501,6 +513,8 @@
     "name": "开票",
     "kind": "AGGREGATE_ROOT",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:AGGREGATE_ROOT:AGG-INVOICE-001",
     "sourceFile": "m1-object-model.yaml",
     "alias": "Invoice",
     "description": "针对一个合同登记的开票业务记录，通过分摊关系覆盖一个或多个付款阶段",
@@ -684,6 +698,8 @@
     "name": "开票付款阶段分摊",
     "kind": "ENTITY",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:ENTITY:AGG-INVOICE-001::开票付款阶段分摊",
     "sourceFile": "m1-object-model.yaml",
     "alias": "InvoiceStageAllocation",
     "description": "开票与付款阶段之间的多对多分摊关系",
@@ -740,6 +756,8 @@
     "name": "收款",
     "kind": "AGGREGATE_ROOT",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:AGGREGATE_ROOT:AGG-RECEIPT-001",
     "sourceFile": "m1-object-model.yaml",
     "alias": "Receipt",
     "description": "独立记录客户针对具体合同和开票的每笔收款",
@@ -834,7 +852,9 @@
     "rawId": "AGG-APPROVAL-001",
     "name": "审批记录",
     "kind": "AGGREGATE_ROOT",
-    "domain": "销售合同执行管理",
+    "domain": "销售合同执行管理·支撑",
+    "domainCategory": "supporting",
+    "canonicalId": "reference-example:AGGREGATE_ROOT:AGG-APPROVAL-001",
     "sourceFile": "m1-object-model.yaml",
     "alias": "ApprovalRecord",
     "description": "记录合同登记审批和开票审批的人工处理历史",
@@ -928,7 +948,9 @@
     "rawId": "DICT-CONTRACT-TYPE",
     "name": "合同类型字典",
     "kind": "DATA_DICTIONARY",
-    "domain": "销售合同执行管理",
+    "domain": "合同类型字典",
+    "domainCategory": "master",
+    "canonicalId": "canonical:DATA_DICTIONARY:合同类型字典",
     "sourceFile": "m1-object-model.yaml",
     "properties": {
       "id": "DICT-CONTRACT-TYPE",
@@ -966,7 +988,9 @@
     "rawId": "DICT-RECEIPT-METHOD",
     "name": "收款方式字典",
     "kind": "DATA_DICTIONARY",
-    "domain": "销售合同执行管理",
+    "domain": "收款方式字典",
+    "domainCategory": "master",
+    "canonicalId": "canonical:DATA_DICTIONARY:收款方式字典",
     "sourceFile": "m1-object-model.yaml",
     "properties": {
       "id": "DICT-RECEIPT-METHOD",
@@ -1004,7 +1028,9 @@
     "rawId": "DICT-APPROVAL-NODE",
     "name": "审批节点字典",
     "kind": "DATA_DICTIONARY",
-    "domain": "销售合同执行管理",
+    "domain": "审批节点字典",
+    "domainCategory": "master",
+    "canonicalId": "canonical:DATA_DICTIONARY:审批节点字典",
     "sourceFile": "m1-object-model.yaml",
     "properties": {
       "id": "DICT-APPROVAL-NODE",
@@ -1036,7 +1062,9 @@
     "rawId": "DICT-APPROVAL-RESULT",
     "name": "审批结果字典",
     "kind": "DATA_DICTIONARY",
-    "domain": "销售合同执行管理",
+    "domain": "审批结果字典",
+    "domainCategory": "master",
+    "canonicalId": "canonical:DATA_DICTIONARY:审批结果字典",
     "sourceFile": "m1-object-model.yaml",
     "properties": {
       "id": "DICT-APPROVAL-RESULT",
@@ -1068,7 +1096,9 @@
     "rawId": "DICT-BIZ-TYPE",
     "name": "审批业务类型字典",
     "kind": "DATA_DICTIONARY",
-    "domain": "销售合同执行管理",
+    "domain": "审批业务类型字典",
+    "domainCategory": "master",
+    "canonicalId": "canonical:DATA_DICTIONARY:审批业务类型字典",
     "sourceFile": "m1-object-model.yaml",
     "properties": {
       "id": "DICT-BIZ-TYPE",
@@ -1100,7 +1130,9 @@
     "rawId": "DICT-PRODUCT-TYPE",
     "name": "产品类型字典",
     "kind": "DATA_DICTIONARY",
-    "domain": "销售合同执行管理",
+    "domain": "产品",
+    "domainCategory": "master",
+    "canonicalId": "canonical:DATA_DICTIONARY:产品类型字典",
     "sourceFile": "m1-object-model.yaml",
     "properties": {
       "id": "DICT-PRODUCT-TYPE",
@@ -1119,7 +1151,9 @@
     "rawId": "DICT-CUSTOMER-TYPE",
     "name": "客户类型字典",
     "kind": "DATA_DICTIONARY",
-    "domain": "销售合同执行管理",
+    "domain": "客户",
+    "domainCategory": "master",
+    "canonicalId": "canonical:DATA_DICTIONARY:客户类型字典",
     "sourceFile": "m1-object-model.yaml",
     "properties": {
       "id": "DICT-CUSTOMER-TYPE",
@@ -1139,6 +1173,8 @@
     "name": "保存合同草稿",
     "kind": "BEHAVIOR",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:BEHAVIOR:Contract_SaveAsDraft",
     "sourceFile": "m2-behavior-model.yaml",
     "properties": {
       "id": "Contract_SaveAsDraft",
@@ -1171,6 +1207,8 @@
     "name": "提交合同审批",
     "kind": "BEHAVIOR",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:BEHAVIOR:Contract_Submit",
     "sourceFile": "m2-behavior-model.yaml",
     "properties": {
       "id": "Contract_Submit",
@@ -1204,6 +1242,8 @@
     "name": "修改并重新提交合同",
     "kind": "BEHAVIOR",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:BEHAVIOR:Contract_Resubmit",
     "sourceFile": "m2-behavior-model.yaml",
     "properties": {
       "id": "Contract_Resubmit",
@@ -1236,6 +1276,8 @@
     "name": "保存开票草稿",
     "kind": "BEHAVIOR",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:BEHAVIOR:Invoice_SaveAsDraft",
     "sourceFile": "m2-behavior-model.yaml",
     "properties": {
       "id": "Invoice_SaveAsDraft",
@@ -1270,6 +1312,8 @@
     "name": "提交开票审批",
     "kind": "BEHAVIOR",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:BEHAVIOR:Invoice_Submit",
     "sourceFile": "m2-behavior-model.yaml",
     "properties": {
       "id": "Invoice_Submit",
@@ -1305,6 +1349,8 @@
     "name": "修改并重新提交开票",
     "kind": "BEHAVIOR",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:BEHAVIOR:Invoice_Resubmit",
     "sourceFile": "m2-behavior-model.yaml",
     "properties": {
       "id": "Invoice_Resubmit",
@@ -1339,6 +1385,8 @@
     "name": "录入合同收款",
     "kind": "BEHAVIOR",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:BEHAVIOR:Receipt_Record",
     "sourceFile": "m2-behavior-model.yaml",
     "properties": {
       "id": "Receipt_Record",
@@ -1378,6 +1426,8 @@
     "name": "冲销错误收款",
     "kind": "BEHAVIOR",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:BEHAVIOR:Receipt_Reverse",
     "sourceFile": "m2-behavior-model.yaml",
     "properties": {
       "id": "Receipt_Reverse",
@@ -1412,6 +1462,8 @@
     "name": "作废或归档合同",
     "kind": "BEHAVIOR",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:BEHAVIOR:Contract_VoidOrArchive",
     "sourceFile": "m2-behavior-model.yaml",
     "properties": {
       "id": "Contract_VoidOrArchive",
@@ -1443,6 +1495,8 @@
     "name": "作废开票",
     "kind": "BEHAVIOR",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:BEHAVIOR:Invoice_Void",
     "sourceFile": "m2-behavior-model.yaml",
     "properties": {
       "id": "Invoice_Void",
@@ -1480,6 +1534,8 @@
     "name": "维护产品信息",
     "kind": "BEHAVIOR",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:BEHAVIOR:Product_Maintain",
     "sourceFile": "m2-behavior-model.yaml",
     "properties": {
       "id": "Product_Maintain",
@@ -1504,6 +1560,8 @@
     "name": "维护客户信息",
     "kind": "BEHAVIOR",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:BEHAVIOR:Customer_Maintain",
     "sourceFile": "m2-behavior-model.yaml",
     "properties": {
       "id": "Customer_Maintain",
@@ -1528,6 +1586,8 @@
     "name": "维护部门信息",
     "kind": "BEHAVIOR",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:BEHAVIOR:Department_Maintain",
     "sourceFile": "m2-behavior-model.yaml",
     "properties": {
       "id": "Department_Maintain",
@@ -1552,6 +1612,8 @@
     "name": "维护人员信息",
     "kind": "BEHAVIOR",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:BEHAVIOR:Employee_Maintain",
     "sourceFile": "m2-behavior-model.yaml",
     "properties": {
       "id": "Employee_Maintain",
@@ -1576,6 +1638,8 @@
     "name": "查询合同列表",
     "kind": "BEHAVIOR",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:BEHAVIOR:Contract_QueryList",
     "sourceFile": "m2-behavior-model.yaml",
     "properties": {
       "id": "Contract_QueryList",
@@ -1600,6 +1664,8 @@
     "name": "查看合同详情",
     "kind": "BEHAVIOR",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:BEHAVIOR:Contract_QueryDetail",
     "sourceFile": "m2-behavior-model.yaml",
     "properties": {
       "id": "Contract_QueryDetail",
@@ -1624,6 +1690,8 @@
     "name": "查询合同执行情况分析",
     "kind": "BEHAVIOR",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:BEHAVIOR:Contract_QueryExecutionAnalysis",
     "sourceFile": "m2-behavior-model.yaml",
     "properties": {
       "id": "Contract_QueryExecutionAnalysis",
@@ -1648,6 +1716,8 @@
     "name": "查询部门合同统计分析",
     "kind": "BEHAVIOR",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:BEHAVIOR:Contract_QueryDepartmentSummary",
     "sourceFile": "m2-behavior-model.yaml",
     "properties": {
       "id": "Contract_QueryDepartmentSummary",
@@ -1672,6 +1742,8 @@
     "name": "查询已开票未收款合同",
     "kind": "BEHAVIOR",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:BEHAVIOR:Contract_QueryInvoicedUnreceived",
     "sourceFile": "m2-behavior-model.yaml",
     "properties": {
       "id": "Contract_QueryInvoicedUnreceived",
@@ -1696,6 +1768,8 @@
     "name": "财务经理审批合同",
     "kind": "BEHAVIOR",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:BEHAVIOR:Contract_ApproveFinance",
     "sourceFile": "m2-behavior-model.yaml",
     "properties": {
       "id": "Contract_ApproveFinance",
@@ -1729,6 +1803,8 @@
     "name": "总经理审批合同",
     "kind": "BEHAVIOR",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:BEHAVIOR:Contract_ApproveGeneralManager",
     "sourceFile": "m2-behavior-model.yaml",
     "properties": {
       "id": "Contract_ApproveGeneralManager",
@@ -1761,6 +1837,8 @@
     "name": "财务经理审批开票",
     "kind": "BEHAVIOR",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:BEHAVIOR:Invoice_ApproveFinance",
     "sourceFile": "m2-behavior-model.yaml",
     "properties": {
       "id": "Invoice_ApproveFinance",
@@ -1798,6 +1876,8 @@
     "name": "更新付款阶段开票状态",
     "kind": "BEHAVIOR",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:BEHAVIOR:PaymentStage_UpdateInvoiceStatus",
     "sourceFile": "m2-behavior-model.yaml",
     "properties": {
       "id": "PaymentStage_UpdateInvoiceStatus",
@@ -1831,6 +1911,8 @@
     "name": "更新开票收款状态",
     "kind": "BEHAVIOR",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:BEHAVIOR:Invoice_UpdateReceiptStatus",
     "sourceFile": "m2-behavior-model.yaml",
     "properties": {
       "id": "Invoice_UpdateReceiptStatus",
@@ -1874,6 +1956,8 @@
     "name": "更新合同结清状态",
     "kind": "BEHAVIOR",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:BEHAVIOR:Contract_UpdateSettlementStatus",
     "sourceFile": "m2-behavior-model.yaml",
     "properties": {
       "id": "Contract_UpdateSettlementStatus",
@@ -1903,6 +1987,8 @@
     "name": "合同审批层级判定",
     "kind": "RULE",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:RULE:RULE-CONTRACT-APPROVAL-LEVEL",
     "sourceFile": "m3-rule-model.yaml",
     "properties": {
       "id": "RULE-CONTRACT-APPROVAL-LEVEL",
@@ -1933,6 +2019,8 @@
     "name": "合同可开票资格",
     "kind": "RULE",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:RULE:RULE-CONTRACT-INVOICE-ELIGIBLE",
     "sourceFile": "m3-rule-model.yaml",
     "properties": {
       "id": "RULE-CONTRACT-INVOICE-ELIGIBLE",
@@ -1963,6 +2051,8 @@
     "name": "付款阶段剩余可开票额度",
     "kind": "RULE",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:RULE:RULE-PAYSTAGE-REMAIN-QUOTA",
     "sourceFile": "m3-rule-model.yaml",
     "properties": {
       "id": "RULE-PAYSTAGE-REMAIN-QUOTA",
@@ -2005,6 +2095,8 @@
     "name": "开票剩余可收款额度",
     "kind": "RULE",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:RULE:RULE-INVOICE-REMAIN-RECEIPT-QUOTA",
     "sourceFile": "m3-rule-model.yaml",
     "properties": {
       "id": "RULE-INVOICE-REMAIN-RECEIPT-QUOTA",
@@ -2045,6 +2137,8 @@
     "name": "开票收款状态判定",
     "kind": "RULE",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:RULE:RULE-INVOICE-RECEIPT-STATUS",
     "sourceFile": "m3-rule-model.yaml",
     "properties": {
       "id": "RULE-INVOICE-RECEIPT-STATUS",
@@ -2079,6 +2173,8 @@
     "name": "合同作废资格",
     "kind": "RULE",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:RULE:RULE-CONTRACT-VOID-ELIGIBLE",
     "sourceFile": "m3-rule-model.yaml",
     "properties": {
       "id": "RULE-CONTRACT-VOID-ELIGIBLE",
@@ -2113,6 +2209,8 @@
     "name": "开票作废资格",
     "kind": "RULE",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:RULE:RULE-INVOICE-VOID-ELIGIBLE",
     "sourceFile": "m3-rule-model.yaml",
     "properties": {
       "id": "RULE-INVOICE-VOID-ELIGIBLE",
@@ -2141,6 +2239,8 @@
     "name": "开票税率一致性",
     "kind": "RULE",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:RULE:RULE-INVOICE-TAXRATE-CONSISTENT",
     "sourceFile": "m3-rule-model.yaml",
     "properties": {
       "id": "RULE-INVOICE-TAXRATE-CONSISTENT",
@@ -2177,6 +2277,8 @@
     "name": "提交审批职责分离",
     "kind": "RULE",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:RULE:RULE-APPROVAL-SOD",
     "sourceFile": "m3-rule-model.yaml",
     "properties": {
       "id": "RULE-APPROVAL-SOD",
@@ -2213,6 +2315,8 @@
     "name": "合同结清资格判定",
     "kind": "RULE",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:RULE:RULE-CONTRACT-SETTLEMENT",
     "sourceFile": "m3-rule-model.yaml",
     "properties": {
       "id": "RULE-CONTRACT-SETTLEMENT",
@@ -2249,6 +2353,8 @@
     "name": "分摊所属合同一致性",
     "kind": "RULE",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:RULE:RULE-ALLOCATION-CONTRACT-CONSISTENT",
     "sourceFile": "m3-rule-model.yaml",
     "properties": {
       "id": "RULE-ALLOCATION-CONTRACT-CONSISTENT",
@@ -2285,6 +2391,8 @@
     "name": "收款所属合同一致性",
     "kind": "RULE",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:RULE:RULE-RECEIPT-CONTRACT-CONSISTENT",
     "sourceFile": "m3-rule-model.yaml",
     "properties": {
       "id": "RULE-RECEIPT-CONTRACT-CONSISTENT",
@@ -2319,6 +2427,8 @@
     "name": "责任人部门一致性",
     "kind": "RULE",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:RULE:RULE-OWNER-DEPT-CONSISTENT",
     "sourceFile": "m3-rule-model.yaml",
     "properties": {
       "id": "RULE-OWNER-DEPT-CONSISTENT",
@@ -2355,6 +2465,8 @@
     "name": "销售人员",
     "kind": "ACTOR",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:ACTOR:ACTOR-SALES",
     "sourceFile": "m5-actor-model.yaml",
     "properties": {
       "actorId": "ACTOR-SALES",
@@ -2371,6 +2483,8 @@
     "name": "财务人员",
     "kind": "ACTOR",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:ACTOR:ACTOR-FINANCE",
     "sourceFile": "m5-actor-model.yaml",
     "properties": {
       "actorId": "ACTOR-FINANCE",
@@ -2387,6 +2501,8 @@
     "name": "财务经理",
     "kind": "ACTOR",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:ACTOR:ACTOR-FINANCE-MANAGER",
     "sourceFile": "m5-actor-model.yaml",
     "properties": {
       "actorId": "ACTOR-FINANCE-MANAGER",
@@ -2403,6 +2519,8 @@
     "name": "总经理",
     "kind": "ACTOR",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:ACTOR:ACTOR-GENERAL-MANAGER",
     "sourceFile": "m5-actor-model.yaml",
     "properties": {
       "actorId": "ACTOR-GENERAL-MANAGER",
@@ -2419,6 +2537,8 @@
     "name": "普通员工",
     "kind": "ACTOR",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:ACTOR:ACTOR-EMPLOYEE",
     "sourceFile": "m5-actor-model.yaml",
     "properties": {
       "actorId": "ACTOR-EMPLOYEE",
@@ -2435,6 +2555,8 @@
     "name": "系统自动执行主体",
     "kind": "ACTOR",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:ACTOR:ACTOR-SYSTEM",
     "sourceFile": "m5-actor-model.yaml",
     "properties": {
       "actorId": "ACTOR-SYSTEM",
@@ -2451,6 +2573,8 @@
     "name": "销售人员",
     "kind": "ROLE",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:ROLE:ROLE-SALES",
     "sourceFile": "m5-actor-model.yaml",
     "properties": {
       "roleId": "ROLE-SALES",
@@ -2473,6 +2597,8 @@
     "name": "财务人员",
     "kind": "ROLE",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:ROLE:ROLE-FINANCE",
     "sourceFile": "m5-actor-model.yaml",
     "properties": {
       "roleId": "ROLE-FINANCE",
@@ -2501,6 +2627,8 @@
     "name": "财务经理",
     "kind": "ROLE",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:ROLE:ROLE-FINANCE-MANAGER",
     "sourceFile": "m5-actor-model.yaml",
     "properties": {
       "roleId": "ROLE-FINANCE-MANAGER",
@@ -2527,6 +2655,8 @@
     "name": "总经理",
     "kind": "ROLE",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:ROLE:ROLE-GENERAL-MANAGER",
     "sourceFile": "m5-actor-model.yaml",
     "properties": {
       "roleId": "ROLE-GENERAL-MANAGER",
@@ -2547,6 +2677,8 @@
     "name": "普通员工",
     "kind": "ROLE",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:ROLE:ROLE-EMPLOYEE",
     "sourceFile": "m5-actor-model.yaml",
     "properties": {
       "roleId": "ROLE-EMPLOYEE",
@@ -2566,6 +2698,8 @@
     "name": "系统自动执行主体",
     "kind": "ROLE",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:ROLE:ROLE-SYSTEM",
     "sourceFile": "m5-actor-model.yaml",
     "properties": {
       "roleId": "ROLE-SYSTEM",
@@ -2579,6 +2713,8 @@
     "name": "PERM-CONTRACT-SAVE-DRAFT",
     "kind": "PERMISSION",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:PERMISSION:PERM-CONTRACT-SAVE-DRAFT",
     "sourceFile": "m5-actor-model.yaml",
     "properties": {
       "permissionId": "PERM-CONTRACT-SAVE-DRAFT",
@@ -2593,6 +2729,8 @@
     "name": "PERM-CONTRACT-SUBMIT",
     "kind": "PERMISSION",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:PERMISSION:PERM-CONTRACT-SUBMIT",
     "sourceFile": "m5-actor-model.yaml",
     "properties": {
       "permissionId": "PERM-CONTRACT-SUBMIT",
@@ -2607,6 +2745,8 @@
     "name": "PERM-CONTRACT-RESUBMIT",
     "kind": "PERMISSION",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:PERMISSION:PERM-CONTRACT-RESUBMIT",
     "sourceFile": "m5-actor-model.yaml",
     "properties": {
       "permissionId": "PERM-CONTRACT-RESUBMIT",
@@ -2621,6 +2761,8 @@
     "name": "PERM-INVOICE-SAVE-DRAFT",
     "kind": "PERMISSION",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:PERMISSION:PERM-INVOICE-SAVE-DRAFT",
     "sourceFile": "m5-actor-model.yaml",
     "properties": {
       "permissionId": "PERM-INVOICE-SAVE-DRAFT",
@@ -2635,6 +2777,8 @@
     "name": "PERM-INVOICE-SUBMIT",
     "kind": "PERMISSION",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:PERMISSION:PERM-INVOICE-SUBMIT",
     "sourceFile": "m5-actor-model.yaml",
     "properties": {
       "permissionId": "PERM-INVOICE-SUBMIT",
@@ -2649,6 +2793,8 @@
     "name": "PERM-INVOICE-RESUBMIT",
     "kind": "PERMISSION",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:PERMISSION:PERM-INVOICE-RESUBMIT",
     "sourceFile": "m5-actor-model.yaml",
     "properties": {
       "permissionId": "PERM-INVOICE-RESUBMIT",
@@ -2663,6 +2809,8 @@
     "name": "PERM-RECEIPT-RECORD",
     "kind": "PERMISSION",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:PERMISSION:PERM-RECEIPT-RECORD",
     "sourceFile": "m5-actor-model.yaml",
     "properties": {
       "permissionId": "PERM-RECEIPT-RECORD",
@@ -2677,6 +2825,8 @@
     "name": "PERM-RECEIPT-REVERSE",
     "kind": "PERMISSION",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:PERMISSION:PERM-RECEIPT-REVERSE",
     "sourceFile": "m5-actor-model.yaml",
     "properties": {
       "permissionId": "PERM-RECEIPT-REVERSE",
@@ -2691,6 +2841,8 @@
     "name": "PERM-CONTRACT-VOID",
     "kind": "PERMISSION",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:PERMISSION:PERM-CONTRACT-VOID",
     "sourceFile": "m5-actor-model.yaml",
     "properties": {
       "permissionId": "PERM-CONTRACT-VOID",
@@ -2705,6 +2857,8 @@
     "name": "PERM-INVOICE-VOID",
     "kind": "PERMISSION",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:PERMISSION:PERM-INVOICE-VOID",
     "sourceFile": "m5-actor-model.yaml",
     "properties": {
       "permissionId": "PERM-INVOICE-VOID",
@@ -2719,6 +2873,8 @@
     "name": "PERM-PRODUCT-MAINTAIN",
     "kind": "PERMISSION",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:PERMISSION:PERM-PRODUCT-MAINTAIN",
     "sourceFile": "m5-actor-model.yaml",
     "properties": {
       "permissionId": "PERM-PRODUCT-MAINTAIN",
@@ -2733,6 +2889,8 @@
     "name": "PERM-CUSTOMER-MAINTAIN",
     "kind": "PERMISSION",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:PERMISSION:PERM-CUSTOMER-MAINTAIN",
     "sourceFile": "m5-actor-model.yaml",
     "properties": {
       "permissionId": "PERM-CUSTOMER-MAINTAIN",
@@ -2747,6 +2905,8 @@
     "name": "PERM-DEPARTMENT-MAINTAIN",
     "kind": "PERMISSION",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:PERMISSION:PERM-DEPARTMENT-MAINTAIN",
     "sourceFile": "m5-actor-model.yaml",
     "properties": {
       "permissionId": "PERM-DEPARTMENT-MAINTAIN",
@@ -2761,6 +2921,8 @@
     "name": "PERM-EMPLOYEE-MAINTAIN",
     "kind": "PERMISSION",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:PERMISSION:PERM-EMPLOYEE-MAINTAIN",
     "sourceFile": "m5-actor-model.yaml",
     "properties": {
       "permissionId": "PERM-EMPLOYEE-MAINTAIN",
@@ -2775,6 +2937,8 @@
     "name": "PERM-CONTRACT-QUERY-LIST",
     "kind": "PERMISSION",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:PERMISSION:PERM-CONTRACT-QUERY-LIST",
     "sourceFile": "m5-actor-model.yaml",
     "properties": {
       "permissionId": "PERM-CONTRACT-QUERY-LIST",
@@ -2789,6 +2953,8 @@
     "name": "PERM-CONTRACT-QUERY-DETAIL",
     "kind": "PERMISSION",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:PERMISSION:PERM-CONTRACT-QUERY-DETAIL",
     "sourceFile": "m5-actor-model.yaml",
     "properties": {
       "permissionId": "PERM-CONTRACT-QUERY-DETAIL",
@@ -2803,6 +2969,8 @@
     "name": "PERM-CONTRACT-QUERY-EXECUTION",
     "kind": "PERMISSION",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:PERMISSION:PERM-CONTRACT-QUERY-EXECUTION",
     "sourceFile": "m5-actor-model.yaml",
     "properties": {
       "permissionId": "PERM-CONTRACT-QUERY-EXECUTION",
@@ -2817,6 +2985,8 @@
     "name": "PERM-CONTRACT-QUERY-DEPT-SUMMARY",
     "kind": "PERMISSION",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:PERMISSION:PERM-CONTRACT-QUERY-DEPT-SUMMARY",
     "sourceFile": "m5-actor-model.yaml",
     "properties": {
       "permissionId": "PERM-CONTRACT-QUERY-DEPT-SUMMARY",
@@ -2831,6 +3001,8 @@
     "name": "PERM-CONTRACT-QUERY-UNRECEIVED",
     "kind": "PERMISSION",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:PERMISSION:PERM-CONTRACT-QUERY-UNRECEIVED",
     "sourceFile": "m5-actor-model.yaml",
     "properties": {
       "permissionId": "PERM-CONTRACT-QUERY-UNRECEIVED",
@@ -2845,6 +3017,8 @@
     "name": "PERM-CONTRACT-QUERY-LIST-OWN-DEPT",
     "kind": "PERMISSION",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:PERMISSION:PERM-CONTRACT-QUERY-LIST-OWN-DEPT",
     "sourceFile": "m5-actor-model.yaml",
     "properties": {
       "permissionId": "PERM-CONTRACT-QUERY-LIST-OWN-DEPT",
@@ -2860,6 +3034,8 @@
     "name": "PERM-CONTRACT-QUERY-DETAIL-OWN-DEPT",
     "kind": "PERMISSION",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:PERMISSION:PERM-CONTRACT-QUERY-DETAIL-OWN-DEPT",
     "sourceFile": "m5-actor-model.yaml",
     "properties": {
       "permissionId": "PERM-CONTRACT-QUERY-DETAIL-OWN-DEPT",
@@ -2875,6 +3051,8 @@
     "name": "PERM-CONTRACT-QUERY-EXECUTION-OWN-DEPT",
     "kind": "PERMISSION",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:PERMISSION:PERM-CONTRACT-QUERY-EXECUTION-OWN-DEPT",
     "sourceFile": "m5-actor-model.yaml",
     "properties": {
       "permissionId": "PERM-CONTRACT-QUERY-EXECUTION-OWN-DEPT",
@@ -2890,6 +3068,8 @@
     "name": "PERM-CONTRACT-QUERY-DEPT-SUMMARY-OWN-DEPT",
     "kind": "PERMISSION",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:PERMISSION:PERM-CONTRACT-QUERY-DEPT-SUMMARY-OWN-DEPT",
     "sourceFile": "m5-actor-model.yaml",
     "properties": {
       "permissionId": "PERM-CONTRACT-QUERY-DEPT-SUMMARY-OWN-DEPT",
@@ -2905,6 +3085,8 @@
     "name": "PERM-CONTRACT-QUERY-UNRECEIVED-OWN-DEPT",
     "kind": "PERMISSION",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:PERMISSION:PERM-CONTRACT-QUERY-UNRECEIVED-OWN-DEPT",
     "sourceFile": "m5-actor-model.yaml",
     "properties": {
       "permissionId": "PERM-CONTRACT-QUERY-UNRECEIVED-OWN-DEPT",
@@ -2920,6 +3102,8 @@
     "name": "PERM-CONTRACT-APPROVE-FINANCE",
     "kind": "PERMISSION",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:PERMISSION:PERM-CONTRACT-APPROVE-FINANCE",
     "sourceFile": "m5-actor-model.yaml",
     "properties": {
       "permissionId": "PERM-CONTRACT-APPROVE-FINANCE",
@@ -2934,6 +3118,8 @@
     "name": "PERM-CONTRACT-APPROVE-LARGE",
     "kind": "PERMISSION",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:PERMISSION:PERM-CONTRACT-APPROVE-LARGE",
     "sourceFile": "m5-actor-model.yaml",
     "properties": {
       "permissionId": "PERM-CONTRACT-APPROVE-LARGE",
@@ -2948,6 +3134,8 @@
     "name": "PERM-INVOICE-APPROVE",
     "kind": "PERMISSION",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:PERMISSION:PERM-INVOICE-APPROVE",
     "sourceFile": "m5-actor-model.yaml",
     "properties": {
       "permissionId": "PERM-INVOICE-APPROVE",
@@ -2962,6 +3150,8 @@
     "name": "合同全生命周期流程",
     "kind": "FLOW",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:FLOW:FLOW-CONTRACT-001",
     "sourceFile": "m6-flow-model.yaml",
     "properties": {
       "id": "FLOW-CONTRACT-001",
@@ -3107,6 +3297,8 @@
     "name": "开始",
     "kind": "ACTIVITY",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:ACTIVITY:A01",
     "sourceFile": "m6-flow-model.yaml",
     "properties": {
       "activityId": "A01",
@@ -3123,6 +3315,8 @@
     "name": "创建合同（保存草稿/提交审批）",
     "kind": "ACTIVITY",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:ACTIVITY:A02",
     "sourceFile": "m6-flow-model.yaml",
     "properties": {
       "activityId": "A02",
@@ -3141,6 +3335,8 @@
     "name": "合同登记审批",
     "kind": "ACTIVITY",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:ACTIVITY:A03",
     "sourceFile": "m6-flow-model.yaml",
     "properties": {
       "activityId": "A03",
@@ -3158,6 +3354,8 @@
     "name": "审批结果判断",
     "kind": "ACTIVITY",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:ACTIVITY:A04",
     "sourceFile": "m6-flow-model.yaml",
     "properties": {
       "activityId": "A04",
@@ -3191,6 +3389,8 @@
     "name": "开票与收款循环",
     "kind": "ACTIVITY",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:ACTIVITY:A05",
     "sourceFile": "m6-flow-model.yaml",
     "properties": {
       "activityId": "A05",
@@ -3208,6 +3408,8 @@
     "name": "合同结清判断",
     "kind": "ACTIVITY",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:ACTIVITY:A06",
     "sourceFile": "m6-flow-model.yaml",
     "properties": {
       "activityId": "A06",
@@ -3235,6 +3437,8 @@
     "name": "合同结清（由同步联动自动触发）",
     "kind": "ACTIVITY",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:ACTIVITY:A07",
     "sourceFile": "m6-flow-model.yaml",
     "properties": {
       "activityId": "A07",
@@ -3252,6 +3456,8 @@
     "name": "合同作废或归档",
     "kind": "ACTIVITY",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:ACTIVITY:A08",
     "sourceFile": "m6-flow-model.yaml",
     "properties": {
       "activityId": "A08",
@@ -3270,6 +3476,8 @@
     "name": "结束",
     "kind": "ACTIVITY",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:ACTIVITY:A09",
     "sourceFile": "m6-flow-model.yaml",
     "properties": {
       "activityId": "A09",
@@ -3284,6 +3492,8 @@
     "name": "合同开票与收款流程",
     "kind": "FLOW",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:FLOW:FLOW-CONTRACT-INVOICE-002",
     "sourceFile": "m6-flow-model.yaml",
     "properties": {
       "id": "FLOW-CONTRACT-INVOICE-002",
@@ -3427,6 +3637,8 @@
     "name": "开始",
     "kind": "ACTIVITY",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:ACTIVITY:B01",
     "sourceFile": "m6-flow-model.yaml",
     "properties": {
       "activityId": "B01",
@@ -3443,6 +3655,8 @@
     "name": "开票登记（保存草稿/提交审批）",
     "kind": "ACTIVITY",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:ACTIVITY:B02",
     "sourceFile": "m6-flow-model.yaml",
     "properties": {
       "activityId": "B02",
@@ -3461,6 +3675,8 @@
     "name": "开票审批",
     "kind": "ACTIVITY",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:ACTIVITY:B03",
     "sourceFile": "m6-flow-model.yaml",
     "properties": {
       "activityId": "B03",
@@ -3478,6 +3694,8 @@
     "name": "审批结果判断",
     "kind": "ACTIVITY",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:ACTIVITY:B04",
     "sourceFile": "m6-flow-model.yaml",
     "properties": {
       "activityId": "B04",
@@ -3511,6 +3729,8 @@
     "name": "更新付款阶段开票状态（同步联动自动触发）",
     "kind": "ACTIVITY",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:ACTIVITY:B05",
     "sourceFile": "m6-flow-model.yaml",
     "properties": {
       "activityId": "B05",
@@ -3528,6 +3748,8 @@
     "name": "录入收款",
     "kind": "ACTIVITY",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:ACTIVITY:B06",
     "sourceFile": "m6-flow-model.yaml",
     "properties": {
       "activityId": "B06",
@@ -3546,6 +3768,8 @@
     "name": "更新开票收款状态（同步联动自动触发）",
     "kind": "ACTIVITY",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:ACTIVITY:B07",
     "sourceFile": "m6-flow-model.yaml",
     "properties": {
       "activityId": "B07",
@@ -3563,6 +3787,8 @@
     "name": "开票是否全部收齐",
     "kind": "ACTIVITY",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:ACTIVITY:B08",
     "sourceFile": "m6-flow-model.yaml",
     "properties": {
       "activityId": "B08",
@@ -3590,6 +3816,8 @@
     "name": "结束",
     "kind": "ACTIVITY",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:ACTIVITY:B09",
     "sourceFile": "m6-flow-model.yaml",
     "properties": {
       "activityId": "B09",
@@ -3604,6 +3832,8 @@
     "name": "合同登记审批",
     "kind": "FLOW",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:FLOW:FLOW-CONTRACT-APPROVAL-001",
     "sourceFile": "m6-flow-model.yaml",
     "properties": {
       "id": "FLOW-CONTRACT-APPROVAL-001",
@@ -3737,6 +3967,8 @@
     "name": "开始",
     "kind": "ACTIVITY",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:ACTIVITY:P01",
     "sourceFile": "m6-flow-model.yaml",
     "properties": {
       "activityId": "P01",
@@ -3753,6 +3985,8 @@
     "name": "财务经理审批",
     "kind": "ACTIVITY",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:ACTIVITY:P02",
     "sourceFile": "m6-flow-model.yaml",
     "properties": {
       "activityId": "P02",
@@ -3775,6 +4009,8 @@
     "name": "财务审批结果判断",
     "kind": "ACTIVITY",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:ACTIVITY:P03",
     "sourceFile": "m6-flow-model.yaml",
     "properties": {
       "activityId": "P03",
@@ -3802,6 +4038,8 @@
     "name": "大额合同判断",
     "kind": "ACTIVITY",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:ACTIVITY:P04",
     "sourceFile": "m6-flow-model.yaml",
     "properties": {
       "activityId": "P04",
@@ -3829,6 +4067,8 @@
     "name": "总经理审批",
     "kind": "ACTIVITY",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:ACTIVITY:P05",
     "sourceFile": "m6-flow-model.yaml",
     "properties": {
       "activityId": "P05",
@@ -3851,6 +4091,8 @@
     "name": "标记审批通过（合同已纳入管理）",
     "kind": "ACTIVITY",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:ACTIVITY:P06",
     "sourceFile": "m6-flow-model.yaml",
     "properties": {
       "activityId": "P06",
@@ -3868,6 +4110,8 @@
     "name": "审批通过结束",
     "kind": "ACTIVITY",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:ACTIVITY:P07",
     "sourceFile": "m6-flow-model.yaml",
     "properties": {
       "activityId": "P07",
@@ -3882,6 +4126,8 @@
     "name": "驳回结束",
     "kind": "ACTIVITY",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:ACTIVITY:P08",
     "sourceFile": "m6-flow-model.yaml",
     "properties": {
       "activityId": "P08",
@@ -3896,6 +4142,8 @@
     "name": "开票审批",
     "kind": "FLOW",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:FLOW:FLOW-INVOICE-APPROVAL-002",
     "sourceFile": "m6-flow-model.yaml",
     "properties": {
       "id": "FLOW-INVOICE-APPROVAL-002",
@@ -3986,6 +4234,8 @@
     "name": "开始",
     "kind": "ACTIVITY",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:ACTIVITY:Q01",
     "sourceFile": "m6-flow-model.yaml",
     "properties": {
       "activityId": "Q01",
@@ -4002,6 +4252,8 @@
     "name": "财务经理审批",
     "kind": "ACTIVITY",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:ACTIVITY:Q02",
     "sourceFile": "m6-flow-model.yaml",
     "properties": {
       "activityId": "Q02",
@@ -4024,6 +4276,8 @@
     "name": "审批结果判断",
     "kind": "ACTIVITY",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:ACTIVITY:Q03",
     "sourceFile": "m6-flow-model.yaml",
     "properties": {
       "activityId": "Q03",
@@ -4051,6 +4305,8 @@
     "name": "审批通过结束（开票已批准）",
     "kind": "ACTIVITY",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:ACTIVITY:Q04",
     "sourceFile": "m6-flow-model.yaml",
     "properties": {
       "activityId": "Q04",
@@ -4065,6 +4321,8 @@
     "name": "驳回结束",
     "kind": "ACTIVITY",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:ACTIVITY:Q05",
     "sourceFile": "m6-flow-model.yaml",
     "properties": {
       "activityId": "Q05",
@@ -4079,6 +4337,8 @@
     "name": "合同综合查询",
     "kind": "REPORT",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:REPORT:REP-CONTRACT-LIST",
     "sourceFile": "m7-report-model.yaml",
     "alias": "contractList",
     "properties": {
@@ -4448,6 +4708,8 @@
     "name": "合同详情查询",
     "kind": "REPORT",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:REPORT:REP-CONTRACT-DETAIL",
     "sourceFile": "m7-report-model.yaml",
     "alias": "contractDetail",
     "properties": {
@@ -4543,6 +4805,8 @@
     "name": "合同执行情况分析",
     "kind": "REPORT",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:REPORT:REP-CONTRACT-EXECUTION",
     "sourceFile": "m7-report-model.yaml",
     "alias": "contractExecutionAnalysis",
     "properties": {
@@ -4771,6 +5035,8 @@
     "name": "部门合同统计分析报表",
     "kind": "REPORT",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:REPORT:REP-DEPT-CONTRACT-SUMMARY",
     "sourceFile": "m7-report-model.yaml",
     "alias": "departmentContractSummary",
     "properties": {
@@ -5032,6 +5298,8 @@
     "name": "已开票未收款合同分析",
     "kind": "REPORT",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:REPORT:REP-INVOICED-UNRECEIVED",
     "sourceFile": "m7-report-model.yaml",
     "alias": "invoicedUnreceivedContracts",
     "properties": {
@@ -5259,6 +5527,8 @@
     "name": "合同管理",
     "kind": "UI_MENU",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:UI_MENU:menu-contract",
     "sourceFile": "mu-ui-model.yaml",
     "properties": {
       "menuId": "menu-contract",
@@ -5283,6 +5553,8 @@
     "name": "合同维护",
     "kind": "UI_MENU",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:UI_MENU:menu-contract-maintain",
     "sourceFile": "mu-ui-model.yaml",
     "properties": {
       "menuId": "menu-contract-maintain",
@@ -5296,6 +5568,8 @@
     "name": "合同查询",
     "kind": "UI_MENU",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:UI_MENU:menu-contract-query",
     "sourceFile": "mu-ui-model.yaml",
     "properties": {
       "menuId": "menu-contract-query",
@@ -5309,6 +5583,8 @@
     "name": "开票管理",
     "kind": "UI_MENU",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:UI_MENU:menu-invoice",
     "sourceFile": "mu-ui-model.yaml",
     "properties": {
       "menuId": "menu-invoice",
@@ -5333,6 +5609,8 @@
     "name": "开票录入",
     "kind": "UI_MENU",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:UI_MENU:menu-invoice-maintain",
     "sourceFile": "mu-ui-model.yaml",
     "properties": {
       "menuId": "menu-invoice-maintain",
@@ -5346,6 +5624,8 @@
     "name": "开票查询",
     "kind": "UI_MENU",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:UI_MENU:menu-invoice-query",
     "sourceFile": "mu-ui-model.yaml",
     "properties": {
       "menuId": "menu-invoice-query",
@@ -5359,6 +5639,8 @@
     "name": "收款管理",
     "kind": "UI_MENU",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:UI_MENU:menu-receipt",
     "sourceFile": "mu-ui-model.yaml",
     "properties": {
       "menuId": "menu-receipt",
@@ -5383,6 +5665,8 @@
     "name": "收款录入",
     "kind": "UI_MENU",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:UI_MENU:menu-receipt-maintain",
     "sourceFile": "mu-ui-model.yaml",
     "properties": {
       "menuId": "menu-receipt-maintain",
@@ -5396,6 +5680,8 @@
     "name": "收款查询",
     "kind": "UI_MENU",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:UI_MENU:menu-receipt-query",
     "sourceFile": "mu-ui-model.yaml",
     "properties": {
       "menuId": "menu-receipt-query",
@@ -5409,6 +5695,8 @@
     "name": "审批中心",
     "kind": "UI_MENU",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:UI_MENU:menu-approval",
     "sourceFile": "mu-ui-model.yaml",
     "properties": {
       "menuId": "menu-approval",
@@ -5433,6 +5721,8 @@
     "name": "合同审批",
     "kind": "UI_MENU",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:UI_MENU:menu-approval-contract",
     "sourceFile": "mu-ui-model.yaml",
     "properties": {
       "menuId": "menu-approval-contract",
@@ -5446,6 +5736,8 @@
     "name": "开票审批",
     "kind": "UI_MENU",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:UI_MENU:menu-approval-invoice",
     "sourceFile": "mu-ui-model.yaml",
     "properties": {
       "menuId": "menu-approval-invoice",
@@ -5459,6 +5751,8 @@
     "name": "报表中心",
     "kind": "UI_MENU",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:UI_MENU:menu-report",
     "sourceFile": "mu-ui-model.yaml",
     "properties": {
       "menuId": "menu-report",
@@ -5488,6 +5782,8 @@
     "name": "合同执行情况分析",
     "kind": "UI_MENU",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:UI_MENU:menu-report-execution",
     "sourceFile": "mu-ui-model.yaml",
     "properties": {
       "menuId": "menu-report-execution",
@@ -5501,6 +5797,8 @@
     "name": "部门合同统计分析",
     "kind": "UI_MENU",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:UI_MENU:menu-report-dept",
     "sourceFile": "mu-ui-model.yaml",
     "properties": {
       "menuId": "menu-report-dept",
@@ -5514,6 +5812,8 @@
     "name": "已开票未收款分析",
     "kind": "UI_MENU",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:UI_MENU:menu-report-unreceived",
     "sourceFile": "mu-ui-model.yaml",
     "properties": {
       "menuId": "menu-report-unreceived",
@@ -5527,6 +5827,8 @@
     "name": "基础数据",
     "kind": "UI_MENU",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:UI_MENU:menu-masterdata",
     "sourceFile": "mu-ui-model.yaml",
     "properties": {
       "menuId": "menu-masterdata",
@@ -5561,6 +5863,8 @@
     "name": "产品信息维护",
     "kind": "UI_MENU",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:UI_MENU:menu-masterdata-product",
     "sourceFile": "mu-ui-model.yaml",
     "properties": {
       "menuId": "menu-masterdata-product",
@@ -5574,6 +5878,8 @@
     "name": "客户信息维护",
     "kind": "UI_MENU",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:UI_MENU:menu-masterdata-customer",
     "sourceFile": "mu-ui-model.yaml",
     "properties": {
       "menuId": "menu-masterdata-customer",
@@ -5587,6 +5893,8 @@
     "name": "部门信息维护",
     "kind": "UI_MENU",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:UI_MENU:menu-masterdata-department",
     "sourceFile": "mu-ui-model.yaml",
     "properties": {
       "menuId": "menu-masterdata-department",
@@ -5600,6 +5908,8 @@
     "name": "人员信息维护",
     "kind": "UI_MENU",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:UI_MENU:menu-masterdata-employee",
     "sourceFile": "mu-ui-model.yaml",
     "properties": {
       "menuId": "menu-masterdata-employee",
@@ -5613,6 +5923,8 @@
     "name": "合同维护",
     "kind": "UI_SCREEN",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:UI_SCREEN:frmContractMaintain",
     "sourceFile": "mu-ui-model.yaml",
     "properties": {
       "screenId": "frmContractMaintain",
@@ -5766,6 +6078,8 @@
     "name": "合同查询",
     "kind": "UI_SCREEN",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:UI_SCREEN:frmContractQuery",
     "sourceFile": "mu-ui-model.yaml",
     "properties": {
       "screenId": "frmContractQuery",
@@ -5866,6 +6180,8 @@
     "name": "开票录入",
     "kind": "UI_SCREEN",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:UI_SCREEN:frmInvoiceMaintain",
     "sourceFile": "mu-ui-model.yaml",
     "properties": {
       "screenId": "frmInvoiceMaintain",
@@ -5967,6 +6283,8 @@
     "name": "开票查询",
     "kind": "UI_SCREEN",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:UI_SCREEN:frmInvoiceQuery",
     "sourceFile": "mu-ui-model.yaml",
     "properties": {
       "screenId": "frmInvoiceQuery",
@@ -6035,6 +6353,8 @@
     "name": "收款录入",
     "kind": "UI_SCREEN",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:UI_SCREEN:frmReceiptMaintain",
     "sourceFile": "mu-ui-model.yaml",
     "properties": {
       "screenId": "frmReceiptMaintain",
@@ -6121,6 +6441,8 @@
     "name": "收款查询",
     "kind": "UI_SCREEN",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:UI_SCREEN:frmReceiptQuery",
     "sourceFile": "mu-ui-model.yaml",
     "properties": {
       "screenId": "frmReceiptQuery",
@@ -6196,6 +6518,8 @@
     "name": "合同审批",
     "kind": "UI_SCREEN",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:UI_SCREEN:frmContractApproval",
     "sourceFile": "mu-ui-model.yaml",
     "properties": {
       "screenId": "frmContractApproval",
@@ -6244,6 +6568,8 @@
     "name": "开票审批",
     "kind": "UI_SCREEN",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:UI_SCREEN:frmInvoiceApproval",
     "sourceFile": "mu-ui-model.yaml",
     "properties": {
       "screenId": "frmInvoiceApproval",
@@ -6292,6 +6618,8 @@
     "name": "合同执行情况分析",
     "kind": "UI_SCREEN",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:UI_SCREEN:frmContractExecutionReport",
     "sourceFile": "mu-ui-model.yaml",
     "properties": {
       "screenId": "frmContractExecutionReport",
@@ -6351,6 +6679,8 @@
     "name": "部门合同统计分析",
     "kind": "UI_SCREEN",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:UI_SCREEN:frmDeptReport",
     "sourceFile": "mu-ui-model.yaml",
     "properties": {
       "screenId": "frmDeptReport",
@@ -6404,6 +6734,8 @@
     "name": "已开票未收款分析",
     "kind": "UI_SCREEN",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:UI_SCREEN:frmUnreceivedReport",
     "sourceFile": "mu-ui-model.yaml",
     "properties": {
       "screenId": "frmUnreceivedReport",
@@ -6457,6 +6789,8 @@
     "name": "产品信息维护",
     "kind": "UI_SCREEN",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:UI_SCREEN:frmProductMaintain",
     "sourceFile": "mu-ui-model.yaml",
     "properties": {
       "screenId": "frmProductMaintain",
@@ -6514,6 +6848,8 @@
     "name": "客户信息维护",
     "kind": "UI_SCREEN",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:UI_SCREEN:frmCustomerMaintain",
     "sourceFile": "mu-ui-model.yaml",
     "properties": {
       "screenId": "frmCustomerMaintain",
@@ -6571,6 +6907,8 @@
     "name": "部门信息维护",
     "kind": "UI_SCREEN",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:UI_SCREEN:frmDepartmentMaintain",
     "sourceFile": "mu-ui-model.yaml",
     "properties": {
       "screenId": "frmDepartmentMaintain",
@@ -6620,6 +6958,8 @@
     "name": "人员信息维护",
     "kind": "UI_SCREEN",
     "domain": "销售合同执行管理",
+    "domainCategory": "core",
+    "canonicalId": "reference-example:UI_SCREEN:frmEmployeeMaintain",
     "sourceFile": "mu-ui-model.yaml",
     "properties": {
       "screenId": "frmEmployeeMaintain",

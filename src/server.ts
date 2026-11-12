@@ -11,12 +11,15 @@ import {
   listFlowcharts, listFlowchartsForSuite, getFlowchart, saveFlowchart, deleteFlowchart,
   deriveFlowRelations, deriveInterviewRelations,
   listInterviews, saveInterview, deleteInterview,
+  buildGlobalOntology, assembleGlobalGraph,
 } from './datastore.js'
 import { resolveDatasourceRoot, discoverSuites } from './ontology-parser.js'
 import {
-  getBuiltinFramework, buildDomainDictionary, deriveOntologyCode, deriveApqcCode, parseApqcCode,
+  getBuiltinFramework, deriveOntologyCode, deriveApqcCode, parseApqcCode,
   registerFramework, validateFrameworkDefinition,
 } from './builtin-frameworks.js'
+import { getDomainDictionary } from './domain/standard-domains.js'
+import { reconcileSuite, applyDomainMappings } from './domain/reconcile.js'
 import { getRegisteredRoutes } from './kernel/route-registry.js'
 import { listAppSummaries } from './kernel/app-registry.js'
 import './apps/index.js'
@@ -58,6 +61,9 @@ function matchRoute(method: string, path: string): { handler: Handler; params: R
     { method: 'GET', pattern: /^\/api\/suites\/([^/]+)\/entities$/,     handler: apiListEntities },
     { method: 'POST', pattern: /^\/api\/suites\/([^/]+)\/entities\/batch$/, handler: apiBatchEntities },
     { method: 'GET', pattern: /^\/api\/suites\/([^/]+)\/graph$/,        handler: apiGetGraph },
+    { method: 'GET', pattern: /^\/api\/global\/ontology$/,              handler: apiGlobalOntology },
+    { method: 'GET', pattern: /^\/api\/global\/graph$/,                 handler: apiGlobalGraph },
+    { method: 'GET', pattern: /^\/api\/global\/process-links$/,         handler: apiGlobalProcessLinks },
     { method: 'GET', pattern: /^\/api\/suites\/([^/]+)\/derived-relations$/, handler: apiDerivedRelations },
     { method: 'GET', pattern: /^\/api\/suites\/([^/]+)\/crud-matrix$/,  handler: apiCrudMatrix },
     { method: 'GET', pattern: /^\/api\/suites\/([^/]+)\/export$/,       handler: apiExportSuite },
@@ -74,6 +80,8 @@ function matchRoute(method: string, path: string): { handler: Handler; params: R
     { method: 'GET', pattern: /^\/api\/frameworks\/([^/]+)$/,           handler: apiGetFramework },
     { method: 'GET', pattern: /^\/api\/coverage$/,                      handler: apiCoverage },
     { method: 'GET', pattern: /^\/api\/dictionary$/,                    handler: apiDictionary },
+    { method: 'GET', pattern: /^\/api\/domain\/reconcile$/,             handler: apiDomainReconcile },
+    { method: 'POST', pattern: /^\/api\/domain\/apply$/,                handler: apiDomainApply },
     { method: 'GET', pattern: /^\/api\/datasource\/suites$/,           handler: apiDatasourceSuites },
     { method: 'GET', pattern: /^\/api\/ontology-code\/derive$/,        handler: apiDeriveOntologyCode },
     { method: 'GET', pattern: /^\/api\/flowcharts$/,                   handler: apiListFlowcharts },
@@ -239,10 +247,32 @@ async function apiBatchEntities(req: IncomingMessage, res: ServerResponse, param
   sendJson(res, 200, { success: true, data: { created: result.created.length, anchored: result.anchored, skipped: result.skipped } })
 }
 
-async function apiGetGraph(_req: IncomingMessage, res: ServerResponse, params: Record<string, string>): Promise<void> {
+async function apiGetGraph(_req: IncomingMessage, res: ServerResponse, params: Record<string, string>, query: Record<string, string>): Promise<void> {
+  // mode=global：返回该套件在全局本体中的子图（含引用的规范主数据实体）
+  if (query.mode === 'global') {
+    const graph = await assembleGlobalGraph({ suiteIds: [params.p1] })
+    sendJson(res, 200, { success: true, data: graph })
+    return
+  }
   const suite = await loadSuiteWithDerived(params.p1)
   if (!suite) { sendJson(res, 404, { success: false, message: `suite ${params.p1} not found` }); return }
   sendJson(res, 200, { success: true, data: assembleGraph(suite) })
+}
+
+async function apiGlobalOntology(_req: IncomingMessage, res: ServerResponse): Promise<void> {
+  const global = await buildGlobalOntology()
+  sendJson(res, 200, { success: true, data: global })
+}
+
+async function apiGlobalGraph(_req: IncomingMessage, res: ServerResponse): Promise<void> {
+  const graph = await assembleGlobalGraph()
+  sendJson(res, 200, { success: true, data: graph })
+}
+
+/** 全局本体↔流程关联（只读派生）：供流程地图浏览模式与全局图谱 PCF 投影使用 */
+async function apiGlobalProcessLinks(_req: IncomingMessage, res: ServerResponse): Promise<void> {
+  const global = await buildGlobalOntology()
+  sendJson(res, 200, { success: true, data: global.processLinks })
 }
 
 async function apiDerivedRelations(_req: IncomingMessage, res: ServerResponse, params: Record<string, string>): Promise<void> {
@@ -326,6 +356,7 @@ async function apiSaveInterview(req: IncomingMessage, res: ServerResponse, param
         value: Boolean((a as any).value),
         roleRef: typeof (a as any).roleRef === 'string' ? (a as any).roleRef : undefined,
         entityId: typeof (a as any).entityId === 'string' ? (a as any).entityId : undefined,
+        entityName: typeof (a as any).entityName === 'string' ? (a as any).entityName : undefined,
         op: typeof (a as any).op === 'string' ? (a as any).op : undefined,
         ruleRef: typeof (a as any).ruleRef === 'string' ? (a as any).ruleRef : undefined,
         behaviorRef: typeof (a as any).behaviorRef === 'string' ? (a as any).behaviorRef : undefined,
@@ -482,7 +513,41 @@ async function apiCoverage(_req: IncomingMessage, res: ServerResponse, _p: Recor
 
 async function apiDictionary(_req: IncomingMessage, res: ServerResponse, _p: Record<string, string>, query: Record<string, string>): Promise<void> {
   const fw = query.framework ?? 'apqc-process'
-  sendJson(res, 200, { success: true, data: buildDomainDictionary(fw) })
+  sendJson(res, 200, { success: true, data: await getDomainDictionary(fw) })
+}
+
+/** 领域对齐（dry-run）：返回每个实体与标准领域目录的匹配建议，不落库 */
+async function apiDomainReconcile(_req: IncomingMessage, res: ServerResponse, _p: Record<string, string>, query: Record<string, string>): Promise<void> {
+  const suiteId = (query.suite ?? '').trim()
+  if (!suiteId) { sendJson(res, 400, { success: false, message: 'suite required' }); return }
+  const data = await reconcileSuite(suiteId, query.framework || undefined)
+  if (!data) { sendJson(res, 404, { success: false, message: `suite ${suiteId} not found` }); return }
+  sendJson(res, 200, { success: true, data })
+}
+
+/** 人工确认后写回标准领域编号，并沉淀别名 */
+async function apiDomainApply(req: IncomingMessage, res: ServerResponse): Promise<void> {
+  const body = await readJsonBody(req) as { suiteId?: unknown; frameworkId?: unknown; items?: unknown } | null
+  const suiteId = typeof body?.suiteId === 'string' ? body.suiteId.trim() : ''
+  const rawItems = Array.isArray(body?.items) ? body.items : null
+  if (!suiteId || !rawItems || rawItems.length === 0) {
+    sendJson(res, 400, { success: false, message: 'suiteId 与 items 必填' })
+    return
+  }
+  if (rawItems.length > 2000) {
+    sendJson(res, 400, { success: false, message: '单次最多 2000 条' })
+    return
+  }
+  const items = rawItems.map((it: any) => ({
+    entityId: String(it?.entityId ?? ''),
+    code: String(it?.code ?? ''),
+    source: it?.source === 'rule' || it?.source === 'manual' || it?.source === 'ai' ? it.source : undefined,
+    confidence: typeof it?.confidence === 'number' ? it.confidence : undefined,
+  }))
+  const frameworkId = typeof body?.frameworkId === 'string' ? body.frameworkId : undefined
+  const data = await applyDomainMappings(suiteId, items, frameworkId)
+  if (!data) { sendJson(res, 404, { success: false, message: `suite ${suiteId} not found` }); return }
+  sendJson(res, 200, { success: true, data })
 }
 
 async function apiDatasourceSuites(_req: IncomingMessage, res: ServerResponse): Promise<void> {

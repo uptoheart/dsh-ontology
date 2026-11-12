@@ -15,8 +15,8 @@ async function loadSuites() {
   populateFwNewSelect();
   const sel = $('#suiteSelect');
   sel.innerHTML = state.suites.length
-    ? state.suites.map(s => `<option value="${esc(s.suiteId)}">${esc(s.suiteId)} · ${esc(s.domain || '')}</option>`).join('')
-    : '<option value="">— 暂无套件，请先「重新导入」 —</option>';
+    ? '<option value="">— 未选择套件（未分配桶）—</option>' + state.suites.map(s => `<option value="${esc(s.suiteId)}">${esc(s.suiteId)} · ${esc(s.domain || '')}</option>`).join('')
+    : '<option value="">— 暂无套件（未分配桶模式），可「重新导入」 —</option>';
   if (state.currentSuiteId && state.suites.some(s => s.suiteId === state.currentSuiteId)) sel.value = state.currentSuiteId;
   $('#cntSuites').textContent = state.suites.length;
   $('#suiteExtra').textContent = state.suites.length ? `${state.suites.length} 个` : '';
@@ -33,7 +33,7 @@ function renderSuites() {
     <div class="suite-item ${s.suiteId === state.currentSuiteId ? 'selected' : ''}" data-sid="${esc(s.suiteId)}">
       <div class="si-name">${s.suiteId === state.currentSuiteId ? '<span class="check">✓</span>' : ''}${esc(s.suiteId)}</div>
       <div class="si-meta">
-        框架：<b>${esc(fwNameOf(s.frameworkId))}</b> · 领域：<b>${esc(s.domain || '—')}</b><br>
+        框架：<b>${esc(fwNameOf(s.frameworkId))}</b> · 核心领域：<b>${esc(s.domain || '—')}</b><br>
         <b>${s.entityCount ?? 0}</b> 实体 · <b>${s.relationCount ?? 0}</b> 关系 · 导入于 ${esc(fmtTime(s.importTime))}
       </div>
     </div>`).join('');
@@ -44,7 +44,10 @@ $('#suiteList').addEventListener('click', (e) => {
   if (item) selectSuite(item.dataset.sid);
 });
 
-$('#suiteSelect').addEventListener('change', (e) => selectSuite(e.target.value));
+$('#suiteSelect').addEventListener('change', (e) => {
+  const v = e.target.value;
+  if (v) selectSuite(v); else deselectSuite();
+});
 
 async function selectSuite(suiteId) {
   if (!suiteId || suiteId === state.currentSuiteId) { if (suiteId) { $('#suiteSelect').value = suiteId; } return; }
@@ -62,20 +65,19 @@ async function selectSuite(suiteId) {
     // 下拉框同步显示当前套件锁定的框架
     const fwSel = $('#fwNewSelect');
     if (fwSel && FW_LIST.some(f => f.frameworkId === fwId)) fwSel.value = fwId;
-    const [coverage, framework, dictionary, interviews] = await Promise.all([
+    state.currentSuiteId = suiteId;
+    const [coverage, framework, dictionary] = await Promise.all([
       api('/api/coverage?suite=' + encodeURIComponent(suiteId) + '&framework=' + fwId),
       api('/api/frameworks/' + fwId),
       api('/api/dictionary?framework=' + fwId),
-      api('/api/suites/' + encodeURIComponent(suiteId) + '/interviews'),
+      loadInterviewScope(),
     ]);
-    state.currentSuiteId = suiteId;
     state.suite = suite;
     state.frameworks = frameworks;
     state.frameworkId = fwId;
     state.coverage = coverage;
     state.framework = framework;
     state.dictionary = dictionary;
-    state.interviews = interviews || [];
     iv.selectedCode = null; iv.currentId = null;
     iv.treeExpanded = new Set(); iv.treeQuery = ''; iv.seeded = false;
     $('#ivTreeSearch').value = '';
@@ -97,6 +99,30 @@ async function selectSuite(suiteId) {
   } finally {
     state.loading = false;
   }
+}
+
+/* 退出套件上下文：回到未分配桶模式（冷启动工作台），框架回退为全局缺省 */
+async function deselectSuite() {
+  if (!state.currentSuiteId) { $('#suiteSelect').value = ''; return; }
+  state.currentSuiteId = null;
+  state.suite = null;
+  state.coverage = null;
+  state.dictionary = null;
+  state.frameworks = [];
+  state.selectedNode = null;
+  state.drawer = null;
+  iv.selectedCode = null; iv.currentId = null;
+  iv.treeExpanded = new Set(); iv.treeQuery = ''; iv.seeded = false;
+  const ivSearch = $('#ivTreeSearch'); if (ivSearch) ivSearch.value = '';
+  try {
+    await ensureGlobalFramework();
+    await Promise.all([loadInterviewScope(), loadGlobalProcessLinks()]);
+  } catch (err) { toast('加载全局框架失败：' + err.message, 'err'); }
+  $('#cntEntities').textContent = '';
+  updateTabLock();
+  renderAll();
+  renderSuiteFwSwitcher();
+  toast('已退出套件上下文，进入未分配桶模式', 'ok');
 }
 
 async function refreshAll() {
@@ -252,6 +278,7 @@ function renderEntities() {
       <td><div class="e-name">${esc(e.name)}</div><div class="e-id">${esc(e.rawId)}</div></td>
       <td><span class="kind-tag">${esc(e.kind)}</span></td>
       <td class="apqc-cell ${apqc ? '' : 'none'}">${apqc ? esc(apqc) : '—'}</td>
+      <td class="dom-cell ${e.domainCode ? '' : 'none'}">${e.domainCode ? esc(e.domainCode + ' ' + (e.domainLabel || '')) : '—'}</td>
       <td><span class="badge st-${st}">${STATUS_LABEL[st]}</span></td>
     </tr>`;
   }).join('');
@@ -260,14 +287,15 @@ function renderEntities() {
     <div class="ent-toolbar">
       <select id="kindSelect"></select>
       <input type="text" id="kwInput" placeholder="🔍 搜索名称 / ID / 领域…" value="${esc(state.entityFilter.keyword)}">
+      <button class="btn" id="btnDomainAlign" title="按标准领域目录（APQC PCF L1/L2）核对并校正实体领域">🧭 领域对齐</button>
       <button class="btn" id="btnBatchImport" title="粘贴客户单据清单批量入库">📋 批量导入</button>
       <button class="btn" id="btnExportPkg" title="导出套件现场数据包（.dshont.json：实体+标注+访谈+流程图）">📤 导出数据包</button>
       <button class="btn" id="btnImportPkg" title="导入现场数据包（按套件 ID 整体覆盖本地同名套件）">📥 导入数据包</button>
       <span class="count">${list.length} / ${state.suite.entities.length} 个实体 · 每页 ${PAGE_SIZE} 条 · 点击行打开标注抽屉</span>
     </div>
     <table class="ent-table">
-      <thead><tr><th>序号</th><th>名称 / ID</th><th>Kind</th><th>框架编号</th><th>覆盖状态</th></tr></thead>
-      <tbody>${rows || '<tr><td colspan="5" style="text-align:center;color:var(--text-dim);padding:24px">无匹配实体</td></tr>'}</tbody>
+      <thead><tr><th>序号</th><th>名称 / ID</th><th>Kind</th><th>框架编号</th><th>标准领域</th><th>覆盖状态</th></tr></thead>
+      <tbody>${rows || '<tr><td colspan="6" style="text-align:center;color:var(--text-dim);padding:24px">无匹配实体</td></tr>'}</tbody>
     </table>
     ${pages > 1 ? `<div class="pager">
       <button class="btn" id="pgPrev" ${state.entityPage <= 1 ? 'disabled' : ''}>‹ 上一页</button>
@@ -296,8 +324,115 @@ function renderEntities() {
   if (prev) prev.addEventListener('click', () => { state.entityPage--; renderEntities(); });
   if (next) next.addEventListener('click', () => { state.entityPage++; renderEntities(); });
   $('#btnBatchImport').addEventListener('click', renderBatchImport);
+  $('#btnDomainAlign').addEventListener('click', renderDomainReconcile);
   $('#btnExportPkg').addEventListener('click', downloadPackage);
   $('#btnImportPkg').addEventListener('click', importPackageFromFile);
+}
+
+/* ─────────── 领域对齐（标准目录：APQC PCF L1/L2） ─────────── */
+const DR_STATUS_LABEL = { matched: '已匹配', ambiguous: '待确认', unmatched: '无建议', skipped: '不参与' };
+const DR_SOURCE_LABEL = { aligned: '已对齐', code: '编号直等', label: '名称精确', alias: '别名命中', contains: '包含匹配' };
+
+async function renderDomainReconcile() {
+  if (!state.suite || !state.currentSuiteId) { toast('请先选择套件', 'err'); return; }
+  const pane = $('#entityPane');
+  pane.innerHTML = '<div class="empty-hint"><div><div class="big">🧭</div>正在按标准领域目录匹配…</div></div>';
+  let data;
+  try {
+    data = await api('/api/domain/reconcile?suite=' + encodeURIComponent(state.currentSuiteId)
+      + '&framework=' + encodeURIComponent(state.frameworkId || ''));
+  } catch (err) {
+    toast('领域对齐失败：' + err.message, 'err');
+    renderEntities();
+    return;
+  }
+  state.domainReconcile = data;
+  renderDomainReconcileView();
+}
+
+function drOptionsHtml(selected) {
+  const entries = (state.dictionary && state.dictionary.entries) || [];
+  const l1 = entries.filter(e => e.level === 'L1');
+  const l2 = entries.filter(e => e.level === 'L2');
+  const opt = (e) => `<option value="${esc(e.code)}"${e.code === selected ? ' selected' : ''}>${esc(e.code + ' ' + e.label)}</option>`;
+  return '<option value="">— 选择标准领域 —</option>'
+    + l1.map(p => `<optgroup label="${esc(p.code + ' ' + p.label)}">${opt(p)}${l2.filter(c => c.parentCode === p.code).map(opt).join('')}</optgroup>`).join('');
+}
+
+function renderDomainReconcileView() {
+  const dr = state.domainReconcile;
+  const pane = $('#entityPane');
+  if (!dr) { renderEntities(); return; }
+  const rowsData = dr.entries.filter(e => e.status !== 'skipped');
+  const rows = rowsData.map((e, i) => {
+    const top = e.suggestions[0];
+    const conf = top ? Math.round(top.score * 100) + '%' : '—';
+    return `<tr data-eid="${esc(e.entityId)}">
+      <td><div class="e-name">${esc(e.entityName)}</div><div class="e-id">${esc(e.entityId)}</div></td>
+      <td><span class="kind-tag">${esc(e.kind)}</span></td>
+      <td>${esc(e.declared || '—')}</td>
+      <td><select class="dr-sel" id="drSel${i}">${drOptionsHtml(top ? top.code : '')}</select></td>
+      <td class="dr-conf">${conf}${e.matchedBy ? `<div class="e-id">${esc(DR_SOURCE_LABEL[e.matchedBy] || e.matchedBy)}</div>` : ''}</td>
+      <td><span class="badge dr-st-${e.status}">${DR_STATUS_LABEL[e.status]}</span>
+          <button class="btn" data-dr-adopt="${i}">采纳</button></td>
+    </tr>`;
+  }).join('');
+
+  const skipped = dr.entries.filter(e => e.status === 'skipped');
+  pane.innerHTML = `
+    <div class="ent-toolbar">
+      <b style="font-size:13px">🧭 领域对齐</b>
+      <span class="count">标准目录 ${esc(dr.frameworkId)} · 已匹配 ${dr.stats.matched} · 待确认 ${dr.stats.ambiguous} · 无建议 ${dr.stats.unmatched} · 不参与 ${dr.stats.skipped}</span>
+      <button class="btn primary" id="drAdoptMatched">全部采纳已匹配</button>
+      <button class="btn" id="drBack">‹ 返回实体列表</button>
+    </div>
+    <div class="dr-hint">规则匹配顺序：编号直等 → 名称精确 → 别名 → 包含。只写入「标准领域编号」，原始领域字段不覆盖；主数据与流程类实体不参与。</div>
+    <table class="ent-table">
+      <thead><tr><th>名称 / ID</th><th>Kind</th><th>声明领域</th><th>标准领域（可改选）</th><th>置信度</th><th>状态 / 操作</th></tr></thead>
+      <tbody>${rows || '<tr><td colspan="6" style="text-align:center;color:var(--text-dim);padding:24px">没有需要对齐的实体</td></tr>'}</tbody>
+    </table>
+    ${skipped.length ? `<details class="dr-skip"><summary>已跳过 ${skipped.length} 条（主数据 / 非名词实体）</summary>
+      <div>${skipped.map(e => `<span class="dr-skip-item">${esc(e.entityName)}<i>${esc(e.reason || '')}</i></span>`).join('')}</div>
+    </details>` : ''}`;
+
+  $('#drBack').addEventListener('click', renderEntities);
+  $('#drAdoptMatched').addEventListener('click', async () => {
+    const items = dr.entries
+      .filter(e => e.status === 'matched' && e.matchedBy !== 'aligned' && e.suggestions[0])
+      .map(e => ({ entityId: e.entityId, code: e.suggestions[0].code, source: 'rule', confidence: e.suggestions[0].score }));
+    await applyDomainItems(items, '已采纳规则匹配结果');
+  });
+  pane.querySelectorAll('[data-dr-adopt]').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const i = Number(btn.getAttribute('data-dr-adopt'));
+      const e = rowsData[i];
+      const sel = $('#drSel' + i);
+      if (!e || !sel || !sel.value) { toast('请先选择标准领域', 'err'); return; }
+      await applyDomainItems([{ entityId: e.entityId, code: sel.value, source: 'manual', confidence: 1 }], '已写入标准领域');
+    });
+  });
+}
+
+async function applyDomainItems(items, okMsg) {
+  if (!items.length) { toast('没有可写入的条目', 'err'); return; }
+  try {
+    const data = await api('/api/domain/apply', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ suiteId: state.currentSuiteId, frameworkId: state.frameworkId, items }),
+    });
+    const updated = (data && data.entities) || [];
+    const index = new Map(state.suite.entities.map((e, i) => [e.id, i]));
+    for (const u of updated) {
+      const i = index.get(u.id);
+      if (i !== undefined) state.suite.entities[i] = u;
+    }
+    const aliasN = (data && data.aliasesAdded) || 0;
+    toast(`${okMsg}：${data.updated} 条${aliasN ? `，新增别名 ${aliasN} 个` : ''}`, 'ok');
+    await renderDomainReconcile();   // 重新 dry-run，刷新统计与状态
+  } catch (err) {
+    toast('写入失败：' + err.message, 'err');
+  }
 }
 
 /* ─────────── 现场数据包（P5-4 .dshont.json） ─────────── */
@@ -351,6 +486,8 @@ function importPackageFromFile() {
 }
 
 $('#entityPane').addEventListener('click', (e) => {
+  // 领域对齐页的行内控件（下拉/采纳）不应触发行点击打开抽屉
+  if (e.target.closest('select, button, input, summary')) return;
   const tr = e.target.closest('tr[data-eid]');
   if (tr) openDrawer(tr.dataset.eid);
 });

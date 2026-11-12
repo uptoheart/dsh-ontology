@@ -10,7 +10,10 @@
 .graph-toolbar .gt-title { font-size: 12px; font-weight: 600; color: var(--text-dim); flex-shrink: 0; }
 .graph-toolbar .btn { padding: 2px 8px; font-size: 11px; }
 .graph-toolbar .gt-hint { font-size: 10.5px; color: var(--text-dim); margin-left: auto; white-space: nowrap; }
-.legend { display: flex; flex-wrap: wrap; gap: 4px 6px; margin-top: 7px; }
+.legend { display: flex; flex-direction: column; gap: 5px; margin-top: 7px; }
+.lg-row { display: flex; flex-wrap: wrap; gap: 4px 6px; }
+.lg-row.hint-row { margin-top: 1px; }
+.lg-hint { font-size: 10px; color: var(--text-dim); }
 .lg-chip {
   display: inline-flex; align-items: center; gap: 4px;
   border: 1px solid var(--border); background: var(--card);
@@ -21,6 +24,12 @@
 .lg-chip b { font-family: var(--mono); font-weight: 500; }
 .lg-chip.off { opacity: .38; }
 .lg-chip:hover { border-color: var(--border-h); }
+/* 第一行：domainCategory 过滤层（更粗更显眼，表明是分组层） */
+.lg-chip.cat-chip {
+  font-size: 11px; font-weight: 600; padding: 2px 10px;
+  background: linear-gradient(180deg, var(--surface), var(--card));
+  border-width: 1.5px;
+}
 .graph-wrap { flex: 1; min-height: 0; position: relative; background: var(--bg); overflow: hidden; }
 .graph-wrap canvas { position: absolute; inset: 0; display: block; cursor: grab; }
 .graph-wrap canvas.dragging { cursor: grabbing; }
@@ -88,6 +97,27 @@
 }
 .view-toggle .toggle:first-child { border-radius: 6px 0 0 6px; }
 .view-toggle .toggle:last-child { border-radius: 0 6px 6px 0; }
+
+/* ═══════════ 图谱范围切换 [套件图谱] [全局图谱] ═══════════ */
+.scope-toggle { display: inline-flex; margin-right: 6px; }
+.scope-toggle .toggle.active {
+  background: var(--accent); border-color: var(--accent);
+  color: #fff; font-weight: 600;
+}
+.scope-toggle .toggle:first-child { border-radius: 6px 0 0 6px; }
+.scope-toggle .toggle:last-child { border-radius: 0 6px 6px 0; }
+
+/* 领域类别标签（实体详情抽屉） */
+.cat-tag {
+  display: inline-block; padding: 1px 7px; border-radius: 10px;
+  font-size: 10.5px; font-weight: 600; margin-left: 4px; vertical-align: middle;
+}
+.cat-master { background: rgba(245, 158, 11, 0.15); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.4); }
+.cat-core { background: rgba(59, 130, 246, 0.15); color: #3b82f6; border: 1px solid rgba(59, 130, 246, 0.4); }
+.cat-supporting { background: rgba(148, 163, 184, 0.15); color: #94a3b8; border: 1px solid rgba(148, 163, 184, 0.4); }
+
+/* 图例只读 chip（全局模式领域类别） */
+.lg-chip.readonly { cursor: default; }
 
 /* 参与流程反查 */
 .part-list { display: flex; flex-direction: column; gap: 5px; }

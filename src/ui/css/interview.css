@@ -154,3 +154,17 @@
   font-size: 12px; line-height: 1; padding: 3px; border-radius: 4px;
 }
 .iv-item .ii-del:hover { color: var(--st-gap); background: var(--st-gap-bg); }
+/* 未分配桶分组与认领 */
+.iv-item .ii-claim {
+  position: absolute; top: 4px; right: 28px;
+  padding: 2px 9px; border: 1px solid var(--accent); border-radius: 999px;
+  background: var(--card); color: var(--accent); cursor: pointer; font-size: 11px; line-height: 1.4;
+}
+.iv-item .ii-claim:hover { background: var(--accent); color: #fff; }
+.iv-item[data-ua="1"] { border-style: dashed; }
+.iv-ua-sep {
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  margin: 12px 4px 6px; padding-top: 10px;
+  border-top: 1px dashed var(--border); font-size: 12px; color: var(--text-dim);
+}
+.iv-ua-sep .btn { flex: none; padding: 2px 10px; font-size: 12px; }

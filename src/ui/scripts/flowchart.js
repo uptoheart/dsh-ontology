@@ -53,7 +53,7 @@ function flowFindNode(code) {
 function renderFlowTree() {
   const wrap = $('#flowTreeWrap');
   if (!state.framework || !state.framework.domains) {
-    wrap.innerHTML = '<div class="empty-hint"><div><div class="big">🗂️</div>请先在「套件管理」中选择套件</div></div>';
+    wrap.innerHTML = '<div class="empty-hint"><div><div class="big">🗂️</div>流程框架加载中或加载失败</div></div>';
     return;
   }
   const q = flow.treeQuery.trim().toLowerCase();

@@ -100,6 +100,12 @@ export type RelationType =
   | 'SAFETY_EVENT_CAUSED_BY'
   | 'SAFETY_RISK_PROPAGATES_TO'
 
+/** 实体领域类别：主数据（跨套件共享）/ 核心域（套件自有）/ 支撑域（套件支撑） */
+export type DomainCategory = 'master' | 'core' | 'supporting'
+
+/** 标准领域编号来源：declared=模型文件声明，rule=规则匹配，manual=人工确认，ai=外部模型判定 */
+export type DomainSource = 'declared' | 'rule' | 'manual' | 'ai'
+
 export interface OntologyEntity {
   id: string
   rawId: string
@@ -107,9 +113,46 @@ export interface OntologyEntity {
   alias?: string
   kind: EntityKind
   domain: string
+  /** 领域类别：master=主数据（跨套件去重）、core=核心域、supporting=支撑域 */
+  domainCategory?: DomainCategory
+  /** 全局规范 ID：主数据实体为 canonical:${kind}:${name}，其余等于 id */
+  canonicalId?: string
+  /** 标准领域编号（APQC PCF L1/L2），领域对齐后写入；原始 domain 字段保持不变 */
+  domainCode?: string
+  /** 标准领域中文名（与 domainCode 配套） */
+  domainLabel?: string
+  /** 标准领域编号的来源 */
+  domainSource?: DomainSource
+  /** 规则/模型匹配置信度（0-1），人工确认固定为 1 */
+  domainConfidence?: number
   description?: string
   sourceFile: string
   properties: Record<string, unknown>
+}
+
+/** 全局「本体↔流程」关联：跨套件投影，只读。同一 canonical 实体可对应多条（保留 provenance） */
+export interface GlobalProcessLink {
+  /** 实体 canonical id（主数据跨套件合并，其余等于自身 id） */
+  canonicalId: string
+  entityName: string
+  entityKind: EntityKind
+  /** 锚定的流程节点编号 */
+  apqcCode: string
+  /** 来源套件 */
+  suiteId: string
+  frameworkId: string
+}
+
+/** 全局本体（跨套件合并去重后的世界本体） */
+export interface GlobalOntology {
+  entities: OntologyEntity[]
+  relations: OntologyRelation[]
+  /** 参与合并的套件摘要 */
+  suites: Array<{ suiteId: string; domain: string; entityCount: number }>
+  /** suite-local id → canonical id 映射（用于关系重写与调试） */
+  idMap: Record<string, string>
+  /** 全局本体↔流程关联层（只读派生，不含覆盖状态） */
+  processLinks: GlobalProcessLink[]
 }
 
 export interface OntologyRelation {
@@ -240,6 +283,8 @@ export interface GraphNode {
   kind: EntityKind
   domain: string
   group: string
+  /** 全局图谱：该实体被哪些套件引用（主数据实体可能跨多个套件） */
+  suites?: string[]
 }
 
 export interface GraphEdge {
@@ -345,6 +390,8 @@ export interface InterviewAnswer {
   value: boolean
   roleRef?: string
   entityId?: string
+  /** 自由文本对象名（未选择套件的未分配桶模式兜底；认领进套件后可再绑定 entityId） */
+  entityName?: string
   op?: FlowOp
   ruleRef?: string
   behaviorRef?: string
@@ -406,6 +453,54 @@ export interface DomainDictionary {
   frameworkId: string
   entries: DomainDictEntry[]
   updatedAt: number
+}
+
+/** 领域对齐匹配结果（单个实体） */
+export interface DomainSuggestion {
+  entityId: string
+  entityName: string
+  kind: EntityKind
+  /** 实体声明的领域（原始 domain 字段） */
+  declared: string
+  /** matched=已认定 / ambiguous=多义待确认 / unmatched=无建议 / skipped=不参与 */
+  status: 'matched' | 'ambiguous' | 'unmatched' | 'skipped'
+  /** 认定方式 */
+  matchedBy?: 'aligned' | 'code' | 'label' | 'alias' | 'contains'
+  /** 跳过或匹配说明 */
+  reason?: string
+  suggestions: Array<{
+    code: string
+    label: string
+    level: 'L1' | 'L2'
+    parentCode?: string
+    score: number
+  }>
+}
+
+/** 套件领域对齐（dry-run）结果 */
+export interface DomainReconcileResult {
+  suiteId: string
+  frameworkId: string
+  entries: DomainSuggestion[]
+  stats: { total: number; matched: number; ambiguous: number; unmatched: number; skipped: number }
+  generatedAt: number
+}
+
+/** 人工确认后要写入的领域编号 */
+export interface DomainApplyItem {
+  entityId: string
+  code: string
+  source?: DomainSource
+  confidence?: number
+}
+
+export interface DomainApplyResult {
+  /** 实际更新的实体数 */
+  updated: number
+  /** 本次沉淀的新别名数 */
+  aliasesAdded: number
+  /** 被更新后的实体（前端就地合并） */
+  entities: OntologyEntity[]
 }
 
 export interface DatastorageConfig {

@@ -8,10 +8,10 @@ import type {
   GraphData, GraphNode, GraphEdge, CoverageMatrix, CoverageCell, CoverageNodeInfo,
   DatastorageConfig, FrameworkDefinition, FrameworkNode, FrameworkDomain, FrameworkLevel,
   FlowchartData, FlowchartMeta, ViolatedMapping, EntityKind, ProcessCoverageMatrix,
-  InterviewRecord, CrudMatrix, FlowOp, FrameMappingEntry, FrameMappingOld,
+  InterviewRecord, CrudMatrix, FlowOp, FrameMappingEntry, FrameMappingOld, GlobalOntology,
 } from './shared-types.js'
 import { mappingAxisOfKind, levelNumOfCode } from './shared-types.js'
-import { discoverSuites, parseSuite, resolveDatasourceRoot as resolveDatasourceRootAsync } from './ontology-parser.js'
+import { discoverSuites, parseSuite, resolveDatasourceRoot as resolveDatasourceRootAsync, classifyDomain } from './ontology-parser.js'
 import {
   getBuiltinFramework, parseApqcCode, listBuiltinFrameworks, DEFAULT_NEW_SUITE_FW,
   registerFramework, validateFrameworkDefinition,
@@ -262,6 +262,78 @@ function allFwEntries(mapping: OntologyAnnotations['entityFrameMapping'] | undef
   return Object.entries(v as Record<string, FrameMappingEntry>)
 }
 
+// ─────────────── 领域划分迁移（旧数据补全 domainCategory / canonicalId） ───────────────
+
+/** 启发式 kind → DomainCategory 映射（无 tags 时使用，覆盖 seed 套件等手写数据） */
+const KIND_SUPPORTING = new Set<EntityKind>([
+  'SAFETY_REGULATION', 'SAFETY_CLAUSE', 'SAFETY_PERMIT',
+])
+const KIND_MASTER = new Set<EntityKind>([
+  'SAFETY_EQUIPMENT', 'SAFETY_MATERIAL', 'SAFETY_UNIT', 'SAFETY_AREA',
+])
+
+/**
+ * 补全实体缺失的 domainCategory 与 canonicalId。
+ * - 已有 tags：调用 classifyDomain 按标准规则判定
+ * - 无 tags 但 kind 在启发式表里：用启发式分类
+ * - 无 tags 无启发式：默认 core
+ * - canonicalId：master 实体按规范生成，其余 = 自身 id
+ *
+ * 原地修改 entities 数组，返回迁移统计。
+ */
+function migrateDomainFields(
+  entities: OntologyEntity[],
+  suiteDomain: string,
+): { migrated: number; master: number; supporting: number; core: number } {
+  let migrated = 0
+  let master = 0, supporting = 0, core = 0
+
+  for (const e of entities) {
+    const missing = !e.domainCategory || !e.canonicalId
+
+    // ── 判定 domainCategory ──
+    let domainCat = e.domainCategory
+    if (!domainCat) {
+      // 优先用 tags（classifyDomain 的原始输入是聚合根的 tag 语义，这里适配实体自身）
+      const props = (e.properties || {}) as Record<string, unknown>
+      const tagsArr = Array.isArray(props.tags) ? props.tags : (Array.isArray((e as any).tags) ? (e as any).tags : [])
+      if (tagsArr.length) {
+        // classifyDomain 返回 { domain, domainCategory }；旧实体 domain 字段本身可能也需要更新，
+        // 但保守起见只更新 domainCategory，domain 保持原值。
+        const { domainCategory } = classifyDomain({ tags: tagsArr } as any, suiteDomain)
+        domainCat = domainCategory
+      } else if (KIND_SUPPORTING.has(e.kind)) {
+        domainCat = 'supporting'
+      } else if (KIND_MASTER.has(e.kind)) {
+        domainCat = 'master'
+      } else {
+        domainCat = 'core'
+      }
+    }
+
+    // ── 生成 canonicalId ──
+    let canonId = e.canonicalId
+    if (!canonId) {
+      canonId = domainCat === 'master'
+        ? `canonical:${e.kind}:${e.name}`
+        : e.id
+    }
+
+    // ── 应用变更 ──
+    if (missing || e.domainCategory !== domainCat || e.canonicalId !== canonId) {
+      e.domainCategory = domainCat as any
+      e.canonicalId = canonId
+      migrated++
+    }
+
+    if (domainCat === 'master') master++
+    else if (domainCat === 'supporting') supporting++
+    else core++
+  }
+
+  return { migrated, master, supporting, core }
+}
+
 export async function loadSuite(suiteId: string): Promise<SuiteData | null> {
   const cfg = await getConfig()
   const storageRoot = resolveDatastorageRoot(cfg)
@@ -289,6 +361,17 @@ export async function loadSuite(suiteId: string): Promise<SuiteData | null> {
 
   const entities = await readJsonSafe<OntologyEntity[]>(join(dir, 'entities.json'), [])
   const relations = await readJsonSafe<OntologyRelation[]>(join(dir, 'relations.json'), [])
+
+  // ── 迁移层：补全旧实体缺失的 domainCategory 和 canonicalId ──
+  // 种子套件（chemical-safety-demo 等）是预置 JSON，从未经过 classifyDomain；
+  // datasource 套件重导入时也可能因为某种遗漏字段。检测到任一实体缺字段时批量补全并回写。
+  const suiteDomain = meta.domain || meta.suiteId
+  const domainMig = migrateDomainFields(entities, suiteDomain)
+  if (domainMig.migrated > 0) {
+    try { await writeJson(join(dir, 'entities.json'), entities) } catch { /* ignore */ }
+    console.warn(`[datastore] migrated ${domainMig.migrated}/${entities.length} entities in suite '${meta.suiteId}' (domainCategory/canonicalId)`)
+  }
+
   let annotations = await readJsonSafe<OntologyAnnotations>(join(dir, 'annotations.json'), {
     entityFrameMapping: {}, coverageMarks: {}, customRelations: [],
   })
@@ -396,6 +479,154 @@ export function assembleGraph(suite: SuiteData): GraphData {
     group: e.kind,
   }))
   const edges: GraphEdge[] = suite.relations.map(r => ({
+    id: r.id,
+    source: r.from,
+    target: r.to,
+    type: r.type,
+    label: r.label,
+  }))
+  return { nodes, edges }
+}
+
+// ─────────────── 全局本体（跨套件合并去重） ───────────────
+
+export interface BuildGlobalOptions {
+  /** 指定参与合并的套件 ID 列表；缺省合并全部已导入套件 */
+  suiteIds?: string[]
+}
+
+/**
+ * 构建全局本体：跨套件合并，主数据实体按 canonicalId 去重。
+ *
+ * 合并规则：
+ * 1. 遍历所有套件的实体，以 canonicalId 为键去重。主数据实体的 canonicalId
+ *    为 `canonical:${kind}:${name}`，跨套件同名主数据合并为一个规范实体。
+ * 2. 非主数据实体的 canonicalId 等于自身 id，不跨套件合并。
+ * 3. 合并时首次出现的实体作为规范实体，后续套件的同名实体在 properties.suites
+ *    中记录来源套件 ID。
+ * 4. 所有关系的 from/to 通过 suite-local id → canonical id 映射表重写，
+ *    形成跨套件引用关系（如 CRM 合同 → 全局产品）。
+ */
+export async function buildGlobalOntology(opts: BuildGlobalOptions = {}): Promise<GlobalOntology> {
+  const metas = await listImportedSuites()
+  const wanted = opts.suiteIds && opts.suiteIds.length
+    ? new Set(opts.suiteIds)
+    : null
+  const selected = wanted ? metas.filter(m => wanted.has(m.suiteId)) : metas
+
+  const canonicalMap = new Map<string, OntologyEntity>()
+  const idMap: Record<string, string> = {}
+  const suites: GlobalOntology['suites'] = []
+  const processLinks: GlobalOntology['processLinks'] = []
+
+  for (const meta of selected) {
+    const suite = await loadSuite(meta.suiteId)
+    if (!suite) continue
+    suites.push({
+      suiteId: meta.suiteId,
+      domain: meta.domain,
+      entityCount: suite.entities.length,
+    })
+
+    for (const e of suite.entities) {
+      const canonId = e.canonicalId || e.id
+      idMap[e.id] = canonId
+      if (!canonicalMap.has(canonId)) {
+        // 首次出现：作为规范实体，记录来源套件
+        const props = { ...(e.properties || {}) }
+        props.suites = [meta.suiteId]
+        canonicalMap.set(canonId, { ...e, id: canonId, properties: props })
+      } else {
+        // 已存在同名规范实体：合并来源套件
+        const existing = canonicalMap.get(canonId)!
+        const props = { ...(existing.properties || {}) }
+        const suiteList = Array.isArray(props.suites) ? [...props.suites] : []
+        if (!suiteList.includes(meta.suiteId)) suiteList.push(meta.suiteId)
+        props.suites = suiteList
+        existing.properties = props
+      }
+    }
+
+    // 全局「本体↔流程」关联：只取流程轴实体，按 canonicalId 投影，保留来源套件
+    const kindOf = new Map(suite.entities.map(e => [e.id, e.kind]))
+    const nameOf = new Map(suite.entities.map(e => [e.id, e.name]))
+    const seenLinks = new Set<string>()
+    for (const eid of Object.keys(suite.annotations.entityFrameMapping || {})) {
+      const kind = kindOf.get(eid)
+      if (!kind || mappingAxisOfKind(kind) !== 'process') continue
+      const canonicalId = idMap[eid] || eid
+      for (const [frameworkId, fw] of allFwEntries(suite.annotations.entityFrameMapping, eid)) {
+        if (!fw.apqcCode) continue
+        const dedupeKey = `${canonicalId}|${fw.apqcCode}|${meta.suiteId}|${frameworkId}`
+        if (seenLinks.has(dedupeKey)) continue
+        seenLinks.add(dedupeKey)
+        processLinks.push({
+          canonicalId,
+          entityName: nameOf.get(eid) || eid,
+          entityKind: kind,
+          apqcCode: fw.apqcCode,
+          suiteId: meta.suiteId,
+          frameworkId,
+        })
+      }
+    }
+  }
+
+  // 关系重映射：from/to 替换为 canonical id，去重
+  const relMap = new Map<string, OntologyRelation>()
+  for (const meta of selected) {
+    const suite = await loadSuite(meta.suiteId)
+    if (!suite) continue
+    for (const r of suite.relations) {
+      const from = idMap[r.from] || r.from
+      const to = idMap[r.to] || r.to
+      const key = `${from}|${r.type}|${to}`
+      if (relMap.has(key)) continue
+      relMap.set(key, { ...r, id: key, from, to })
+    }
+  }
+
+  // 校验：关系端点必须存在于规范实体集中，否则补一个 DANGLING 节点
+  const canonIds = new Set(canonicalMap.keys())
+  const dangling = new Set<string>()
+  for (const r of relMap.values()) {
+    if (!canonIds.has(r.from)) dangling.add(r.from)
+    if (!canonIds.has(r.to)) dangling.add(r.to)
+  }
+  for (const did of dangling) {
+    if (canonIds.has(did)) continue
+    canonicalMap.set(did, {
+      id: did, rawId: did, name: `[未解析] ${did}`, kind: 'DANGLING_REF',
+      domain: '未知', domainCategory: 'core', canonicalId: did,
+      sourceFile: '', properties: { dangling: true },
+    })
+  }
+
+  // 丢弃指向不存在实体的关联（套件被裁剪或实体已删）
+  const validLinks = processLinks.filter(l => canonicalMap.has(l.canonicalId))
+
+  return {
+    entities: Array.from(canonicalMap.values()),
+    relations: Array.from(relMap.values()),
+    suites,
+    idMap,
+    processLinks: validLinks,
+  }
+}
+
+/** 基于全局本体组装图谱数据（节点 group 取领域类别） */
+export async function assembleGlobalGraph(opts: BuildGlobalOptions = {}): Promise<GraphData> {
+  const global = await buildGlobalOntology(opts)
+  const nodes: GraphNode[] = global.entities.map(e => ({
+    id: e.id,
+    rawId: e.rawId,
+    name: e.name,
+    kind: e.kind,
+    domain: e.domain,
+    group: (e.domainCategory || 'core') as string,
+    suites: (e.properties && Array.isArray(e.properties.suites)) ? e.properties.suites as string[] : undefined,
+  }))
+  const edges: GraphEdge[] = global.relations.map(r => ({
     id: r.id,
     source: r.from,
     target: r.to,

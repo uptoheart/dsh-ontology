@@ -4,15 +4,15 @@
   "project": "contract-management",
   "sourceRequirements": "合同管理需求规格说明书-V9.md",
   "sourceDir": "Ontology\\reference-example",
-  "importTime": 1792119945017,
+  "importTime": 1794361502679,
   "sourceMtime": 1788788493000,
   "sourceFileCount": 8,
   "entityCount": 170,
   "relationCount": 331,
+  "appId": "pcf",
   "frameworkId": "hw-style-pcf",
   "frameworks": [
-    "hw-style-pcf",
-    "apqc-process"
+    "hw-style-pcf"
   ],
   "activeFrameworkId": "hw-style-pcf"
 }

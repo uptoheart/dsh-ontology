@@ -46,10 +46,43 @@ function matchState(node, q) {
   return 'no';
 }
 
+/* 浏览模式索引：无套件时按框架定义合成的树（只读，带全局关联对象数） */
+let browseIndex = new Map();
+function buildBrowseTree() {
+  const counts = new Map(); // apqcCode → Set(canonicalId)
+  for (const l of (state.processLinks || [])) {
+    if (l.frameworkId !== state.frameworkId) continue;
+    if (!counts.has(l.apqcCode)) counts.set(l.apqcCode, new Set());
+    counts.get(l.apqcCode).add(l.canonicalId);
+  }
+  const mapNode = (n, parents) => ({
+    code: n.code,
+    name: n.name || n.label,
+    label: n.label || n.name,
+    status: 'unset',
+    entityCount: (counts.get(n.code) || new Set()).size,
+    entities: [],
+    levelId: n.levelId,
+    _path: parents,
+    children: (n.children || []).map(ch => mapNode(ch, [...parents, { code: n.code, label: n.label || n.name }])),
+  });
+  return (state.framework?.domains || []).map(d => mapNode(d, []));
+}
+
 function renderTree() {
   const wrap = $('#treeWrap');
   const c = state.coverage;
   const tree = c ? (c.fullTree || c.tree) : null;
+  state.browseMode = !c && !!state.framework;
+  if (state.browseMode) {
+    browseIndex = new Map();
+    const browseTree = buildBrowseTree();
+    const index = (list) => { for (const n of list) { browseIndex.set(n.code, n); index(n.children || []); } };
+    index(browseTree);
+    const bq = state.treeQuery.trim().toLowerCase();
+    wrap.innerHTML = browseTree.map(n => renderTreeNode(n, 0, bq)).join('') || '<div class="empty-hint"><div>无匹配节点</div></div>';
+    return;
+  }
   if (!tree || !tree.length) {
     wrap.innerHTML = '<div class="empty-hint"><div><div class="big">🗂️</div>请先选择套件</div></div>';
     return;
@@ -69,20 +102,25 @@ function renderTreeNode(node, depth, q) {
   const expanded = q ? true : state.expanded.has(node.code);
   const pad = 8 + depth * 18;
   const sel = state.selectedNode && state.selectedNode.code === node.code ? ' selected' : '';
-  const ents = node.entityCount > 0 ? `<span class="ent-chip" title="关联实体数">${node.entityCount}</span>` : '';
+  // 浏览模式为只读：不显示覆盖状态、不提供节点编辑、禁止拖拽
+  const browse = state.browseMode;
+  const ents = node.entityCount > 0
+    ? `<span class="ent-chip" title="${browse ? '全局关联对象数' : '关联实体数'}">${node.entityCount}</span>` : '';
   const namePart = node.label === node.name ? '' : `<span class="t-name">${esc(node.name)}</span>`;
-  let html = `<div class="tree-row${sel}" data-code="${esc(node.code)}" data-depth="${depth + 1}" draggable="true" style="padding-left:${pad}px">
+  const badge = browse ? '' : `<span class="badge st-${node.status}">${STATUS_LABEL[node.status]}</span>`;
+  const ops = browse ? '' : `<span class="row-ops">
+      <button class="rop" data-op="add" title="添加子节点">＋</button>
+      <button class="rop" data-op="edit" title="编辑节点（编号/名称/说明）">✎</button>
+      <button class="rop" data-op="del" title="删除节点（含子节点）">🗑</button>
+    </span>`;
+  let html = `<div class="tree-row${sel}" data-code="${esc(node.code)}" data-depth="${depth + 1}" draggable="${browse ? 'false' : 'true'}" style="padding-left:${pad}px">
     <span class="caret ${expanded ? 'open' : ''} ${hasKids ? '' : 'leaf'}" data-caret="1">▶</span>
     <span class="code">${esc(node.code)}</span>
     <span class="t-label">${esc(node.label)}</span>
     ${namePart}
-    <span class="badge st-${node.status}">${STATUS_LABEL[node.status]}</span>
+    ${badge}
     ${ents}
-    <span class="row-ops">
-      <button class="rop" data-op="add" title="添加子节点">＋</button>
-      <button class="rop" data-op="edit" title="编辑节点（编号/名称/说明）">✎</button>
-      <button class="rop" data-op="del" title="删除节点（含子节点）">🗑</button>
-    </span>
+    ${ops}
   </div>`;
   if (hasKids && expanded) {
     for (const ch of node.children) html += renderTreeNode(ch, depth + 1, q);
@@ -102,7 +140,7 @@ $('#treeWrap').addEventListener('click', (e) => {
   }
   const row = e.target.closest('.tree-row');
   if (!row) return;
-  const node = findCoverageNode(row.dataset.code);
+  const node = findCoverageNode(row.dataset.code) || (state.browseMode ? browseIndex.get(row.dataset.code) : null);
   if (!node) return;
   if (e.target.closest('.caret')) {
     if (node.children && node.children.length) {
@@ -125,7 +163,7 @@ $('#treeSearch').addEventListener('input', (e) => {
 });
 
 function selectNode(code) {
-  const node = findCoverageNode(code);
+  const node = findCoverageNode(code) || (state.browseMode ? browseIndex.get(code) : null);
   if (!node) return;
   state.selectedNode = node;
   renderTree();
@@ -144,6 +182,7 @@ const PROC_ST_LABEL = { covered: '✅ 流程已覆盖', partial: '🟡 流程部
 
 function renderNodeDetail() {
   const box = $('#fwDetail');
+  if (state.browseMode) { renderBrowseDetail(box); return; }
   // 覆盖度变化（挂载/摘除实体）后 state.selectedNode 是旧快照，这里按 code 重新解析
   if (state.selectedNode) {
     const fresh = findCoverageNode(state.selectedNode.code);
@@ -265,6 +304,52 @@ function renderNodeDetail() {
     </div>`;
 }
 
+/* 浏览模式详情：只读展示全局「本体↔流程」关联，不出现覆盖状态 */
+function renderBrowseDetail(box) {
+  const node = state.selectedNode;
+  if (!node) {
+    box.innerHTML = '<div class="empty-hint"><div><div class="big">🗂️</div>点击左侧节点查看全局关联</div></div>';
+    return;
+  }
+  const def = findFwDef(node.code);
+  const pathHtml = node._path && node._path.length
+    ? node._path.map(p => `${esc(p.code)} ${esc(p.label)}`).join('<span class="sep">›</span>') + '<span class="sep">›</span>'
+    : '';
+  // 该节点及其子树的全局关联，按 canonical 实体聚合，保留来源套件
+  const underNode = (code) => !!code && (code === node.code || String(code).startsWith(node.code + '.'));
+  const byCanon = new Map();
+  for (const l of (state.processLinks || [])) {
+    if (l.frameworkId !== state.frameworkId || !underNode(l.apqcCode)) continue;
+    const cur = byCanon.get(l.canonicalId) || { name: l.entityName, kind: l.entityKind, suites: new Set() };
+    cur.suites.add(l.suiteId);
+    byCanon.set(l.canonicalId, cur);
+  }
+  const chips = Array.from(byCanon.entries()).slice(0, 50).map(([, e]) => `
+    <button class="ent-link" title="来源套件：${esc(Array.from(e.suites).join('、'))}">
+      <span>${esc(e.name)}</span>
+      <span class="kind-tag">${esc(e.kind)}</span>
+      <span class="e-id">${esc(Array.from(e.suites).join(' · '))}</span>
+    </button>`).join('');
+  box.innerHTML = `
+    <div class="fw-detail">
+      <h2><span class="code">${esc(node.code)}</span>${esc(node.label)}<span class="en">${esc(node.name)}</span></h2>
+      <div class="crumbs">${pathHtml}<b>${esc(node.code)} ${esc(node.label)}</b>
+        <span class="badge st-unset" style="margin-left:8px">浏览模式 · 不含覆盖状态</span></div>
+      ${def && def.definition ? `<div class="def">${esc(def.definition)}</div>` : ''}
+      <div class="stat-line">
+        <div class="stat-pill">全局关联对象 <b>${byCanon.size}</b></div>
+      </div>
+      <h3 class="section-title">关联对象（跨套件合并）</h3>
+      <div class="ent-links">${chips || '<div style="color:var(--text-dim);font-size:12px">还没有任何套件把流程类对象锚定到该编号</div>'}</div>
+      <div class="fw-jumps">
+        <button class="btn" data-browse-global="1">🌐 去全局图谱查看</button>
+      </div>
+      <div style="color:var(--text-dim);font-size:12px;margin-top:8px">
+        选择套件后可查看该编号的覆盖状态、访谈证据与流程画板。
+      </div>
+    </div>`;
+}
+
 /* 「挂载实体」候选：按当前节点的轴向过滤，名称/ID 模糊匹配，最多 8 条 */
 function renderMountHits(q) {
   const box = $('#fwMountHits');
@@ -295,6 +380,8 @@ function renderMountHits(q) {
 }
 
 $('#fwDetail').addEventListener('click', (e) => {
+  const browseGlobal = e.target.closest('[data-browse-global]');
+  if (browseGlobal) { switchTab('global'); return; }
   const mountBtn = e.target.closest('[data-mount]');
   if (mountBtn) {
     const box = $('#fwMount');
